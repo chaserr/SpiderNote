@@ -1,0 +1,44 @@
+PODS:
+  - Alamofire (3.5.0)
+  - CryptoSwift (0.5.2)
+  - FDFullscreenPopGesture (1.1)
+  - Kingfisher (2.4.1)
+  - MBProgressHUD (0.9.2)
+  - ObjectMapper (1.4.0)
+  - Reachability (3.2)
+  - Realm (1.1.0):
+    - Realm/Headers (= 1.1.0)
+  - Realm/Headers (1.1.0)
+  - RealmSwift (1.1.0):
+    - Realm (= 1.1.0)
+  - SnapKit (0.22.0)
+  - SwiftyJSON (2.3.2)
+
+DEPENDENCIES:
+  - Alamofire (~> 3.5.0)
+  - CryptoSwift (~> 0.5.2)
+  - FDFullscreenPopGesture
+  - Kingfisher
+  - MBProgressHUD
+  - ObjectMapper (~> 1.4.0)
+  - Reachability
+  - RealmSwift (~> 1.1.0)
+  - SnapKit (~> 0.22.0)
+  - SwiftyJSON
+
+SPEC CHECKSUMS:
+  Alamofire: b70a7352335f8ea5babd0a923eb7e8eacc67b877
+  CryptoSwift: c1ef79f901b86099a6fe8b3c7524cf9f3f3c8c40
+  FDFullscreenPopGesture: a8a620179e3d9c40e8e00256dcee1c1a27c6d0f0
+  Kingfisher: 41aed5b6c1ed8fa98cf6d75283ce89cf7890f517
+  MBProgressHUD: 1569cf7ace17a8bac47aabfbb8580a49690386d1
+  ObjectMapper: a07ad0462c5adf014adc0f89ef04c29b626e855e
+  Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
+  Realm: ceecf1a4540c4ce9efe196fe73fa9855bce05bd8
+  RealmSwift: 838058b2db95b12cb86bd0cf209df642c33fb60a
+  SnapKit: 0dd2fd157330f1ea11fd84da13e6be8a7a22bae0
+  SwiftyJSON: 04ccea08915aa0109039157c7974cf0298da292a
+
+PODFILE CHECKSUM: 146c3ac811531864ad50cde01a743046252b1b15
+
+COCOAPODS: 1.1.0.beta.2

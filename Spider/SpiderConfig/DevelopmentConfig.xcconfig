@@ -1,0 +1,23 @@
+//
+//  DevelopmentConfig.xcconfig
+//  Spider
+//
+//  Created by 童星 on 16/8/29.
+//  Copyright © 2016年 auais. All rights reserved.
+//
+
+//App的唯一标示符
+PRODUCT_BUNDLE_IDENTIFIER = com.auais.spiders
+
+//ShareAppkey
+Share_KEY        =  1694f34777872
+Share_Secret     =  5099922334baf236ecd8ec5511db4a38
+// 新浪AppKey
+Sina_AppKey   =  1700854342
+Sina_AppSecret =  4a85af6460c468a9a0e00c11c078db45
+
+// 微信
+
+// QQ
+QQ_AppID = 1105654306
+QQ_AppKey = CKqkDQKUEgRqx4r4
