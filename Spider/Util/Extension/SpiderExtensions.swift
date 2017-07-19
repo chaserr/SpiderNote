@@ -9,12 +9,12 @@
 import Foundation
 
 extension UIView {
-    func contains(point: CGPoint) -> Bool {
+    func contains(_ point: CGPoint) -> Bool {
         return bounds.contains(point)
     }
     
-    func contain(point: CGPoint) -> Bool {
-        guard let point = superview?.convertPoint(point, toView: self) else {
+    func contain(_ point: CGPoint) -> Bool {
+        guard let point = superview?.convert(point, to: self) else {
             return false
         }
         
@@ -27,7 +27,7 @@ extension UIView {
         
         guard let context = UIGraphicsGetCurrentContext() else { return nil }
         
-        layer.renderInContext(context)
+        layer.render(in: context)
         
         let fullImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
@@ -38,31 +38,31 @@ extension UIView {
         return imageView
     }
     
-    func animateMoveTo(point point: CGPoint, withScalor scalor: CGFloat) {
+    func animateMoveTo(point: CGPoint, withScalor scalor: CGFloat) {
         
-        UIView.animateWithDuration(0.1, animations: {
+        UIView.animate(withDuration: 0.1, animations: {
             
             self.frame.size = CGSize(width: self.frame.width * scalor, height: self.frame.height * scalor)
             self.center = point
             
-        }) { done in
+        }, completion: { done in
             
             self.layer.shadowRadius = 2.0
             self.layer.shadowOpacity = 0.25
-            self.layer.shadowPath = UIBezierPath(rect: self.bounds).CGPath
-        }
+            self.layer.shadowPath = UIBezierPath(rect: self.bounds).cgPath
+        }) 
     }
     
-    class func move(view: UIView, toPoint point: CGPoint, withScalor scalor: CGFloat, completion: ( Bool -> Void)) {
-        UIView.animateWithDuration(0.3, animations: {
+    class func move(_ view: UIView, toPoint point: CGPoint, withScalor scalor: CGFloat, completion: @escaping ( (Bool) -> Void)) {
+        UIView.animate(withDuration: 0.3, animations: {
             view.layer.shadowOpacity = 0
             view.frame.size = CGSize(width: view.frame.width * scalor, height: view.frame.height * scalor)
             view.center = point
             view.alpha = 0.0
-        }) { done in
+        }, completion: { done in
             view.removeFromSuperview()
             completion(done)
-        }
+        }) 
     }
 }
 
@@ -74,18 +74,18 @@ extension CGPoint {
 }
 
 extension String {
-    func toTime() -> NSTimeInterval {   // "01:30" -> 90
-        let range = rangeOfString(":")
-        let min   = substringToIndex(range!.startIndex)
-        let sec   = substringFromIndex(range!.endIndex)
+    func toTime() -> TimeInterval {   // "01:30" -> 90
+        let range = self.range(of: ":")
+        let min   = substring(to: range!.lowerBound)
+        let sec   = substring(from: range!.upperBound)
         
-        return NSTimeInterval(min)! * 60 + NSTimeInterval(sec)!
+        return TimeInterval(min)! * 60 + TimeInterval(sec)!
     }
     
     func toCGPoint() -> CGPoint {
-        let range = self.rangeOfString(":")!
-        let xPer = substringToIndex(range.startIndex)
-        let yPer = substringFromIndex(range.endIndex)
+        let range = self.range(of: ":")!
+        let xPer = substring(to: range.lowerBound)
+        let yPer = substring(from: range.upperBound)
         
         return CGPoint(x: xPer.toCGFloat(), y: yPer.toCGFloat())
     }
@@ -95,41 +95,41 @@ extension String {
     }
     
     func toCGFloat() -> CGFloat {
-        let num = NSNumberFormatter().numberFromString(self)!
+        let num = NumberFormatter().number(from: self)!
         return CGFloat(num.floatValue)
     }
     
     func toYearMonth() -> String {
-        let end = endIndex.advancedBy(-1, limit: startIndex)
-        let pos = startIndex.advancedBy(7, limit: end)
-        return substringToIndex(pos)
+        let end = characters.index(endIndex, offsetBy: -1, limitedBy: startIndex)
+        let pos = characters.index(startIndex, offsetBy: 7, limitedBy: end)
+        return substring(to: pos)
     }
     
     func toYear() -> String {
-        let end = endIndex.advancedBy(-1, limit: startIndex)
-        let pos = startIndex.advancedBy(4, limit: end)
-        return substringToIndex(pos)
+        let end = characters.index(endIndex, offsetBy: -1, limitedBy: startIndex)
+        let pos = characters.index(startIndex, offsetBy: 4, limitedBy: end)
+        return substring(to: pos)
     }
     
     func toMonth() -> String {
         let ym = toYearMonth()
-        let end = ym.endIndex.advancedBy(-2, limit: ym.startIndex)
-        return ym.substringFromIndex(end)
+        let end = ym.characters.index(ym.endIndex, offsetBy: -2, limitedBy: ym.startIndex)
+        return ym.substring(from: end)
     }
     
     func isThisYear() -> Bool {
-        let thisYear = NSDate().toYear()
+        let thisYear = Date().toYear()
         return thisYear == self.toYear()
     }
     
     func toUndocCellTime() -> String {
         let nsRange = NSMakeRange(5, 5)
-        let md = (self as NSString).substringWithRange(nsRange)
-        let changed = md.stringByReplacingOccurrencesOfString("-", withString: "/")
+        let md = (self as NSString).substring(with: nsRange)
+        let changed = md.replacingOccurrences(of: "-", with: "/")
         return changed
     }
     
-    func toSpiderURL() -> NSURL? {
+    func toSpiderURL() -> URL? {
         
         return nil
     }
@@ -139,8 +139,8 @@ extension String {
     }
     
     func toUndocHeaderTime() -> String {
-        let thisMonth = NSDate().toMonth()
-        let thisYear  = NSDate().toYear()
+        let thisMonth = Date().toMonth()
+        let thisYear  = Date().toYear()
         
         if thisYear != toYear() {
             
@@ -157,14 +157,14 @@ extension String {
     }
 }
 
-extension NSTimeInterval {
+extension TimeInterval {
     func toMinSec() -> String {
-        return String(format: "%02d:%02d", Int(self/60), Int(self%60))
+        return String(format: "%02d:%02d", Int(self/60), Int(self.truncatingRemainder(dividingBy: 60)))
     }
     
     func toDecimal() -> String {
         if Int(self/60) > 0 {
-            return String(format: "%d.%d\"", Int(self/60), Int(self%60))
+            return String(format: "%d.%d\"", Int(self/60), Int(self.truncatingRemainder(dividingBy: 60)))
         } else {
             return String(format: "%d\"", Int(self))
         }
@@ -185,23 +185,23 @@ extension Array {
 //    }
 }
 
-extension NSDate {
+extension Date {
     func toString() -> String {
-        let dateFormatter = NSDateFormatter()
+        let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        return dateFormatter.stringFromDate(self)
+        return dateFormatter.string(from: self)
     }
     
     func toYear() -> String {
-        let dateFormatter = NSDateFormatter()
+        let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy"
-        return dateFormatter.stringFromDate(self)
+        return dateFormatter.string(from: self)
     }
     
     func toMonth() -> String {
-        let dateFormatter = NSDateFormatter()
+        let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MM"
-        return dateFormatter.stringFromDate(self)
+        return dateFormatter.string(from: self)
     }
 }
 
@@ -214,7 +214,7 @@ extension UIColor {
 }
 
 // random
-func randomInRange(range: Range<Int>) -> CGFloat {
-    let count = UInt32(range.endIndex - range.startIndex)
-    return  CGFloat(arc4random_uniform(count)) + CGFloat(range.startIndex)
+func randomInRange(_ range: CountableClosedRange<Int>) -> CGFloat {
+    let count = UInt32(range.upperBound - range.lowerBound)
+    return  CGFloat(arc4random_uniform(count)) + CGFloat(range.lowerBound)
 }

@@ -15,11 +15,11 @@ final class SpiderPlayer: NSObject, AVAudioPlayerDelegate {
     
     var player: AVAudioPlayer?
 
-    var lastPlayedTime: NSTimeInterval = 0
+    var lastPlayedTime: TimeInterval = 0
     var lastID: String = ""
     var playingID: String = ""
     
-    func prepareToPlay(audioInfo: AudioInfo, at startTime: NSTimeInterval = 0) {
+    func prepareToPlay(_ audioInfo: AudioInfo, at startTime: TimeInterval = 0) {
         guard let audioURL = APP_UTILITY.getAudioFilePath(audioInfo.id) else { return }
         
         if let player = player {
@@ -30,7 +30,7 @@ final class SpiderPlayer: NSObject, AVAudioPlayerDelegate {
         }
         
         do {
-            player = try AVAudioPlayer(contentsOfURL: audioURL)
+            player = try AVAudioPlayer(contentsOf: audioURL)
             player?.delegate = self
             
             playingID = audioInfo.ownerID
@@ -44,11 +44,11 @@ final class SpiderPlayer: NSObject, AVAudioPlayerDelegate {
         }
     }
     
-    func prepareToPlay(url: NSURL) -> AVAudioPlayer? {
+    func prepareToPlay(_ url: URL) -> AVAudioPlayer? {
         reset()
         
         do {
-            player = try AVAudioPlayer(contentsOfURL: url)
+            player = try AVAudioPlayer(contentsOf: url)
             player?.delegate = self
         } catch {
             println("SpiderPlayer init player failed: \n \(error)")
@@ -57,7 +57,7 @@ final class SpiderPlayer: NSObject, AVAudioPlayerDelegate {
         return player
     }
     
-    func play(at time: NSTimeInterval) {
+    func play(at time: TimeInterval) {
         
         if let player = player {
             player.currentTime = time
@@ -78,7 +78,7 @@ final class SpiderPlayer: NSObject, AVAudioPlayerDelegate {
         changed = true
     }
     
-    func audioPlayerDidFinishPlaying(player: AVAudioPlayer, successfully flag: Bool) {
+    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
         lastPlayedTime = player.duration
         lastID = playingID
         playingID = ""
@@ -90,31 +90,31 @@ final class SpiderPlayer: NSObject, AVAudioPlayerDelegate {
         
         println(" Init Spider Player ........ ")
 
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(handleRouteChange(_:)), name: AVAudioSessionRouteChangeNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleRouteChange(_:)), name: NSNotification.Name.AVAudioSessionRouteChange, object: nil)
     }
     
-    func handleRouteChange(notification: NSNotification) {
+    func handleRouteChange(_ notification: Notification) {
         guard let info = notification.userInfo,
-            changeKey = info[AVAudioSessionRouteChangeReasonKey] as? UInt,
-            changeReason = AVAudioSessionRouteChangeReason(rawValue: changeKey),
-            previousRoute = info[AVAudioSessionRouteChangePreviousRouteKey] as? AVAudioSessionRouteDescription,
-            output = previousRoute.outputs.first
+            let changeKey = info[AVAudioSessionRouteChangeReasonKey] as? UInt,
+            let changeReason = AVAudioSessionRouteChangeReason(rawValue: changeKey),
+            let previousRoute = info[AVAudioSessionRouteChangePreviousRouteKey] as? AVAudioSessionRouteDescription,
+            let output = previousRoute.outputs.first
             
             else { return }
         
-        if changeReason == .OldDeviceUnavailable && output.portType == AVAudioSessionPortHeadphones {
+        if changeReason == .oldDeviceUnavailable && output.portType == AVAudioSessionPortHeadphones {
             println(" Headphone has plugged out...........")
             self.pause()
         }
     }
     
-    func audioPlayerBeginInterruption(player: AVAudioPlayer) {
+    func audioPlayerBeginInterruption(_ player: AVAudioPlayer) {
         println(" Spider Player Begin Interruption ")
         pause()
     }
     
     deinit {
         println(" deinit Spider Player ........ ")
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
 }

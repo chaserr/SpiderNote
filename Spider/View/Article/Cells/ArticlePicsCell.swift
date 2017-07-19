@@ -15,19 +15,19 @@ private let editEdge   = UIEdgeInsetsMake(kArticleVerticlSpace + 2, 0, kArticleV
 class ArticlePicsCell: ArticleBaseCell {
     var tapAction: (() -> Void)?
     
-    private var beEditing = false
-    private var picEdge: Constraint? = nil
+    fileprivate var beEditing = false
+    fileprivate var picEdge: Constraint? = nil
     
-    private var picsView: InfinitePictureView = {
+    fileprivate var picsView: InfinitePictureView = {
         return InfinitePictureView()
     }()
     
-    private var tagCountView: SectionTagCountView = {
+    fileprivate var tagCountView: SectionTagCountView = {
         return SectionTagCountView()
     }()
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: .Default, reuseIdentifier: reuseIdentifier)
+        super.init(style: .default, reuseIdentifier: reuseIdentifier)
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(didTap))
         picsView.addGestureRecognizer(tap)
@@ -48,7 +48,7 @@ class ArticlePicsCell: ArticleBaseCell {
         }
     }
     
-    func didTap(sender: UITapGestureRecognizer) {
+    func didTap(_ sender: UITapGestureRecognizer) {
         tapAction?()
     }
     
@@ -58,7 +58,7 @@ class ArticlePicsCell: ArticleBaseCell {
         picsView.prepareForReuse()
     }
     
-    func congfigureWithSection(section: SectionObject, layout: SectionLayout, editing: Bool = false) {
+    func congfigureWithSection(_ section: SectionObject, layout: SectionLayout, editing: Bool = false) {
         super.configureSection(layout, editing: editing)
 
         guard let picInfos = layout.pics else { return }
@@ -69,18 +69,18 @@ class ArticlePicsCell: ArticleBaseCell {
             beEditing = editing
 
             picEdge?.updateInsets(editing ? editEdge : commonEdge)
-            tagCountView.hidden = editing
+            tagCountView.isHidden = editing
         }
     }
     
     // 防止与侧滑冲突
-    override func hitTest(point: CGPoint, withEvent event: UIEvent?) -> UIView? {
+    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         let popRect = CGRect(x: 0, y: 0, w: 30, h: bounds.height)
         
         if popRect.contains(point){
             return self
         }  else {
-            return super.hitTest(point, withEvent: event)
+            return super.hitTest(point, with: event)
         }
     }
     

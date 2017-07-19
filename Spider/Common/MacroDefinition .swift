@@ -9,8 +9,8 @@
 import Foundation
 import AdSupport
 
-let APP_DELEGATE  = UIApplication.sharedApplication().delegate as! AppDelegate
-let APP_KEYWINDOW = UIApplication.sharedApplication().keyWindow!
+let APP_DELEGATE  = UIApplication.shared.delegate as! AppDelegate
+let APP_KEYWINDOW = UIApplication.shared.keyWindow!
 
 
 /**日期格式*/
@@ -38,28 +38,28 @@ let kDU_yyyMMddHHmmssS       = "yyyy-MM-dd HH:mm:ss.S"
 
 
 /** 根据subview位置获取cell的indexPath */
-func IndexPath_SubView_TableView(subView:UIView, tableview:UITableView) -> NSIndexPath {
-    let subViewFrame = subView.convertRect(subView.bounds, toView: tableview)
-    let indexPath    = tableview.indexPathForRowAtPoint(subViewFrame.origin)
+func IndexPath_SubView_TableView(_ subView:UIView, tableview:UITableView) -> IndexPath {
+    let subViewFrame = subView.convert(subView.bounds, to: tableview)
+    let indexPath    = tableview.indexPathForRow(at: subViewFrame.origin)
 
     return indexPath!
 }
 
 /** 根据subview位置获取cell */
-func Cell_SubView_TableView(subView:UIView, tableview:UITableView) -> AnyObject {
-    let subViewFrame = subView.convertRect(subView.bounds, toView: tableview)
-    let indexPath    = tableview.indexPathForRowAtPoint(subViewFrame.origin)
-    let cell         = tableview.cellForRowAtIndexPath(indexPath!)
+func Cell_SubView_TableView(_ subView:UIView, tableview:UITableView) -> AnyObject {
+    let subViewFrame = subView.convert(subView.bounds, to: tableview)
+    let indexPath    = tableview.indexPathForRow(at: subViewFrame.origin)
+    let cell         = tableview.cellForRow(at: indexPath!)
 
     return cell!
 }
 
 /** json字符串转换成字典 */
-public func JsonStrToDic(jsonStr: String) -> [String: AnyObject]? {
+public func JsonStrToDic(_ jsonStr: String) -> [String: AnyObject]? {
     
-    let dicData = jsonStr.dataUsingEncoding(NSUTF8StringEncoding)
+    let dicData = jsonStr.data(using: String.Encoding.utf8)
     
-    let dic: [String: AnyObject]? = try! NSJSONSerialization.JSONObjectWithData(dicData!, options: NSJSONReadingOptions.AllowFragments) as? [String: AnyObject]
+    let dic: [String: AnyObject]? = try! JSONSerialization.jsonObject(with: dicData!, options: JSONSerialization.ReadingOptions.allowFragments) as? [String: AnyObject]
     return dic
     
 }
@@ -72,45 +72,45 @@ public func JsonStrToDic(jsonStr: String) -> [String: AnyObject]? {
  
  - returns: uiviewcontroller
  */
-func getViewControllerFromStoryBoard(storyBoardName:String, viewControllerIdentify:String) -> UIViewController {
+func getViewControllerFromStoryBoard(_ storyBoardName:String, viewControllerIdentify:String) -> UIViewController {
     let storyBoard = UIStoryboard.init(name: storyBoardName, bundle: nil)
-    let targetVC = storyBoard.instantiateViewControllerWithIdentifier(viewControllerIdentify)
+    let targetVC = storyBoard.instantiateViewController(withIdentifier: viewControllerIdentify)
     return targetVC
 }
 
 
 
 /** 16进制颜色转换*/
-func RGBCOLORV(rgbValue:NSInteger) -> UIColor{
+func RGBCOLORV(_ rgbValue:NSInteger) -> UIColor{
 
     return UIColor(red: ((CGFloat)((rgbValue & 0xFF0000) >> 16))/255.0,
                    green: ((CGFloat)((rgbValue & 0xFF00) >> 8))/255.0,
                    blue: ((CGFloat)(rgbValue & 0xFF))/255.0, alpha: 1.0)
 }
 
-func RGBCOLORVA(rgbValue:NSInteger, alphaValue:CGFloat) -> UIColor{
+func RGBCOLORVA(_ rgbValue:NSInteger, alphaValue:CGFloat) -> UIColor{
 
     return UIColor(red: ((CGFloat)((rgbValue & 0xFF0000) >> 16))/255.0,
                    green: ((CGFloat)((rgbValue & 0xFF00) >> 8))/255.0,
                    blue: ((CGFloat)(rgbValue & 0xFF))/255.0, alpha: alphaValue)
 }
 /**RGB颜色转换*/
-func RGBCOLOR(r:CGFloat, g:CGFloat, b:CGFloat) -> UIColor {
+func RGBCOLOR(_ r:CGFloat, g:CGFloat, b:CGFloat) -> UIColor {
     return UIColor.init(red: (r)/255.0, green: (g)/255.0, blue: (b)/255.0, alpha: 1.0)
 }
 
-func RGBACOLOR(r:CGFloat, g:CGFloat, b:CGFloat, a:CGFloat) -> UIColor {
+func RGBACOLOR(_ r:CGFloat, g:CGFloat, b:CGFloat, a:CGFloat) -> UIColor {
     return UIColor.init(red: (r)/255.0, green: (g)/255.0, blue: (b)/255.0, alpha: a)
 }
 
 
 
 /**系统字体大小*/
-func SYSTEMFONT(s: CGFloat) -> UIFont {
-    return UIFont.systemFontOfSize(s)
+func SYSTEMFONT(_ s: CGFloat) -> UIFont {
+    return UIFont.systemFont(ofSize: s)
 }
 
-func SYSTEMFONT(s: CGFloat, name: String) -> UIFont {
+func SYSTEMFONT(_ s: CGFloat, name: String) -> UIFont {
     return UIFont(name: name, size: s)!
 }
 
@@ -132,20 +132,20 @@ func SYSTEMFONT(s: CGFloat, name: String) -> UIFont {
 //let cancleButtonBlock:AlertViewBlock? = nil
 //let otherButtonBlock:AlertViewBlock? = nil
 
-func alert(title:String?, message:String?,parentVC:UIViewController) -> Void {
+func alert(_ title:String?, message:String?,parentVC:UIViewController) -> Void {
     let errorAlert   = UIAlertController(
         title: title,
         message: message,
-        preferredStyle: UIAlertControllerStyle.Alert
+        preferredStyle: UIAlertControllerStyle.alert
     )
     errorAlert.addAction(
         UIAlertAction(
             title: "OK",
-            style: UIAlertActionStyle.Default,
+            style: UIAlertActionStyle.default,
             handler: nil
         )
     )
-    parentVC.presentViewController(errorAlert, animated: true, completion: nil)
+    parentVC.present(errorAlert, animated: true, completion: nil)
 }
 
 
@@ -154,9 +154,9 @@ func getCurrentRootViewController() -> UIViewController? {
     
     let result:UIViewController?
     
-    let topWindow = UIApplication.sharedApplication().keyWindow
+    let topWindow = UIApplication.shared.keyWindow
     if topWindow?.windowLevel != UIWindowLevelNormal {
-        let windows:[UIWindow] = UIApplication.sharedApplication().windows
+        let windows:[UIWindow] = UIApplication.shared.windows
         for topWindow in windows {
             if topWindow.windowLevel == UIWindowLevelNormal {
                 break
@@ -166,10 +166,10 @@ func getCurrentRootViewController() -> UIViewController? {
     }
     
     let rootView = topWindow?.subviews[0]
-    let nextResponder = rootView?.nextResponder()
-    if (nextResponder?.isKindOfClass(UIViewController)) != nil {
+    let nextResponder = rootView?.next
+    if (nextResponder?.isKind(of: UIViewController.self)) != nil {
         result = nextResponder as? UIViewController
-    }else if ((topWindow?.respondsToSelector(Selector("rootViewController"))) != nil && topWindow!.rootViewController != nil){
+    }else if ((topWindow?.responds(to: Selector("rootViewController"))) != nil && topWindow!.rootViewController != nil){
     
         result = topWindow!.rootViewController;
 

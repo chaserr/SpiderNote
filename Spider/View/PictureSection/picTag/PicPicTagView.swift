@@ -10,14 +10,14 @@ import UIKit
 import Kingfisher
 
 class PicPicTagView: PicTagView {
-    private var imageV: UIImageView!
+    fileprivate var imageV: UIImageView!
     
     init(location: CGPoint, picInfo: PicInfo, direction: TagDirection, inSize: CGSize) {
         super.init(frame: CGRect(x: location.x - 5, y: location.y - kPicPicTagH / 2, width: kPicPicTagW, height: kPicPicTagH))
-        self.type = .Pic
+        self.type = .pic
         self.direction = direction
         
-        userInteractionEnabled = true
+        isUserInteractionEnabled = true
         
         let dot: UIImageView = {
             let imageV = UIImageView(frame: CGRect(x: 0, y: kPicPicTagH / 2 - kPicTagDotS / 2, width: kPicTagDotS, height: kPicTagDotS))
@@ -34,7 +34,7 @@ class PicPicTagView: PicTagView {
         contentView = {
             
             let imageV = UIImageView(frame: CGRect(x: 35, y: 2.5, width: 40, height: 40))
-            imageV.contentMode = .ScaleAspectFill
+            imageV.contentMode = .scaleAspectFill
             imageV.layer.masksToBounds = true
             
             if let image = picInfo.image {
@@ -55,18 +55,18 @@ class PicPicTagView: PicTagView {
         addSubview(contentView)
         
         switch direction {
-        case .Right:
+        case .right:
             break
             
-        case .Left:
+        case .left:
             
-            transform = CGAffineTransformMakeRotation(CGFloat(M_PI))
-            contentView.transform = CGAffineTransformMakeRotation(CGFloat(M_PI))
+            transform = CGAffineTransform(rotationAngle: CGFloat(M_PI))
+            contentView.transform = CGAffineTransform(rotationAngle: CGFloat(M_PI))
             frame.origin = CGPoint(x: location.x - kPicPicTagW + 5, y: location.y - kPicPicTagH / 2)
             
-        case .None:
+        case .none:
             
-            self.direction = .Right
+            self.direction = .right
             if (location.x + kPicPicTagW) >= inSize.width {
                 rotate()
                 frame.origin = CGPoint(x: location.x - kPicPicTagW + 5, y: location.y - kPicPicTagH / 2)
@@ -74,7 +74,7 @@ class PicPicTagView: PicTagView {
         }
     }
     
-    override func didLongPress(sender: UILongPressGestureRecognizer) {
+    override func didLongPress(_ sender: UILongPressGestureRecognizer) {
         super.didLongPress(sender)
     }
 

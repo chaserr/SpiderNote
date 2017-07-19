@@ -37,19 +37,19 @@ class SearchMainViewController: UIViewController, UITextFieldDelegate, UISearchB
     let searchArticleRes                     = SearchArticleResultVC()
     lazy var scrollView:UIScrollView = {
     
-        let scrollV:UIScrollView = UIScrollView.init(frame: CGRectMake(0, kSegmentHight, kScreenWidth, kScreenHeight - 64 - kSegmentHight))
+        let scrollV:UIScrollView = UIScrollView.init(frame: CGRect(x: 0, y: kSegmentHight, width: kScreenWidth, height: kScreenHeight - 64 - kSegmentHight))
         scrollV.showsHorizontalScrollIndicator = false
         scrollV.delegate = self
-        scrollV.pagingEnabled = true
-        scrollV.scrollEnabled = true
+        scrollV.isPagingEnabled = true
+        scrollV.isScrollEnabled = true
         scrollV.bounces = false
-        scrollV.contentSize = CGSizeMake(kScreenWidth * CGFloat(segmentArrayTitle.count), scrollV.h)
+        scrollV.contentSize = CGSize(width: kScreenWidth * CGFloat(segmentArrayTitle.count), height: scrollV.h)
         return scrollV
         
     }()
     lazy var searchBar:CusSearchBar = {
     
-        let searchB      = CusSearchBar.init(frame: CGRectMake(0, 0, kScreenWidth, 25))
+        let searchB      = CusSearchBar.init(frame: CGRect(x: 0, y: 0, width: kScreenWidth, height: 25))
         searchB.setShowsCancelButton(true, animated: true)
         searchB.delegate = self
 
@@ -57,7 +57,7 @@ class SearchMainViewController: UIViewController, UITextFieldDelegate, UISearchB
     }()
     lazy var titleLabel:UILabel = {
     
-        let titleL       = UILabel.init(frame: CGRectMake(12, 14, 200, 16))
+        let titleL       = UILabel.init(frame: CGRect(x: 12, y: 14, width: 200, height: 16))
         titleL.textColor = RGBCOLOR(0, g: 104, b: 248)
         titleL.font      = SYSTEMFONT(14)
         return titleL
@@ -65,11 +65,11 @@ class SearchMainViewController: UIViewController, UITextFieldDelegate, UISearchB
     lazy var segmentControl:LXDSegmentControl = {
     
         let config                           = LXDSegmentControlConfiguration.init(controlType: LXDSegmentControlTypeSlideBlock, items: segmentArrayTitle)
-        config.itemSelectedColor             = UIColor.clearColor()
-        config.backgroundColor               = UIColor.whiteColor()
-        let segmentControl:LXDSegmentControl = LXDSegmentControl.init(frame: CGRectMake(0, 0, kScreenWidth, kSegmentHight), configuration: config, delegate: nil)
-        segmentControl.addSubLayerWithFrame(CGRectMake(0, CGRectGetMinY(segmentControl.frame) + 1, CGRectGetWidth(segmentControl.frame), 1), color: RGBCOLORV(0xdddddd).CGColor)
-        segmentControl.addSubLayerWithFrame(CGRectMake(0, CGRectGetMaxY(segmentControl.frame) - 1, CGRectGetWidth(segmentControl.frame), 1), color: RGBCOLORV(0xdddddd).CGColor)
+        config.itemSelectedColor             = UIColor.clear
+        config.backgroundColor               = UIColor.white
+        let segmentControl:LXDSegmentControl = LXDSegmentControl.init(frame: CGRect(x: 0, y: 0, width: kScreenWidth, height: kSegmentHight), configuration: config, delegate: nil)
+        segmentControl.addSubLayerWithFrame(CGRect(x: 0, y: segmentControl.frame.minY + 1, width: segmentControl.frame.width, height: 1), color: RGBCOLORV(0xdddddd).cgColor)
+        segmentControl.addSubLayerWithFrame(CGRect(x: 0, y: segmentControl.frame.maxY - 1, width: segmentControl.frame.width, height: 1), color: RGBCOLORV(0xdddddd).cgColor)
         segmentControl.delegate              = self
 
         return segmentControl
@@ -78,7 +78,7 @@ class SearchMainViewController: UIViewController, UITextFieldDelegate, UISearchB
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor                            = UIColor.whiteColor()
+        view.backgroundColor                            = UIColor.white
         customLizeNavigationBarBackBtn()
         view.addSubview(self.segmentControl)
         searchArticleRes.searchtype = searchType
@@ -92,36 +92,36 @@ class SearchMainViewController: UIViewController, UITextFieldDelegate, UISearchB
         showQuestion                                    = false
         navigationItem.titleView                        = self.searchBar
         navigationController?.navigationBar.setNeedsLayout()
-        edgesForExtendedLayout                          = UIRectEdge.None
-        navigationController?.navigationBar.translucent = true
+        edgesForExtendedLayout                          = UIRectEdge()
+        navigationController?.navigationBar.isTranslucent = true
         //        scrollToPage(0)
         let segmentItem = view.viewWithTag(10000) as! UIButton
         self.segmentControl.clickSegmentItem(segmentItem)
     }
     
     // MARK:控制器生命周期
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         hiddenNavBottomLine()
 
         navigationController?.setBackgroundImage(UIImage.init(named: "search_navigationbar_background")!)
 
-        UIApplication.sharedApplication().setStatusBarStyle(.Default, animated: false)
+        UIApplication.shared.setStatusBarStyle(.default, animated: false)
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         hiddenKeyBoard()
         
-        UIApplication.sharedApplication().setStatusBarStyle(.LightContent, animated: false)
+        UIApplication.shared.setStatusBarStyle(.lightContent, animated: false)
 
     }
     
-    override func viewDidDisappear(animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
     }
 
@@ -138,14 +138,14 @@ class SearchMainViewController: UIViewController, UITextFieldDelegate, UISearchB
     }
     
     
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         searchBar.resignFirstResponder()
     }
     
     
     
-    override func preferredStatusBarStyle() -> UIStatusBarStyle {
-        return UIStatusBarStyle.LightContent
+    override var preferredStatusBarStyle : UIStatusBarStyle {
+        return UIStatusBarStyle.lightContent
     }
 }
 
@@ -153,7 +153,7 @@ class SearchMainViewController: UIViewController, UITextFieldDelegate, UISearchB
 // MARK: -- LXDSegmentControlDelegate
 extension SearchMainViewController{
 
-    func segmentControl(segmentControl: LXDSegmentControl!, didSelectAtIndex index: UInt) {
+    func segmentControl(_ segmentControl: LXDSegmentControl!, didSelectAt index: UInt) {
         
         scrollToPage(NSInteger(index))
         
@@ -173,7 +173,7 @@ extension SearchMainViewController{
 // MARK: -- UISearchBarDelegate method
 extension SearchMainViewController{
 
-    func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         searchBar.text = ""
         searchBar.becomeFirstResponder()
         searchBar.setShowsCancelButton(true, animated: true)
@@ -193,7 +193,7 @@ extension SearchMainViewController{
     }
     
     // 实时搜索
-    func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         
         if searchText.lengths <= 0 {
             return
@@ -217,7 +217,7 @@ extension SearchMainViewController{
     
     
     
-    func searchBarSearchButtonClicked(searchBar: UISearchBar) {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         
         searchBar.resignFirstResponder()
         searchBar.setShowsCancelButton(false, animated: true)
@@ -226,12 +226,12 @@ extension SearchMainViewController{
         }
         
         if currentPage == 0 {
-            if (searchMindResult.searchHistories.containsObject(searchBar.text!)) {
-                searchMindResult.searchHistories.removeObject(searchBar.text!)
+            if (searchMindResult.searchHistories.contains(searchBar.text!)) {
+                searchMindResult.searchHistories.remove(searchBar.text!)
                 
             }
             // 保存搜索记录，最多10条
-            searchMindResult.searchHistories.insertObject(searchBar.text!, atIndex: 0)
+            searchMindResult.searchHistories.insert(searchBar.text!, at: 0)
             if searchMindResult.searchHistories.count > SearchHistoriesNum.kMostNumber.rawValue {
                 searchMindResult.searchHistories.removeLastObject()
             }
@@ -244,13 +244,13 @@ extension SearchMainViewController{
         }
         else{
             
-            if (searchArticleRes.searchHistories.containsObject(searchBar.text!)) {
-                searchArticleRes.searchHistories.removeObject(searchBar.text!)
+            if (searchArticleRes.searchHistories.contains(searchBar.text!)) {
+                searchArticleRes.searchHistories.remove(searchBar.text!)
                 
             }
             
             // 保存搜索记录，最多10条
-            searchArticleRes.searchHistories.insertObject(searchBar.text!, atIndex: 0)
+            searchArticleRes.searchHistories.insert(searchBar.text!, at: 0)
             if searchArticleRes.searchHistories.count > SearchHistoriesNum.kMostNumber.rawValue {
                 searchArticleRes.searchHistories.removeLastObject()
             }
@@ -265,10 +265,10 @@ extension SearchMainViewController{
         
     }
     
-    func searchBarCancelButtonClicked(searchBar: UISearchBar) {
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
         // 使用异步，防止点击取消按钮和键盘退出动画时间的冲突
-        dispatch_async(dispatch_get_main_queue()) { 
+        DispatchQueue.main.async { 
             searchBar.setShowsCancelButton(false, animated: true)
         }
         
@@ -280,7 +280,7 @@ extension SearchMainViewController{
 extension SearchMainViewController{
     
     
-        func scrollViewDidEndScrollingAnimation(scrollView: UIScrollView) {
+        func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
             if currentPage == (NSInteger)(scrollView.contentOffset.x / kScreenWidth) {
                 return
             }
@@ -293,14 +293,14 @@ extension SearchMainViewController{
             }
         }
     
-        func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+        func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
             if scrollView.className == "UIScrollView" {
                 if currentPage == (NSInteger)(scrollView.contentOffset.x / kScreenWidth) {
                     return
                 }
                 else{
     
-                    UIView.animateWithDuration(0.5, animations: {
+                    UIView.animate(withDuration: 0.5, animations: {
                         [weak self] in
                         let page = (NSInteger)(scrollView.contentOffset.x / kScreenWidth)
                         self!.setSegmentViewBtnWithPage(page)
@@ -313,7 +313,7 @@ extension SearchMainViewController{
         }
     
     
-        func setSegmentViewBtnWithPage(page:NSInteger) -> Void {
+        func setSegmentViewBtnWithPage(_ page:NSInteger) -> Void {
             if currentPage == page {
                 return
             }else{
@@ -322,15 +322,15 @@ extension SearchMainViewController{
             }
         }
     
-        func scrollViewAddView(view:UIView, index:Int) -> Void {
+        func scrollViewAddView(_ view:UIView, index:Int) -> Void {
             let rect = self.scrollView.bounds
-            view.frame = CGRectMake(CGFloat(index) * CGRectGetWidth(rect) , 0, CGRectGetWidth(rect), CGRectGetHeight(rect) )
+            view.frame = CGRect(x: CGFloat(index) * rect.width , y: 0, width: rect.width, height: rect.height )
             self.scrollView.addSubview(view)
     
         }
     
-        func scrollToPage(page:NSInteger) -> Void {
-            self.scrollView.scrollRectToVisible(CGRectMake(CGFloat(page) * kScreenWidth, self.scrollView.contentOffset.y, self.scrollView.w, self.scrollView.h), animated: true)
+        func scrollToPage(_ page:NSInteger) -> Void {
+            self.scrollView.scrollRectToVisible(CGRect(x: CGFloat(page) * kScreenWidth, y: self.scrollView.contentOffset.y, width: self.scrollView.w, height: self.scrollView.h), animated: true)
             
         }
     

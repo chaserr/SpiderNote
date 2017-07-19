@@ -15,13 +15,13 @@ class UndocCountLabel: UILabel {
         willSet {
             
             if newValue == 0 {
-                hidden = true
+                isHidden = true
                 
             } else {
                 
                 if newValue != count {
                     
-                    hidden = false
+                    isHidden = false
                     var fontSize = CGFloat(11)
                     
                     switch newValue {
@@ -33,17 +33,17 @@ class UndocCountLabel: UILabel {
                         break
                     }
                     
-                    font = UIFont.systemFontOfSize(fontSize)
+                    font = UIFont.systemFont(ofSize: fontSize)
                     
-                    UIView.animateWithDuration(0.2, animations: {
+                    UIView.animate(withDuration: 0.2, animations: {
                         
-                        self.transform = CGAffineTransformMakeScale(1.6, 1.6)
+                        self.transform = CGAffineTransform(scaleX: 1.6, y: 1.6)
                         self.text = newValue > 99 ? "99+" : "\(newValue)"
                         
                     }, completion: { done in
                             
-                        UIView.animateWithDuration(0.2, animations: {
-                            self.transform = CGAffineTransformIdentity
+                        UIView.animate(withDuration: 0.2, animations: {
+                            self.transform = CGAffineTransform.identity
                         })
                     })
                 }
@@ -54,14 +54,14 @@ class UndocCountLabel: UILabel {
     init() {
         super.init(frame: CGRect(x: 30, y: 4, width: 14, height: 14))
         
-        hidden = true
+        isHidden = true
         layer.cornerRadius = 7
         layer.masksToBounds = true
-        font = UIFont.systemFontOfSize(11)
+        font = UIFont.systemFont(ofSize: 11)
 //        adjustsFontSizeToFitWidth = true
-        textAlignment = .Center
-        textColor = UIColor.whiteColor()
-        backgroundColor = UIColor.redColor()
+        textAlignment = .center
+        textColor = UIColor.white
+        backgroundColor = UIColor.red
     }
     
 //    override func intrinsicContentSize() -> CGSize {

@@ -1,3 +1,4 @@
+
 //
 //  UploadProjectManager.swift
 //  Spider
@@ -12,7 +13,7 @@ import Alamofire
 
 let UPLOADPROMANAGER = UploadProManager.getInstance()
 
-public class UploadProManager {
+open class UploadProManager {
 
    
     var conflictProArr = [ProjectObject]()
@@ -25,7 +26,7 @@ public class UploadProManager {
         return instance!
     }
     
-    func uploadProject(parameters:[String: AnyObject], success: () -> Void, failure: () -> Void) -> Void {
+    func uploadProject(_ parameters:[String: AnyObject], success: () -> Void, failure: () -> Void) -> Void {
         
         AOHUDVIEW.showLoadingHUD("加载中...", parentView: APP_DELEGATE.window!)
         AORequest(requestMethod: .POST, specialParameters: parameters, api: .uploadProjectsUrl).responseJSON { response in
@@ -88,7 +89,7 @@ public class UploadProManager {
     }
     
     
-    func analiysisParam(param: [String: AnyObject]) -> Void {
+    func analiysisParam(_ param: [String: AnyObject]) -> Void {
         
     }
     
@@ -99,11 +100,11 @@ public class UploadProManager {
      
      - returns: return value description
      */
-    func getSecondRequestParam(uploadProjectID: [String]) -> [String:AnyObject] {
+    func getSecondRequestParam(_ uploadProjectID: [String]) -> [String:AnyObject] {
         
         var paramDic                     = [String: AnyObject]()
-        paramDic["userId"]               = APP_UTILITY.currentUser?.userID!// 用户ID
-        paramDic["deviceId"]             = APPIdentificationManage.sharedInstance().readUUID()// 设备唯一标识符
+        paramDic["userId"]               = APP_UTILITY.currentUser?.userID! as AnyObject// 用户ID
+        paramDic["deviceId"]             = APPIdentificationManage.sharedInstance().readUUID() as AnyObject// 设备唯一标识符
         /** 项目 */
         var projectArr = [ProjectObject]()
         
@@ -115,16 +116,16 @@ public class UploadProManager {
         var notesArr                     = [AnyObject]()
         for item in projectArr {
             var proDic              = [String: AnyObject]()
-            proDic["id"]            = item.id
-            proDic["userId"]        = APP_UTILITY.currentUser?.userID!
-            proDic["deviceId"]      = item.deviceId
-            proDic["name"] = item.name
-            proDic["createAt"] = item.createAtTime
-            proDic["updateAt"] = item.updateAtTime
+            proDic["id"]            = item.id as AnyObject
+            proDic["userId"]        = APP_UTILITY.currentUser?.userID! as AnyObject
+            proDic["deviceId"]      = item.deviceId as AnyObject
+            proDic["name"] = item.name as AnyObject
+            proDic["createAt"] = item.createAtTime as AnyObject
+            proDic["updateAt"] = item.updateAtTime as AnyObject
             var mindsArr: Array = [AnyObject]()
             var childIds: String = ""
             if item.minds.count != 0 {
-                for (index,mind) in item.minds.enumerate() {
+                for (index,mind) in item.minds.enumerated() {
                     if item.minds.count == 1 {
                         childIds = childIds + mind.id
                     }else if index == item.minds.count - 1{
@@ -133,14 +134,14 @@ public class UploadProManager {
                         childIds = childIds + mind.id + ","
                     }
                     var mindDic            = [String: AnyObject]()
-                    mindDic["id"] = mind.id
-                    mindDic["noteId"] = mind.noteID
-                    mindDic["mindType"] = mind.type
-                    mindDic["name"] = mind.name
-                    mindDic["deleteFlag"] = mind.deleteFlag
+                    mindDic["id"] = mind.id as AnyObject
+                    mindDic["noteId"] = mind.noteID as AnyObject
+                    mindDic["mindType"] = mind.type as AnyObject
+                    mindDic["name"] = mind.name as AnyObject
+                    mindDic["deleteFlag"] = mind.deleteFlag as AnyObject
                     var sectionIds: String = ""
                     if mind.sections.count != 0 {
-                        for (index,section) in mind.sections.enumerate() {
+                        for (index,section) in mind.sections.enumerated() {
                             if mind.subMinds.count == 1 {
                                 sectionIds = sectionIds + section.id
                             }else if index == mind.subMinds.count - 1{
@@ -150,10 +151,10 @@ public class UploadProManager {
                             }
                         }
                     }
-                    mindDic["sectionIds"] = sectionIds ?? ""
+                    mindDic["sectionIds"] = sectionIds as AnyObject ?? ""
                     var childIds: String = ""
                     if mind.subMinds.count != 0 {
-                        for (index,submind) in mind.subMinds.enumerate() {
+                        for (index,submind) in mind.subMinds.enumerated() {
                             if mind.subMinds.count == 1 {
                                 childIds = childIds + submind.id
                             }else if index == mind.subMinds.count - 1{
@@ -163,15 +164,15 @@ public class UploadProManager {
                             }
                         }
                     }
-                    mindDic["childIds"] = childIds ?? ""
-                    mindsArr.append(mindDic)
+                    mindDic["childIds"] = childIds as AnyObject ?? ""
+                    mindsArr.append(mindDic as AnyObject)
                 }
             }
-            proDic["childIds"] = childIds ?? ""
-            proDic["minds"] = mindsArr
-            notesArr.append(proDic)
+            proDic["childIds"] = childIds as AnyObject ?? ""
+            proDic["minds"] = mindsArr as AnyObject
+            notesArr.append(proDic as AnyObject)
         }
-        paramDic["notes"]               = notesArr
+        paramDic["notes"]               = notesArr as AnyObject
         
         
         /** 段落 */
@@ -179,74 +180,74 @@ public class UploadProManager {
         var sectionsArr: Array = [AnyObject]()
         for item in sectionArr {
             var sectionDic            = [String: AnyObject]()
-            sectionDic["id"]          = item.id
-            sectionDic["userId"]      = APP_UTILITY.currentUser?.userID
-            sectionDic["noteId"]      = item.projectID
-            sectionDic["undocFlag"]   = item.undocFlag
-            sectionDic["sectionType"] = item.type
-            sectionDic["updateAt"]    = item.updateAt
-            sectionDic["deleteFlag"]  = item.deleteFlag
+            sectionDic["id"]          = item.id as AnyObject
+            sectionDic["userId"]      = APP_UTILITY.currentUser?.userID as AnyObject
+            sectionDic["noteId"]      = item.projectID as AnyObject
+            sectionDic["undocFlag"]   = item.undocFlag as AnyObject
+            sectionDic["sectionType"] = item.type as AnyObject
+            sectionDic["updateAt"]    = item.updateAt as AnyObject
+            sectionDic["deleteFlag"]  = item.deleteFlag as AnyObject
             var picsArr: Array = [AnyObject]()
             if item.pics.count != 0 {
                 for pic in item.pics {
                     var picDic            = [String: AnyObject]()
-                    picDic["id"] = pic.id
-                    picDic["imageUrl"] = pic.url
+                    picDic["id"] = pic.id as AnyObject
+                    picDic["imageUrl"] = pic.url as AnyObject
                     var picTagsArr: Array = [AnyObject]()
                     if pic.tags.count != 0 {
 
                         for picTag in pic.tags {
                             var picTagDic            = [String: AnyObject]()
-                            picTagDic["id"] = picTag.id
-                            picTagDic["tagType"] = picTag.type
-                            picTagDic["directionX"] = picTag.location.toCGPoint().x
-                            picTagDic["directionY"] = picTag.location.toCGPoint().y
-                            picTagDic["text"] = picTag.content
-                            picTagDic["sourceUrl"] = picTag.sourceUrl
-                            picTagDic["duration"] = picTag.duration
-                            picTagDic["isLeft"] = picTag.direction
-                            picTagsArr.append(picTagDic)
+                            picTagDic["id"] = picTag.id as AnyObject
+                            picTagDic["tagType"] = picTag.type as AnyObject
+                            picTagDic["directionX"] = picTag.location.toCGPoint().x as AnyObject
+                            picTagDic["directionY"] = picTag.location.toCGPoint().y as AnyObject
+                            picTagDic["text"] = picTag.content as AnyObject
+                            picTagDic["sourceUrl"] = picTag.sourceUrl as AnyObject
+                            picTagDic["duration"] = picTag.duration as AnyObject
+                            picTagDic["isLeft"] = picTag.direction as AnyObject
+                            picTagsArr.append(picTagDic as AnyObject)
                         }
                     }
-                    picDic["imageTagIds"] = picTagsArr
-                    picsArr.append(picDic)
+                    picDic["imageTagIds"] = picTagsArr as AnyObject
+                    picsArr.append(picDic as AnyObject)
                 }
             }
-            sectionDic["imageIds"] = picsArr
+            sectionDic["imageIds"] = picsArr as AnyObject
             
             var audioDic            = [String: AnyObject]()
             if (item.audio != nil) {
 
-                audioDic["id"] = item.audio?.id
-                audioDic["audioUrl"] = item.audio?.url
-                audioDic["duration"] = item.audio?.duration
+                audioDic["id"] = item.audio?.id as AnyObject
+                audioDic["audioUrl"] = item.audio?.url as AnyObject
+                audioDic["duration"] = item.audio?.duration as AnyObject
                 var audioTagArr: Array = [AnyObject]()
                 if item.audio?.tags.count != 0  {
                     for audioTag in (item.audio?.tags)! {
                         var audioTagDic            = [String: AnyObject]()
-                        audioTagDic["id"] = audioTag.id
-                        audioTagDic["tagType"] = audioTag.type
-                        audioTagDic["text"] = audioTag.content
-                        audioTagDic["imageUrl"] = audioTag.sourceUrl
-                        audioTagDic["timePoint"] = audioTag.timePoint
-                        audioTagArr.append(audioTagDic)
+                        audioTagDic["id"] = audioTag.id as AnyObject
+                        audioTagDic["tagType"] = audioTag.type as AnyObject
+                        audioTagDic["text"] = audioTag.content as AnyObject
+                        audioTagDic["imageUrl"] = audioTag.sourceUrl as AnyObject
+                        audioTagDic["timePoint"] = audioTag.timePoint as AnyObject
+                        audioTagArr.append(audioTagDic as AnyObject)
                     }
                 }
-                audioDic["audioTagIds"] = audioTagArr
+                audioDic["audioTagIds"] = audioTagArr as AnyObject
             }
-            sectionDic["audioId"]     = audioDic
-            sectionDic["text"]        = item.text
-            sectionsArr.append(sectionDic)
+            sectionDic["audioId"]     = audioDic as AnyObject
+            sectionDic["text"]        = item.text as AnyObject
+            sectionsArr.append(sectionDic as AnyObject)
         }
         
-        paramDic["sections"] = sectionsArr
+        paramDic["sections"] = sectionsArr as AnyObject
 
         let parad = paramDic as NSDictionary
         AODlog(parad.description)
         return paramDic
     }
     
-    func downloadAudio(url: String, success: () -> Void, failure: () -> Void) -> Void {
+    func downloadAudio(_ url: String, success: @escaping () -> Void, failure: @escaping () -> Void) -> Void {
         AOHUDVIEW.showLoadingHUD("加载中...", parentView: APP_DELEGATE.window!)
         AORequest.init(requestMethod: .GET, urlStr: url).responseJSON { (response) in
             if response.result.isSuccess{
@@ -271,7 +272,7 @@ public class UploadProManager {
 extension UploadProManager{
 
     // TODO: 测试
-    func testNetWorking(success: () -> Void, failure: () -> Void) -> Void {
+    func testNetWorking(_ success: @escaping () -> Void,  failure: @escaping () -> Void) -> Void {
         AOHUDVIEW.showLoadingHUD("加载中...", parentView: APP_DELEGATE.window!)
         AORequest(requestMethod: .GET, urlStr: "http://api2.pianke.me/read/columns").responseJSON { (response) in
             if response.result.isSuccess{

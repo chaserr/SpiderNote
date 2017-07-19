@@ -14,7 +14,7 @@ class UnBoxToArticleSnapView: UIView {
         
         switch info.type {
             
-        case .Pic:
+        case .pic:
 
             guard let picInfo = info.picInfo else {
                 println(" UnBoxToArticleSnapView Init Failed: can't get pic info ")
@@ -24,7 +24,7 @@ class UnBoxToArticleSnapView: UIView {
             super.init(frame: CGRect(x: 0, y: 0, width: kScreenWidth * 0.8, height: 200))
             
             let imageView = UIImageView(frame: bounds)
-            imageView.contentMode = .ScaleAspectFill
+            imageView.contentMode = .scaleAspectFill
             imageView.layer.masksToBounds = true
             
             if let image = picInfo.image {
@@ -40,14 +40,14 @@ class UnBoxToArticleSnapView: UIView {
             
             addSubview(imageView)
             
-        case .Text:
+        case .text:
             
             guard let text = info.text else {
                 println(" UnBoxToArticleSnapView Init Failed: can't get text info ")
                 return nil
             }
             
-            let rect = text.boundingRectWithSize(CGSize(width: kScreenWidth * 0.8 - 30, height: CGFloat(FLT_MAX)), options: [.UsesFontLeading, .UsesLineFragmentOrigin], attributes: [NSFontAttributeName: SpiderConfig.Font.Text], context: nil)
+            let rect = text.boundingRect(with: CGSize(width: kScreenWidth * 0.8 - 30, height: CGFloat(FLT_MAX)), options: [.usesFontLeading, .usesLineFragmentOrigin], attributes: [NSFontAttributeName: SpiderConfig.Font.Text], context: nil)
             
             super.init(frame: CGRect(x: 0, y: 0, width: kScreenWidth * 0.8, height: ceil(rect.height) + 20))
 
@@ -59,7 +59,7 @@ class UnBoxToArticleSnapView: UIView {
             
             addSubview(label)
             
-        case .Audio:
+        case .audio:
             
             guard let duration = info.duration else {
                 println(" UnBoxToArticleSnapView Init Failed: can't get audio info ")
@@ -71,10 +71,10 @@ class UnBoxToArticleSnapView: UIView {
             addSubview(playerView)
         }
         
-        backgroundColor = UIColor.whiteColor()
+        backgroundColor = UIColor.white
         layer.shadowRadius = 2.0
         layer.shadowOpacity = 0.25
-        layer.shadowPath = UIBezierPath(rect: bounds).CGPath
+        layer.shadowPath = UIBezierPath(rect: bounds).cgPath
     }
     
     required init?(coder aDecoder: NSCoder) {

@@ -9,10 +9,10 @@
 import UIKit
 
 public enum OutlineEditBarState: Int {
-    case NewBoth    = 0
-    case JustPutIn  = 1
-    case InNewMind  = 3
-    case NewMind    = 4
+    case newBoth    = 0
+    case justPutIn  = 1
+    case inNewMind  = 3
+    case newMind    = 4
 }
 
 class OutlineEditBar: UIView {
@@ -21,42 +21,42 @@ class OutlineEditBar: UIView {
     
     var level = 0
         
-    var state = OutlineEditBarState.JustPutIn {
+    var state = OutlineEditBarState.justPutIn {
         didSet {
             switch state {
-            case .JustPutIn:
-                addButton.hidden = false
+            case .justPutIn:
+                addButton.isHidden = false
                 putInButton.center.x = kOutlineEditBarW - 25
-                putInButton.hidden = false
+                putInButton.isHidden = false
                 
-            case .NewMind, .NewBoth:
-                
-                putInButton.center.x = 25
-                addButton.hidden = false
-                putInButton.hidden = true
-                
-            case .InNewMind:
+            case .newMind, .newBoth:
                 
                 putInButton.center.x = 25
-                putInButton.hidden = false
-                addButton.hidden = false
+                addButton.isHidden = false
+                putInButton.isHidden = true
+                
+            case .inNewMind:
+                
+                putInButton.center.x = 25
+                putInButton.isHidden = false
+                addButton.isHidden = false
             }
         }
     }
     
-    private var outlineState: OutlineState!
+    fileprivate var outlineState: OutlineState!
     
-    private lazy var addButton: UIButton = {
+    fileprivate lazy var addButton: UIButton = {
         let button = UIButton(frame: CGRect(x: kOutlineEditBarW - 30 - 10, y: (kOutlineCellHeight - 30) / 2, width: 30, height: 30))
-        button.setImage(UIImage(named: "outline_more"), forState: .Normal)
-        button.addTarget(self, action: #selector(addButtonClicked), forControlEvents: .TouchUpInside)
+        button.setImage(UIImage(named: "outline_more"), for: UIControlState())
+        button.addTarget(self, action: #selector(addButtonClicked), for: .touchUpInside)
         return button
     }()
     
-    private lazy var putInButton: UIButton = {
+    fileprivate lazy var putInButton: UIButton = {
         let button = UIButton(frame: CGRect(x: 10, y: (kOutlineCellHeight - 30) / 2, width: 30, height: 30))
-        button.setImage(UIImage(named: "outline_put_in"), forState: .Normal)
-        button.addTarget(self, action: #selector(putInButtonClicked), forControlEvents: .TouchUpInside)
+        button.setImage(UIImage(named: "outline_put_in"), for: UIControlState())
+        button.addTarget(self, action: #selector(putInButtonClicked), for: .touchUpInside)
         return button
     }()
 

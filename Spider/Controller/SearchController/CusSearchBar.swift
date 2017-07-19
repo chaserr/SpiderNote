@@ -25,14 +25,14 @@ class CusSearchBar: UISearchBar {
 //        backgroundColor = RGBCOLORV(0xf0f0f0)
         placeholder = "搜索节点或长文内容"
 //        showsSearchResultsButton = true
-        searchResultsButtonSelected = true
+        isSearchResultsButtonSelected = true
         showsCancelButton = true
-        let searchField = self.valueForKey("searchField") as! UITextField
+        let searchField = self.value(forKey: "searchField") as! UITextField
         searchField.backgroundColor = UIColor.color(withHex: 0xf0f0f0)
-        searchField.returnKeyType = UIReturnKeyType.Search
-        setBackgroundImage(UIImage.init(), forBarPosition: UIBarPosition.Any, barMetrics: UIBarMetrics.Default)
+        searchField.returnKeyType = UIReturnKeyType.search
+        setBackgroundImage(UIImage.init(), for: UIBarPosition.any, barMetrics: UIBarMetrics.default)
         tintColor = RGBCOLORV(0x5fb85f)
-        UIBarButtonItem.appearanceWhenContainedWithin(UISearchBar).title = "取消"
+        UIBarButtonItem.appearanceWhenContained(within: UISearchBar).title = "取消"
 //        if #available(iOS 9.0, *) {
 //            UIBarButtonItem.appearanceWhenContainedInInstancesOfClasses([UISearchBar.self]).title = "取消"
 //        }

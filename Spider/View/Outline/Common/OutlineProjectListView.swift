@@ -10,13 +10,13 @@ import UIKit
 
 class OutlineProjectListView: UITableView {
     
-    var selectHandler: (ProjectObject -> ())?
+    var selectHandler: ((ProjectObject) -> ())?
     
-    private var projects = SpiderRealm.getProjects()
-    private var currentID = ""
+    fileprivate var projects = SpiderRealm.getProjects()
+    fileprivate var currentID = ""
     
     init(currentID: String) {
-        super.init(frame: CGRect(x: 0, y: 64, width: kScreenWidth, height: kScreenHeight - 64), style: .Plain)
+        super.init(frame: CGRect(x: 0, y: 64, width: kScreenWidth, height: kScreenHeight - 64), style: .plain)
         
         self.currentID = currentID
         
@@ -30,12 +30,12 @@ class OutlineProjectListView: UITableView {
         dataSource = self
     }
     
-    func addOrRemoveTo(view: UIView? = nil) {
+    func addOrRemoveTo(_ view: UIView? = nil) {
         let superView = view ?? superview!
         
-        if self.isDescendantOfView(superView) {
+        if self.isDescendant(of: superView) {
         
-            UIView.animateWithDuration(0.3, animations: {
+            UIView.animate(withDuration: 0.3, animations: {
                 self.alpha = 0
             }, completion: { done in
                 self.removeFromSuperview()
@@ -46,9 +46,9 @@ class OutlineProjectListView: UITableView {
             alpha = 0
             reloadData()
             superView.addSubview(self)
-            UIView.animateWithDuration(0.3) {
+            UIView.animate(withDuration: 0.3, animations: {
                 self.alpha = 1
-            }
+            }) 
         }
     }
     
@@ -59,17 +59,17 @@ class OutlineProjectListView: UITableView {
 
 extension OutlineProjectListView: UITableViewDelegate, UITableViewDataSource {
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return projects.count
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let project = projects[indexPath.item]
         let cell = OutlineProjectListCell(text: project.name, hightlight: project.id == currentID)
         return cell
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let project = projects[indexPath.item]
         currentID = project.id
         selectHandler?(project)

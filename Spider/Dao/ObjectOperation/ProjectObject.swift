@@ -26,20 +26,20 @@ class ProjectObject: Object {
     
     dynamic var deleteFlag: Int = 0
 
-    let minds = List<MindObject>()
+    var minds = List<MindObject>()
     
     convenience init(name: String) {
         self.init()
         self.name = name
-        self.id = NSUUID().UUIDString
-        self.createAtTime = NSDate().toString()
+        self.id = UUID().uuidString
+        self.createAtTime = Date().toString()
         self.updateAtTime = createAtTime
         self.syncTimesTamp = createAtTime
     }
     
-    required convenience init(_ map: Map) {
+    required convenience init(map: Map) {
         self.init()
-        mapping(map)
+        mapping(map: map)
     }
     
     override static func primaryKey() -> String? {
@@ -58,19 +58,19 @@ extension ProjectObject {
         return minds.filter("deleteFlag == 0")
     }
     
-    func update(time: String = NSDate().toString()) {
+    func update(_ time: String = Date().toString()) {
         modifyFlag = 1
         updateAtTime = time
     }
     
-    func removeMind(mind: MindObject) {
-        if let index = minds.indexOf(mind) {
-            minds.removeAtIndex(index)
+    func removeMind(_ mind: MindObject) {
+        if let index = minds.index(of: mind) {
+            minds.remove(at: index)
         }
     }
     
-    func removeMindWith(id: String) -> MindObject? {
-        guard let mind = REALM.realm.objectForPrimaryKey(MindObject.self, key: id) else { return nil}
+    func removeMindWith(_ id: String) -> MindObject? {
+        guard let mind = REALM.realm.objectForPrimaryKey(MindObject.self, key: id as AnyObject) else { return nil}
         removeMind(mind)
         return mind
     }
@@ -103,9 +103,9 @@ extension Results {
 extension ProjectObject{
 
     /** 根据ID 查询项目*/
-    static func fetchOneProObject(targetId: String, project: ProjectObject?) -> ProjectObject {
+    static func fetchOneProObject(_ targetId: String, project: ProjectObject?) -> ProjectObject {
         var projectObjArr: [ProjectObject] = []
-        projectObjArr = REALM.realm!.objects(ProjectObject).filter("id = %@", targetId).toArray()
+        projectObjArr = REALM.realm!.objects(ProjectObject.self).filter("id = %@", targetId).toArray()
         var projectObj = projectObjArr.first
         if projectObj == nil {
             projectObj = createOneProOject(targetId, project: project)
@@ -113,7 +113,7 @@ extension ProjectObject{
         return projectObj!
     }
     
-    static func createOneProOject(targetId: String, project: ProjectObject?) -> ProjectObject {
+    static func createOneProOject(_ targetId: String, project: ProjectObject?) -> ProjectObject {
         try! REALM.realm.write({
             REALM.realm.add(project!, update: true)
         })

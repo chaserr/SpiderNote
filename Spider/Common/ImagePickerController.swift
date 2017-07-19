@@ -27,7 +27,7 @@ extension TZImagePickerController {
 //            requestOptions.resizeMode           = .Exact
 //            requestOptions.networkAccessAllowed = true
             
-            self?.dismissViewControllerAnimated(animated, completion: nil)
+            self?.dismiss(animated: animated, completion: nil)
             
             completion(photos)
         }

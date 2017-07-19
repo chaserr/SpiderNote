@@ -16,9 +16,9 @@ class BaseNavViewController: UINavigationController, UINavigationControllerDeleg
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        UINavigationBar.appearance().barTintColor = UIColor.whiteColor()
-        UINavigationBar.appearance().tintColor = UIColor.blackColor()
-        UINavigationBar.appearance().translucent = false
+        UINavigationBar.appearance().barTintColor = UIColor.white
+        UINavigationBar.appearance().tintColor = UIColor.black
+        UINavigationBar.appearance().isTranslucent = false
         
     }
 
@@ -28,16 +28,16 @@ class BaseNavViewController: UINavigationController, UINavigationControllerDeleg
     }
     
 
-    override func pushViewController(viewController: UIViewController, animated: Bool) {
+    override func pushViewController(_ viewController: UIViewController, animated: Bool) {
         super.pushViewController(viewController, animated: animated)
 
     }
     
-    override func popViewControllerAnimated(animated: Bool) -> UIViewController? {
+    override func popViewController(animated: Bool) -> UIViewController? {
         
-        if ((navigationController?.topViewController?.isKindOfClass(MindViewController.self)) != nil) {
+        if ((navigationController?.topViewController?.isKind(of: MindViewController.self)) != nil) {
             SPIDERSTRUCT.currentLevel -= 1
-        }else if ((navigationController?.topViewController?.isKindOfClass(ProjectCollectionViewController.self)) != nil) {
+        }else if ((navigationController?.topViewController?.isKind(of: ProjectCollectionViewController.self)) != nil) {
         
             SPIDERSTRUCT.currentLevel == 0
             
@@ -59,13 +59,13 @@ class BaseNavViewController: UINavigationController, UINavigationControllerDeleg
 //                }
         
         
-        return super.popViewControllerAnimated(animated)
+        return super.popViewController(animated: animated)
         
     }
 }
 
 extension BaseNavViewController {
     
-    func navigationController(navigationController: UINavigationController, willShowViewController viewController: UIViewController, animated: Bool) {
+    func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
     }
 }

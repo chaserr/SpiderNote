@@ -9,30 +9,30 @@
 import UIKit
 
 @objc protocol PicTagDelegate {
-    func didPan(id: String, sender: UIPanGestureRecognizer)
-    func didTap(id: String)
-    func didLongPress(id: String, sender: UILongPressGestureRecognizer)
+    func didPan(_ id: String, sender: UIPanGestureRecognizer)
+    func didTap(_ id: String)
+    func didLongPress(_ id: String, sender: UILongPressGestureRecognizer)
 }
 
 class PicTagView: UIView {
 
     var id = ""
-    var type = PicTagType.Text
+    var type = PicTagType.text
     var contentView: UIView!    // 用于翻转标签
-    var direction = TagDirection.Right
+    var direction = TagDirection.right
     
     var perXY: CGPoint {
         
-        if direction == .Right {
+        if direction == .right {
             return revertToPer(CGPoint(x: frame.origin.x + 5, y: frame.midY))
         } else {
             return revertToPer(CGPoint(x: frame.maxX - 5, y: frame.midY))
         }
     }
     
-    private func revertToPer(point: CGPoint) -> CGPoint {
+    fileprivate func revertToPer(_ point: CGPoint) -> CGPoint {
         
-        guard let superView = superview else { return CGPointZero }
+        guard let superView = superview else { return CGPoint.zero }
         return CGPoint(x: point.x / superView.frame.width, y: point.y / superView.frame.height)
     }
     
@@ -57,28 +57,28 @@ class PicTagView: UIView {
         delegate.didTap(id)
     }
     
-    func didPan(sender: UIPanGestureRecognizer) {
+    func didPan(_ sender: UIPanGestureRecognizer) {
         delegate.didPan(id, sender: sender)
     }
     
-    func didLongPress(sender: UILongPressGestureRecognizer) {
+    func didLongPress(_ sender: UILongPressGestureRecognizer) {
         delegate.didLongPress(id, sender: sender)
     }
     
     func rotate() {
         switch direction {
             
-        case .Right:
-            direction = .Left
+        case .right:
+            direction = .left
             
-            transform = CGAffineTransformMakeRotation(CGFloat(M_PI))
-            contentView.transform = CGAffineTransformMakeRotation(CGFloat(M_PI))
+            transform = CGAffineTransform(rotationAngle: CGFloat(M_PI))
+            contentView.transform = CGAffineTransform(rotationAngle: CGFloat(M_PI))
             
-        case .Left:
-            direction = .Right
+        case .left:
+            direction = .right
             
-            transform = CGAffineTransformIdentity
-            contentView.transform = CGAffineTransformIdentity
+            transform = CGAffineTransform.identity
+            contentView.transform = CGAffineTransform.identity
             
         default:
             break

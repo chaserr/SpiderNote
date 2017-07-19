@@ -1,3 +1,4 @@
+
 //
 //  UserDefaults.swift
 //  Spider
@@ -8,99 +9,99 @@
 
 import UIKit
 
-public let Defaults = NSUserDefaults.standardUserDefaults()
+public let Defaults = UserDefaults.standard
 
-public extension NSUserDefaults {
+public extension UserDefaults {
     class Proxy {
-        private let defaults: NSUserDefaults
-        private let key: String
+        fileprivate let defaults: UserDefaults
+        fileprivate let key: String
         
-        private init(_ defaults: NSUserDefaults, _ key: String) {
+        fileprivate init(_ defaults: UserDefaults, _ key: String) {
             self.defaults = defaults
             self.key = key
         }
         
         // MARK: Getters
         
-        public var object: NSObject? {
-            return defaults.objectForKey(key) as? NSObject
+        open var object: NSObject? {
+            return defaults.object(forKey: key) as? NSObject
         }
         
-        public var string: String? {
-            return defaults.stringForKey(key)
+        open var string: String? {
+            return defaults.string(forKey: key)
         }
         
-        public var array: NSArray? {
-            return defaults.arrayForKey(key)
+        open var array: NSArray? {
+            return defaults.array(forKey: key) as! NSArray
         }
         
-        public var dictionary: NSDictionary? {
-            return defaults.dictionaryForKey(key)
+        open var dictionary: NSDictionary? {
+            return defaults.dictionary(forKey: key) as! NSDictionary
         }
         
-        public var data: NSData? {
-            return defaults.dataForKey(key)
+        open var data: Data? {
+            return defaults.data(forKey: key)
         }
         
-        public var date: NSDate? {
-            return object as? NSDate
+        open var date: Date? {
+            return object as? Date
         }
         
-        public var number: NSNumber? {
+        open var number: NSNumber? {
             return defaults.numberForKey(key)
         }
         
-        public var int: Int? {
-            return number?.integerValue
+        open var int: Int? {
+            return number?.intValue
         }
         
-        public var double: Double? {
+        open var double: Double? {
             return number?.doubleValue
         }
         
-        public var bool: Bool? {
+        open var bool: Bool? {
             return number?.boolValue
         }
         
         // MARK: Non-Optional Getters
         
-        public var stringValue: String {
+        open var stringValue: String {
             return string ?? ""
         }
         
-        public var arrayValue: NSArray {
+        open var arrayValue: NSArray {
             return array ?? []
         }
         
-        public var dictionaryValue: NSDictionary {
+        open var dictionaryValue: NSDictionary {
             return dictionary ?? NSDictionary()
         }
         
-        public var dataValue: NSData {
-            return data ?? NSData()
+        open var dataValue: Data {
+            return data ?? Data()
         }
         
-        public var numberValue: NSNumber {
+        open var numberValue: NSNumber {
             return number ?? 0
         }
         
-        public var intValue: Int {
+        open var intValue: Int {
             return int ?? 0
         }
         
-        public var doubleValue: Double {
+        open var doubleValue: Double {
             return double ?? 0
         }
         
-        public var boolValue: Bool {
+        open var boolValue: Bool {
             return bool ?? false
         }
     }
     
     /// `NSNumber` representation of a user default
     
-    func numberForKey(key: String) -> NSNumber? {
-        return objectForKey(key) as? NSNumber
+    func numberForKey(_ key: String) -> NSNumber? {
+        return object(forKey: key) as? NSNumber
     }
     
     /// Returns getter proxy for `key`
@@ -117,12 +118,12 @@ public extension NSUserDefaults {
         }
         set {
             switch newValue {
-            case let v as Int: setInteger(v, forKey: key)
-            case let v as Double: setDouble(v, forKey: key)
-            case let v as Bool: setBool(v, forKey: key)
-            case let v as NSURL: setURL(v, forKey: key)
-            case let v as NSObject: setObject(v, forKey: key)
-            case nil: removeObjectForKey(key)
+            case let v as Int: self.set(v, forKey: key)
+            case let v as Double: self.set(v, forKey: key)
+            case let v as Bool: self.set(v, forKey: key)
+            case let v as URL: self.set(v, forKey: key)
+            case let v as NSObject: self.set(v, forKey: key)
+            case nil: removeObject(forKey: key)
             default: assertionFailure("Invalid value type")
             }
         }
@@ -130,14 +131,14 @@ public extension NSUserDefaults {
     
     /// Returns `true` if `key` exists
     
-    public func hasKey(key: String) -> Bool {
-        return objectForKey(key) != nil
+    public func hasKey(_ key: String) -> Bool {
+        return object(forKey: key) != nil
     }
     
     /// Removes value for `key`
     
-    public func remove(key: String) {
-        removeObjectForKey(key)
+    public func remove(_ key: String) {
+        removeObject(forKey: key)
     }
 }
 
@@ -148,39 +149,39 @@ public extension NSUserDefaults {
 /// Extend this class and add your user defaults keys as static constants
 /// so you can use the shortcut dot notation (e.g. `Defaults[.yourKey]`)
 
-public class DefaultsKeys {
-    private init() {}
+open class DefaultsKeys {
+    fileprivate init() {}
 }
 
 /// Base class for static user defaults keys. Specialize with value type type
 /// and pass key name to the initializer to create a key.
 
-public class DefaultsKey<ValueType>: DefaultsKeys {
+open class DefaultsKey<ValueType>: DefaultsKeys {
     // TODO: Can we use protocols to ensure ValueType is a compatible type?
-    public let _key: String
+    open let _key: String
     
     public init(_ key: String) {
         self._key = key
     }
 }
 
-extension NSUserDefaults {
-    func set<T>(key: DefaultsKey<T>, _ value: Any?) {
+extension UserDefaults {
+    func set<T>(_ key: DefaultsKey<T>, _ value: Any?) {
         self[key._key] = value
     }
 }
 
-extension NSUserDefaults {
+extension UserDefaults {
     /// Returns `true` if `key` exists
     
-    public func hasKey<T>(key: DefaultsKey<T>) -> Bool {
-        return objectForKey(key._key) != nil
+    public func hasKey<T>(_ key: DefaultsKey<T>) -> Bool {
+        return object(forKey: key._key) != nil
     }
     
     /// Removes value for `key`
     
-    public func remove<T>(key: DefaultsKey<T>) {
-        removeObjectForKey(key._key)
+    public func remove<T>(_ key: DefaultsKey<T>) {
+        removeObject(forKey: key._key)
     }
 }
 
@@ -188,33 +189,33 @@ extension NSUserDefaults {
 
 // TODO: Use generic subscripts when they become available
 
-extension NSUserDefaults {
+extension UserDefaults {
     public subscript(key: DefaultsKey<String?>) -> String? {
-        get { return stringForKey(key._key) }
+        get { return string(forKey: key._key) }
         set { set(key, newValue) }
     }
     
     public subscript(key: DefaultsKey<String>) -> String {
-        get { return stringForKey(key._key) ?? "" }
+        get { return string(forKey: key._key) ?? "" }
         set { set(key, newValue) }
     }
     public subscript(key: DefaultsKey<NSString?>) -> NSString? {
-        get { return stringForKey(key._key) }
+        get { return string(forKey: key._key) as! NSString }
         set { set(key, newValue) }
     }
     
     public subscript(key: DefaultsKey<NSString>) -> NSString {
-        get { return stringForKey(key._key) ?? "" }
+        get { return string(forKey: key._key) as! NSString ?? "" }
         set { set(key, newValue) }
     }
     
     public subscript(key: DefaultsKey<Int?>) -> Int? {
-        get { return numberForKey(key._key)?.integerValue }
+        get { return numberForKey(key._key)?.intValue }
         set { set(key, newValue) }
     }
     
     public subscript(key: DefaultsKey<Int>) -> Int {
-        get { return numberForKey(key._key)?.integerValue ?? 0 }
+        get { return numberForKey(key._key)?.intValue ?? 0 }
         set { set(key, newValue) }
     }
     
@@ -239,78 +240,78 @@ extension NSUserDefaults {
     }
     
     public subscript(key: DefaultsKey<AnyObject?>) -> AnyObject? {
-        get { return objectForKey(key._key) }
+        get { return object(forKey: key._key) as AnyObject }
         set { set(key, newValue) }
     }
     
     public subscript(key: DefaultsKey<NSObject?>) -> NSObject? {
-        get { return objectForKey(key._key) as? NSObject }
+        get { return object(forKey: key._key) as? NSObject }
         set { set(key, newValue) }
     }
     
-    public subscript(key: DefaultsKey<NSData?>) -> NSData? {
-        get { return dataForKey(key._key) }
+    public subscript(key: DefaultsKey<Data?>) -> Data? {
+        get { return data(forKey: key._key) }
         set { set(key, newValue) }
     }
     
-    public subscript(key: DefaultsKey<NSData>) -> NSData {
-        get { return dataForKey(key._key) ?? NSData() }
+    public subscript(key: DefaultsKey<Data>) -> Data {
+        get { return data(forKey: key._key) ?? Data() }
         set { set(key, newValue) }
     }
     
-    public subscript(key: DefaultsKey<NSDate?>) -> NSDate? {
-        get { return objectForKey(key._key) as? NSDate }
+    public subscript(key: DefaultsKey<Date?>) -> Date? {
+        get { return object(forKey: key._key) as? Date }
         set { set(key, newValue) }
     }
     
-    public subscript(key: DefaultsKey<NSURL?>) -> NSURL? {
-        get { return URLForKey(key._key) }
+    public subscript(key: DefaultsKey<URL?>) -> URL? {
+        get { return url(forKey: key._key) }
         set { set(key, newValue) }
     }
     
     // TODO: It would probably make sense to have support for statically typed dictionaries (e.g. [String: String])
     
     public subscript(key: DefaultsKey<[String: AnyObject]?>) -> [String: AnyObject]? {
-        get { return dictionaryForKey(key._key) }
+        get { return dictionary(forKey: key._key) as! [String : AnyObject] }
         set { set(key, newValue) }
     }
     
     public subscript(key: DefaultsKey<[String: AnyObject]>) -> [String: AnyObject] {
-        get { return dictionaryForKey(key._key) ?? [:] }
+        get { return dictionary(forKey: key._key)! as [String : AnyObject] ?? [:] }
         set { set(key, newValue) }
     }
     
     public subscript(key: DefaultsKey<NSDictionary?>) -> NSDictionary? {
-        get { return dictionaryForKey(key._key) }
+        get { return dictionary(forKey: key._key) as! NSDictionary }
         set { set(key, newValue) }
     }
     
     public subscript(key: DefaultsKey<NSDictionary>) -> NSDictionary {
-        get { return dictionaryForKey(key._key) ?? [:] }
+        get { return dictionary(forKey: key._key) as! NSDictionary ?? [:] }
         set { set(key, newValue) }
     }
 }
 
 // MARK: Static subscripts for array types
 
-extension NSUserDefaults {
+extension UserDefaults {
     public subscript(key: DefaultsKey<NSArray?>) -> NSArray? {
-        get { return arrayForKey(key._key) }
+        get { return array(forKey: key._key) as! NSArray }
         set { set(key, newValue) }
     }
     
     public subscript(key: DefaultsKey<NSArray>) -> NSArray {
-        get { return arrayForKey(key._key) ?? [] }
+        get { return array(forKey: key._key) as! NSArray ?? [] }
         set { set(key, newValue) }
     }
     
     public subscript(key: DefaultsKey<[AnyObject]?>) -> [AnyObject]? {
-        get { return arrayForKey(key._key) }
+        get { return array(forKey: key._key) as! [AnyObject] }
         set { set(key, newValue) }
     }
     
     public subscript(key: DefaultsKey<[AnyObject]>) -> [AnyObject] {
-        get { return arrayForKey(key._key) ?? [] }
+        get { return array(forKey: key._key) as! [AnyObject] ?? [] }
         set { set(key, newValue) }
     }
 }
@@ -320,25 +321,25 @@ extension NSUserDefaults {
 // AnyObject is for NSData and NSDate, _ObjectiveCBridgeable is for value
 // types bridge-able to Foundation types (String, Int, ...)
 
-extension NSUserDefaults {
-    public func getArray<T: _ObjectiveCBridgeable>(key: DefaultsKey<[T]>) -> [T] {
-        return arrayForKey(key._key) as NSArray? as? [T] ?? []
+extension UserDefaults {
+    public func getArray<T: _ObjectiveCBridgeable>(_ key: DefaultsKey<[T]>) -> [T] {
+        return array(forKey: key._key) as NSArray? as? [T] ?? []
     }
     
-    public func getArray<T: _ObjectiveCBridgeable>(key: DefaultsKey<[T]?>) -> [T]? {
-        return arrayForKey(key._key) as NSArray? as? [T]
+    public func getArray<T: _ObjectiveCBridgeable>(_ key: DefaultsKey<[T]?>) -> [T]? {
+        return array(forKey: key._key) as NSArray? as? [T]
     }
     
-    public func getArray<T: AnyObject>(key: DefaultsKey<[T]>) -> [T] {
-        return arrayForKey(key._key) as NSArray? as? [T] ?? []
+    public func getArray<T: AnyObject>(_ key: DefaultsKey<[T]>) -> [T] {
+        return array(forKey: key._key) as NSArray? as? [T] ?? []
     }
     
-    public func getArray<T: AnyObject>(key: DefaultsKey<[T]?>) -> [T]? {
-        return arrayForKey(key._key) as NSArray? as? [T]
+    public func getArray<T: AnyObject>(_ key: DefaultsKey<[T]?>) -> [T]? {
+        return array(forKey: key._key) as NSArray? as? [T]
     }
 }
 
-extension NSUserDefaults {
+extension UserDefaults {
     public subscript(key: DefaultsKey<[String]?>) -> [String]? {
         get { return getArray(key) }
         set { set(key, newValue) }
@@ -379,22 +380,22 @@ extension NSUserDefaults {
         set { set(key, newValue) }
     }
     
-    public subscript(key: DefaultsKey<[NSData]?>) -> [NSData]? {
+    public subscript(key: DefaultsKey<[Data]?>) -> [Data]? {
         get { return getArray(key) }
         set { set(key, newValue) }
     }
     
-    public subscript(key: DefaultsKey<[NSData]>) -> [NSData] {
+    public subscript(key: DefaultsKey<[Data]>) -> [Data] {
         get { return getArray(key) }
         set { set(key, newValue) }
     }
     
-    public subscript(key: DefaultsKey<[NSDate]?>) -> [NSDate]? {
+    public subscript(key: DefaultsKey<[Date]?>) -> [Date]? {
         get { return getArray(key) }
         set { set(key, newValue) }
     }
     
-    public subscript(key: DefaultsKey<[NSDate]>) -> [NSDate] {
+    public subscript(key: DefaultsKey<[Date]>) -> [Date] {
         get { return getArray(key) }
         set { set(key, newValue) }
     }
@@ -402,20 +403,20 @@ extension NSUserDefaults {
 
 // MARK: Archiving complex types
 
-extension NSUserDefaults {
+extension UserDefaults {
     // TODO: Can we simplify this and ensure that T is NSCoding compliant?
     
-    public func archive<T>(key: DefaultsKey<T>, _ value: T) {
+    public func archive<T>(_ key: DefaultsKey<T>, _ value: T) {
         if let value: AnyObject = value as? AnyObject {
-            set(key, NSKeyedArchiver.archivedDataWithRootObject(value))
+            set(key, NSKeyedArchiver.archivedData(withRootObject: value))
         } else {
             assertionFailure("Invalid value type")
         }
     }
     
-    public func archive<T>(key: DefaultsKey<T?>, _ value: T?) {
+    public func archive<T>(_ key: DefaultsKey<T?>, _ value: T?) {
         if let value: AnyObject = value as? AnyObject {
-            set(key, NSKeyedArchiver.archivedDataWithRootObject(value))
+            set(key, NSKeyedArchiver.archivedData(withRootObject: value))
         } else if value == nil {
             remove(key)
         } else {
@@ -423,12 +424,12 @@ extension NSUserDefaults {
         }
     }
     
-    public func unarchive<T>(key: DefaultsKey<T?>) -> T? {
-        return dataForKey(key._key).flatMap { NSKeyedUnarchiver.unarchiveObjectWithData($0) } as? T
+    public func unarchive<T>(_ key: DefaultsKey<T?>) -> T? {
+        return data(forKey: key._key).flatMap { NSKeyedUnarchiver.unarchiveObject(with: $0) } as? T
     }
     
-    public func unarchive<T>(key: DefaultsKey<T>) -> T? {
-        return dataForKey(key._key).flatMap { NSKeyedUnarchiver.unarchiveObjectWithData($0) } as? T
+    public func unarchive<T>(_ key: DefaultsKey<T>) -> T? {
+        return data(forKey: key._key).flatMap { NSKeyedUnarchiver.unarchiveObject(with: $0) } as? T
     }
 }
 
@@ -443,8 +444,8 @@ precedence 90
 /// Note: This isn't the same as `Defaults.registerDefaults`. This method saves the new value to disk, whereas `registerDefaults` only modifies the defaults in memory.
 /// Note: If key already exists, the expression after ?= isn't evaluated
 
-@available(*, deprecated=1, message="Please migrate to static keys and use this gist: https://gist.github.com/radex/68de9340b0da61d43e60")
-public func ?= (proxy: NSUserDefaults.Proxy, @autoclosure expr: () -> Any) {
+@available(*, deprecated: 1, message: "Please migrate to static keys and use this gist: https://gist.github.com/radex/68de9340b0da61d43e60")
+public func ?= (proxy: UserDefaults.Proxy, expr: @autoclosure () -> Any) {
     if !proxy.defaults.hasKey(proxy.key) {
         proxy.defaults[proxy.key] = expr()
     }
@@ -453,14 +454,14 @@ public func ?= (proxy: NSUserDefaults.Proxy, @autoclosure expr: () -> Any) {
 /// Adds `b` to the key (and saves it as an integer)
 /// If key doesn't exist or isn't a number, sets value to `b`
 
-@available(*, deprecated=1, message="Please migrate to static keys to use this.")
-public func += (proxy: NSUserDefaults.Proxy, b: Int) {
+@available(*, deprecated: 1, message: "Please migrate to static keys to use this.")
+public func += (proxy: UserDefaults.Proxy, b: Int) {
     let a = proxy.defaults[proxy.key].intValue
     proxy.defaults[proxy.key] = a + b
 }
 
-@available(*, deprecated=1, message="Please migrate to static keys to use this.")
-public func += (proxy: NSUserDefaults.Proxy, b: Double) {
+@available(*, deprecated: 1, message: "Please migrate to static keys to use this.")
+public func += (proxy: UserDefaults.Proxy, b: Double) {
     let a = proxy.defaults[proxy.key].doubleValue
     proxy.defaults[proxy.key] = a + b
 }
@@ -468,8 +469,8 @@ public func += (proxy: NSUserDefaults.Proxy, b: Double) {
 /// Icrements key by one (and saves it as an integer)
 /// If key doesn't exist or isn't a number, sets value to 1
 
-@available(*, deprecated=1, message="Please migrate to static keys to use this.")
-public postfix func ++ (proxy: NSUserDefaults.Proxy) {
+@available(*, deprecated: 1, message: "Please migrate to static keys to use this.")
+public postfix func ++ (proxy: UserDefaults.Proxy) {
     proxy += 1
 }
 

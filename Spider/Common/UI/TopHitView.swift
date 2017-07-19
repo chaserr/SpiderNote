@@ -24,28 +24,28 @@ class TopHitView: UIView {
         }
     }
     var iconIgv: UIImageView!
-    var tapHandler: dispatch_block_t!
-    var dismissHandler: dispatch_block_t!
+    var tapHandler: ()->()!
+    var dismissHandler: ()->()!
     var label: UILabel!
     var dismissDelay: Float = 0
     var defaultTopMessageConfig = [String:AnyObject]()
-    var dismissTimer: NSTimer!
+    var dismissTimer: Timer!
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        autoresizingMask = UIViewAutoresizing.FlexibleWidth
+        autoresizingMask = UIViewAutoresizing.flexibleWidth
         backgroundColor = RGBACOLOR(0.64, g: 0.65, b: 0.66, a: 0.96)
-        label = UILabel(frame: CGRectMake(0, 0, 50, kTopBarHeight))
-        label.backgroundColor = UIColor.clearColor()
-        label.autoresizingMask = UIViewAutoresizing.FlexibleWidth
+        label = UILabel(frame: CGRect(x: 0, y: 0, width: 50, height: kTopBarHeight))
+        label.backgroundColor = UIColor.clear
+        label.autoresizingMask = UIViewAutoresizing.flexibleWidth
         label.font = SYSTEMFONT(13)
-        label.userInteractionEnabled = true
+        label.isUserInteractionEnabled = true
         
         addSubview(label)
         iconIgv = UIImageView()
         addSubview(iconIgv)
-        iconIgv.contentMode = UIViewContentMode.Center
+        iconIgv.contentMode = UIViewContentMode.center
         addTapGesture(target: self, action: #selector(tapNow))
         iconIgv.addTapGesture { (UITapGestureRecognizer) in
             self.dismiss()
@@ -57,7 +57,7 @@ class TopHitView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func showTopMessage(message: String, config: NSDictionary?, delay: Float, tapHandler: dispatch_block_t?) -> Void {
+    func showTopMessage(_ message: String, config: NSDictionary?, delay: Float, tapHandler: ()->()?) -> Void {
         
         warningText = message;
         self.tapHandler = tapHandler;
@@ -72,16 +72,16 @@ class TopHitView: UIView {
     func resetViews(){
         
         if defaultTopMessageConfig.isEmpty {
-            defaultTopMessageConfig = [kTopBarBackgroundColor : RGBACOLOR(0.64, g: 0.65, b: 0.66, a: 0.96), kTopBarTextColor : UIColor.whiteColor(), kTopBarTextFont : SYSTEMFONT(14)]
+            defaultTopMessageConfig = [kTopBarBackgroundColor : RGBACOLOR(0.64, g: 0.65, b: 0.66, a: 0.96), kTopBarTextColor : UIColor.white, kTopBarTextFont : SYSTEMFONT(14)]
         }
         
-        iconIgv.image = (defaultTopMessageConfig[kTopBarIcon] as? UIImage)?.scaleToSize(CGSizeMake(20, 20))
-        label.textColor = UIColor.whiteColor()
+        iconIgv.image = (defaultTopMessageConfig[kTopBarIcon] as? UIImage)?.scaleToSize(CGSize(width: 20, height: 20))
+        label.textColor = UIColor.white
         label.font = defaultTopMessageConfig[kTopBarTextFont] as? UIFont
     }
     
     override func layoutSubviews() {
-        let textSize: CGSize = label.text!.boundingRectWithSize(CGSizeMake(CGRectGetWidth(self.bounds) * 0.9, 20.0), options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: [NSFontAttributeName : label.font], context: nil).size
+        let textSize: CGSize = label.text!.boundingRect(with: CGSize(width: self.bounds.width * 0.9, height: 20.0), options: NSStringDrawingOptions.usesLineFragmentOrigin, attributes: [NSFontAttributeName : label.font], context: nil).size
         
         var iconWidth: CGFloat = 30.0
         let betweenIconAndText: CGFloat = 10.0
@@ -89,26 +89,26 @@ class TopHitView: UIView {
             iconWidth = 0.0
         }
         
-        self.label.frame = CGRectMake(betweenIconAndText, (CGRectGetHeight(self.bounds) - textSize.height) * 0.5, textSize.width, textSize.height);
-        self.iconIgv.frame = CGRectMake(kScreenWidth - 45, (CGRectGetHeight(self.bounds) - iconWidth) * 0.5, iconWidth, iconWidth);
+        self.label.frame = CGRect(x: betweenIconAndText, y: (self.bounds.height - textSize.height) * 0.5, width: textSize.width, height: textSize.height);
+        self.iconIgv.frame = CGRect(x: kScreenWidth - 45, y: (self.bounds.height - iconWidth) * 0.5, width: iconWidth, height: iconWidth);
         
     }
     
     
     func dismiss() -> Void {
         // 提示框消失，开始计时
-        let closeWarnLoginTime: String = DateUtil.getCurrentDateStringWithFormat(kDU_YYYYMMddhhmmss)
+        let closeWarnLoginTime: String = DateUtil.getCurrentDateString(withFormat: kDU_YYYYMMddhhmmss)
         APP_USER.closeWarnLoginTime = closeWarnLoginTime
         APP_USER.saveUserInfo()
         
         var selfFrame: CGRect = self.frame
-        selfFrame.origin.y -= CGRectGetHeight(selfFrame)
-        UIView.animateWithDuration(0.25, animations: { 
+        selfFrame.origin.y -= selfFrame.height
+        UIView.animate(withDuration: 0.25, animations: { 
             self.frame = selfFrame
             self.alpha = 0.3
-        }) { (finished: Bool) in
+        }, completion: { (finished: Bool) in
                 self.removeFromSuperview()
-        }
+        }) 
         
         dismissHandler()
         
@@ -129,17 +129,17 @@ class TopHitView: UIView {
         }
     }
     
-    override func willMoveToSuperview(newSuperview: UIView?) {
+    override func willMove(toSuperview newSuperview: UIView?) {
         if (newSuperview != nil) {
             alpha = 1.0
             var selfFrame: CGRect = self.frame
-            selfFrame.y -= CGRectGetHeight(selfFrame)
+            selfFrame.y -= selfFrame.height
             self.frame = selfFrame
             selfFrame.y = 0
-            UIView.animateWithDuration(0.5, animations: { 
+            UIView.animate(withDuration: 0.5, animations: { 
                 self.frame = selfFrame
                 }, completion: { (Bool) in
-                    super.willMoveToSuperview(newSuperview)
+                    super.willMove(toSuperview: newSuperview)
             })
             if (dismissTimer != nil) {
                 self.dismissTimer.invalidate()
@@ -147,7 +147,7 @@ class TopHitView: UIView {
             }
             
             if (self.dismissDelay > 0) {
-                self.dismissTimer = NSTimer.scheduledTimerWithTimeInterval(NSTimeInterval(self.dismissDelay), target: self, selector: #selector((dismiss)), userInfo: nil, repeats: false)
+                self.dismissTimer = Timer.scheduledTimer(timeInterval: TimeInterval(self.dismissDelay), target: self, selector: #selector((dismiss)), userInfo: nil, repeats: false)
             }
             
         }else{
@@ -166,7 +166,7 @@ var TopWarningKey =  "TopWarningKey"
 
 extension UIViewController {
 
-    func setTopMessageDefaultApperance(apperance: NSDictionary) -> Void {
+    func setTopMessageDefaultApperance(_ apperance: NSDictionary) -> Void {
         
         
     }

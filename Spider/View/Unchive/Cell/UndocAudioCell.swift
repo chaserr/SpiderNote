@@ -10,15 +10,15 @@ import UIKit
 
 class UndocAudioCell: UndocBaseCell {
 
-    private var durationLabel: UILabel = {
+    fileprivate var durationLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFontOfSize(19)
-        label.textAlignment = .Center
+        label.font = UIFont.systemFont(ofSize: 19)
+        label.textAlignment = .center
         label.textColor = UIColor.color(withHex: 0x686868)
         return label
     }()
     
-    private let bgView: UIImageView = {
+    fileprivate let bgView: UIImageView = {
         return UIImageView(image: UIImage(named: "unchive_audio_icon"))
     }()
     
@@ -43,7 +43,7 @@ class UndocAudioCell: UndocBaseCell {
         }
     }
     
-    override func configureWithInfo(info: UndocBoxLayout, editing: Bool = false) {
+    override func configureWithInfo(_ info: UndocBoxLayout, editing: Bool = false) {
         super.configureWithInfo(info, editing: editing)
         durationLabel.text = info.duration
     }

@@ -14,23 +14,23 @@ private let textTagSize = CGSize(width: tag_unfold_width, height: CGFloat(FLT_MA
 
 class AudioTagCellContentView: UIView {
     
-    private var info: AudioTagInfo!
+    fileprivate var info: AudioTagInfo!
         
-    private var timeLabel: UILabel = {
+    fileprivate var timeLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFontOfSize(9)
+        label.font = UIFont.systemFont(ofSize: 9)
         label.textColor = themeColor
-        label.textAlignment = .Center
+        label.textAlignment = .center
         label.numberOfLines = 0
         return label
     }()
     
-    private var lineView: UIImageView = {
+    fileprivate var lineView: UIImageView = {
         let imageView = UIImageView(image: UIImage(named: "audio_line"))
         return imageView
     }()
     
-    private var dotView: UIView = {
+    fileprivate var dotView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 3
         view.layer.masksToBounds = true
@@ -38,19 +38,19 @@ class AudioTagCellContentView: UIView {
         return view
     }()
     
-    private lazy var textTag: UILabel = {
+    fileprivate lazy var textTag: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFontOfSize(14)
+        label.font = UIFont.systemFont(ofSize: 14)
         label.textColor = themeColor
         return label
     }()
     
-    private lazy var picTag: UIImageView = {
+    fileprivate lazy var picTag: UIImageView = {
         let imageView = UIImageView()
         return imageView
     }()
     
-    private lazy var playButton: UIButton = {
+    fileprivate lazy var playButton: UIButton = {
         let button = UIButton()
         
         return button
@@ -59,7 +59,7 @@ class AudioTagCellContentView: UIView {
     // MARK: - Life Cycle
     
     init(info: AudioTagInfo) {
-        super.init(frame: CGRectZero)
+        super.init(frame: CGRect.zero)
         self.info = info
         
         timeLabel.text = info.time
@@ -73,11 +73,11 @@ class AudioTagCellContentView: UIView {
     
     func foldTag() {
         switch info.type {
-        case .Pic:
+        case .pic:
             picTag.snp_updateConstraints(closure: { (make) in
                 make.width.height.equalTo(30)
             })
-        case .Text:
+        case .text:
             textTag.numberOfLines = 1
             textTag.textColor = themeColor
         }
@@ -87,7 +87,7 @@ class AudioTagCellContentView: UIView {
         
         switch info.type {
             
-        case .Pic:
+        case .pic:
             
             guard let image = info.pic?.image else { return 0 }
             
@@ -99,12 +99,12 @@ class AudioTagCellContentView: UIView {
             
             return picTagH + 2 * picTag.frame.origin.y
             
-        case .Text:
+        case .text:
             
-            let textTagH = NSString(string: info.content!).boundingRectWithSize(textTagSize, options: [.UsesLineFragmentOrigin, .UsesFontLeading], attributes: [NSFontAttributeName: textTag.font], context: nil).height
+            let textTagH = NSString(string: info.content!).boundingRect(with: textTagSize, options: [.usesLineFragmentOrigin, .usesFontLeading], attributes: [NSFontAttributeName: textTag.font], context: nil).height
             
             textTag.numberOfLines = 0
-            textTag.textColor = UIColor.blackColor()
+            textTag.textColor = UIColor.black
             return textTagH + 8.5 * 2
         }
     }
@@ -140,7 +140,7 @@ class AudioTagCellContentView: UIView {
         // add tagView
         switch info.type {
             
-        case .Pic:
+        case .pic:
             
             if let image = info.pic?.image {
                 picTag.image = image
@@ -158,7 +158,7 @@ class AudioTagCellContentView: UIView {
                 make.top.equalTo((kAudioTagCellHeight - 30)*0.5)
             })
             
-        case .Text:
+        case .text:
             
             textTag.text = info.content
             addSubview(textTag)

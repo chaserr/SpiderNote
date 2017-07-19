@@ -22,12 +22,12 @@ enum ShareType: String {
 }
 
 protocol ShareViewDelegate {
-    func shareView(shareType: ShareType) -> Void
+    func shareView(_ shareType: ShareType) -> Void
 }
 
 class ShareView: UIView {
 
-    typealias SwitchClosure = (switchOn: Bool) -> Void
+    typealias SwitchClosure = (_ switchOn: Bool) -> Void
     
     var switchClosure: SwitchClosure?
     
@@ -41,11 +41,11 @@ class ShareView: UIView {
     
        let nibName = className
         
-       let shareView = NSBundle.mainBundle().loadNibNamed(nibName, owner: nil, options: nil)!.first as! ShareView
+       let shareView = Bundle.main.loadNibNamed(nibName, owner: nil, options: nil)!.first as! ShareView
        return shareView
     }
     
-    @IBAction func longPressToCopy(sender: UITapGestureRecognizer) {
+    @IBAction func longPressToCopy(_ sender: UITapGestureRecognizer) {
         // 轻拍手势
 //        let labelIdenfify = sender.view?.accessibilityIdentifier
 //        if labelIdenfify == ShareType.TakePassword.rawValue {
@@ -55,7 +55,7 @@ class ShareView: UIView {
     }
     
 
-    @IBAction func actionBtn(sender: UIButton) {
+    @IBAction func actionBtn(_ sender: UIButton) {
         let shareType: String = sender.accessibilityIdentifier!
         
         switch shareType {
@@ -81,27 +81,27 @@ class ShareView: UIView {
         }
     }
 
-    @IBAction func cancelShareAction(sender: AnyObject) {
+    @IBAction func cancelShareAction(_ sender: AnyObject) {
         if sender.accessibilityIdentifier! == ShareType.CancelShare.rawValue {
             delegate?.shareView(.CancelShare)
         }
     }
     
     override func layoutSubviews() {
-        let switchView = SevenSwitch.init(frame: CGRectMake(0, 0, 65, 35))
+        let switchView = SevenSwitch.init(frame: CGRect(x: 0, y: 0, width: 65, height: 35))
         switchView.isRounded = false
         switchView.on = true
-        switchView.addTarget(self, action: #selector(valueChange), forControlEvents: UIControlEvents.ValueChanged)
+        switchView.addTarget(self, action: #selector(valueChange), for: UIControlEvents.valueChanged)
         switchBgVIew.addSubview(switchView)
     }
     
-    func switchValueChange(closure: SwitchClosure) -> Void {
+    func switchValueChange(_ closure: @escaping SwitchClosure) -> Void {
         switchClosure = closure
     }
     
-    func valueChange(sender: SevenSwitch) -> Void {
+    func valueChange(_ sender: SevenSwitch) -> Void {
         if switchClosure != nil {
-            switchClosure!(switchOn: sender.on)
+            switchClosure!(sender.on)
         }
     }
     

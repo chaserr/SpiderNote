@@ -10,14 +10,14 @@ import UIKit
 
 class UndocPicCell: UndocBaseCell {
 
-    private var imageView: UIImageView = {
+    fileprivate var imageView: UIImageView = {
         return UIImageView()
     }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        imageView.contentMode = .ScaleAspectFill
+        imageView.contentMode = .scaleAspectFill
         imageView.layer.masksToBounds = true
         contentView.addSubview(imageView)
         
@@ -31,7 +31,7 @@ class UndocPicCell: UndocBaseCell {
         imageView.image = nil
     }
     
-    override func configureWithInfo(info: UndocBoxLayout, editing: Bool = false) {
+    override func configureWithInfo(_ info: UndocBoxLayout, editing: Bool = false) {
         super.configureWithInfo(info, editing: editing)
         
         if let image = info.picInfo?.image {

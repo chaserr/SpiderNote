@@ -10,17 +10,17 @@ import UIKit
 
 class ArticleTitleCell: ArticleBaseCell {
     
-    private var titleView: UIView = {
+    fileprivate var titleView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = SpiderConfig.Color.BackgroundDark
         return view
     }()
     
-    private var titleLabel: UILabel = {
+    fileprivate var titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFontOfSize(20)
+        label.font = UIFont.systemFont(ofSize: 20)
         label.textColor = SpiderConfig.Color.LightText
         return label
     }()
@@ -29,19 +29,19 @@ class ArticleTitleCell: ArticleBaseCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "0个段落"
-        label.font = UIFont.systemFontOfSize(10)
+        label.font = UIFont.systemFont(ofSize: 10)
         label.textColor = SpiderConfig.Color.HintText
         return label
     }()
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: .Default, reuseIdentifier: reuseIdentifier)
+        super.init(style: .default, reuseIdentifier: reuseIdentifier)
         
-        selectionStyle = .None
+        selectionStyle = .none
         makeUI()
     }
     
-    private func makeUI() {
+    fileprivate func makeUI() {
         titleView.addSubview(titleLabel)
         titleView.addSubview(sectionCountLabel)
         contentView.addSubview(titleView)
@@ -63,7 +63,7 @@ class ArticleTitleCell: ArticleBaseCell {
         }
     }
     
-    func configureTitleCell(name: String, sectionCount: Int) {
+    func configureTitleCell(_ name: String, sectionCount: Int) {
         titleLabel.text = name
         sectionCountLabel.text = "\(sectionCount)个段落"
     }

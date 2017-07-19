@@ -29,21 +29,21 @@ class AOCurrentUser: NSObject, NSCoding{
     required convenience init?(coder aDecoder: NSCoder) {
         self.init()
 //        decodeAutoWithAutoCoder(aDecoder)
-        account = aDecoder.decodeObjectForKey("account") as? String
-        password = aDecoder.decodeObjectForKey("password") as? String
-        token = aDecoder.decodeObjectForKey("token") as? String
-        userID = aDecoder.decodeObjectForKey("userID") as? String
+        account = aDecoder.decodeObject(forKey: "account") as? String
+        password = aDecoder.decodeObject(forKey: "password") as? String
+        token = aDecoder.decodeObject(forKey: "token") as? String
+        userID = aDecoder.decodeObject(forKey: "userID") as? String
 
         
         
     }
     
-    func encodeWithCoder(aCoder: NSCoder) {
+    func encode(with aCoder: NSCoder) {
 //        encodeAutoWithCoder(aCoder)
-        aCoder.encodeObject(account, forKey: "account")
-        aCoder.encodeObject(password, forKey: "password")
-        aCoder.encodeObject(self.userID, forKey: "userID")
-        aCoder.encodeObject(token, forKey: "token")
+        aCoder.encode(account, forKey: "account")
+        aCoder.encode(password, forKey: "password")
+        aCoder.encode(self.userID, forKey: "userID")
+        aCoder.encode(token, forKey: "token")
     }
     
     deinit{}
@@ -54,7 +54,7 @@ class AOCurrentUser: NSObject, NSCoding{
 
 class AppUtility: NSObject {
     
-    let filemgr = NSFileManager.defaultManager()
+    let filemgr = FileManager.default
     var currentUser:AOCurrentUser?
     
     static var instance:AppUtility?
@@ -77,11 +77,11 @@ class AppUtility: NSObject {
         instance = nil
     }
     
-    class func objectForKey(key:String) ->AnyObject?{
+    class func objectForKey(_ key:String) ->AnyObject?{
     
         let path = dataFilePathForKey(key)
         if path != nil {
-            let obj = NSKeyedUnarchiver.unarchiveObjectWithFile(path!)
+            let obj = NSKeyedUnarchiver.unarchiveObject(withFile: path!)
 
             return obj
         }else{
@@ -92,18 +92,18 @@ class AppUtility: NSObject {
         
     }
     
-    class func setObject(value:AnyObject, key:String) -> AnyObject? {
+    class func setObject(_ value:AnyObject, key:String) -> AnyObject? {
         let path: String = dataFilePathForKey(key)!
         return NSKeyedArchiver.archiveRootObject(value, toFile: path)
     }
     
-    class func dataFilePathForKey(key:String) -> String? {
+    class func dataFilePathForKey(_ key:String) -> String? {
         let document = FileUtil.getFileUtil().getDocmentPath()
         let dir = document.stringByAppendingPathComponent("user")
-        if !NSFileManager.defaultManager().fileExistsAtPath(dir) {
+        if !FileManager.default.fileExists(atPath: dir) {
             do{
             
-                try NSFileManager.defaultManager().createDirectoryAtPath(dir, withIntermediateDirectories: true, attributes: nil)
+                try FileManager.default.createDirectory(atPath: dir, withIntermediateDirectories: true, attributes: nil)
                 
                 
             }catch let error as NSError{
@@ -156,10 +156,10 @@ class AppUtility: NSObject {
         }
         
         path = FileUtil.getFileUtil().getDocmentPath().stringByAppendingPathComponent(currentUser!.userID!)
-        if !filemgr.fileExistsAtPath(path!) {
+        if !filemgr.fileExists(atPath: path!) {
             do{
                 
-                try NSFileManager.defaultManager().createDirectoryAtPath(path!, withIntermediateDirectories: true, attributes: nil)
+                try FileManager.default.createDirectory(atPath: path!, withIntermediateDirectories: true, attributes: nil)
             }catch let error as NSError{
                 
                 AODlog(error.description)
@@ -171,10 +171,10 @@ class AppUtility: NSObject {
     /**当前数据库路径*/
     func databasePath() -> String {
         let path = userDocumentPath()?.stringByAppendingPathComponent("sql")
-        if !filemgr.fileExistsAtPath(path!) {
+        if !filemgr.fileExists(atPath: path!) {
             do{
                 
-                try NSFileManager.defaultManager().createDirectoryAtPath(path!, withIntermediateDirectories: true, attributes: nil)
+                try FileManager.default.createDirectory(atPath: path!, withIntermediateDirectories: true, attributes: nil)
             }catch let error as NSError{
                 
                 AODlog(error.description)
@@ -188,10 +188,10 @@ class AppUtility: NSObject {
     /**当前用户图片路径*/
     func imageFilePath() -> String {
         let path = userDocumentPath()?.stringByAppendingPathComponent("image")
-        if !filemgr.fileExistsAtPath(path!) {
+        if !filemgr.fileExists(atPath: path!) {
             do{
                 
-                try NSFileManager.defaultManager().createDirectoryAtPath(path!, withIntermediateDirectories: true, attributes: nil)
+                try FileManager.default.createDirectory(atPath: path!, withIntermediateDirectories: true, attributes: nil)
             }catch let error as NSError{
                 
                 AODlog(error.description)
@@ -205,10 +205,10 @@ class AppUtility: NSObject {
     func voiceFilePath() -> String {
         let path = userDocumentPath()?.stringByAppendingPathComponent("voice")
         
-        if !filemgr.fileExistsAtPath(path!) {
+        if !filemgr.fileExists(atPath: path!) {
             do{
                 
-                try NSFileManager.defaultManager().createDirectoryAtPath(path!, withIntermediateDirectories: true, attributes: nil)
+                try FileManager.default.createDirectory(atPath: path!, withIntermediateDirectories: true, attributes: nil)
             }catch let error as NSError{
                 
                 AODlog(error.description)
@@ -218,16 +218,16 @@ class AppUtility: NSObject {
         return path!;
     }
     
-    func getAudioFilePath(id: String) -> NSURL? {
-        return NSURL(fileURLWithPath: voiceFilePath()).URLByAppendingPathComponent(id)?.URLByAppendingPathExtension(FileExtension.M4A.rawValue)
+    func getAudioFilePath(_ id: String) -> URL? {
+        return URL(fileURLWithPath: voiceFilePath()).appendingPathComponent(id)?.appendingPathExtension(FileExtension.M4A.rawValue)
     }
     
-    func removeAudioFile(id: String) {
+    func removeAudioFile(_ id: String) {
         let path = voiceFilePath().stringByAppendingPathComponent("\(id).\(FileExtension.M4A.rawValue)")
         
-        if filemgr.fileExistsAtPath(path) {
+        if filemgr.fileExists(atPath: path) {
             do {
-                try filemgr.removeItemAtPath(path)
+                try filemgr.removeItem(atPath: path)
             } catch {
                 println("error: remove audio file: \(error)")
             }
@@ -237,10 +237,10 @@ class AppUtility: NSObject {
     /**公共文件夹路径*/
     func commonPath() -> String {
         let path = FileUtil.getFileUtil().getDocmentPath().stringByAppendingPathComponent("common")
-        if !filemgr.fileExistsAtPath(path) {
+        if !filemgr.fileExists(atPath: path) {
             do{
                 
-                try NSFileManager.defaultManager().createDirectoryAtPath(path, withIntermediateDirectories: true, attributes: nil)
+                try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
             }catch let error as NSError{
                 
                 AODlog(error.description)
@@ -249,9 +249,9 @@ class AppUtility: NSObject {
         return path
     }
     
-    func bundleFile(file:String) -> String {
+    func bundleFile(_ file:String) -> String {
         file
-        return NSBundle.mainBundle().pathForResource((file as NSString).stringByDeletingPathExtension, ofType: file.pathExtension)!
+        return Bundle.main.path(forResource: (file as NSString).deletingPathExtension, ofType: file.pathExtension)!
     }
     
     

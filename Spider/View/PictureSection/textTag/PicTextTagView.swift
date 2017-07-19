@@ -10,7 +10,7 @@ import UIKit
 
 class PicTextTagView: PicTagView {
     
-    private var inSize: CGSize!
+    fileprivate var inSize: CGSize!
     
     var text: String! {
         didSet {
@@ -24,7 +24,7 @@ class PicTextTagView: PicTagView {
             
             frame.size = CGSize(width: 15 + bgView.frame.width, height: kPicTextTagH)
             
-            if direction == .Right {
+            if direction == .right {
                 if frame.maxX >= inSize.width {
                     rotate()
                     frame.origin = CGPoint(x: frame.origin.x - frame.size.width, y: frame.origin.y)
@@ -33,11 +33,11 @@ class PicTextTagView: PicTagView {
         }
     }
     
-    private var bgView: UIImageView!
+    fileprivate var bgView: UIImageView!
     
     init(location: CGPoint, text: String, direction: TagDirection, inSize: CGSize) {
         super.init(frame: CGRect(x: location.x - 5, y: location.y - kPicTextTagH / 2, width: 0, height: kPicTextTagH))
-        self.type = .Text
+        self.type = .text
         self.inSize = inSize
         
         let dot: UIImageView = {
@@ -49,8 +49,8 @@ class PicTextTagView: PicTagView {
         contentView = {
             let label = UILabel()
             label.text = text
-            label.font = UIFont.systemFontOfSize(12)
-            label.textColor = UIColor.whiteColor()
+            label.font = UIFont.systemFont(ofSize: 12)
+            label.textColor = UIColor.white
             label.sizeToFit()
             return label
         }()
@@ -59,7 +59,7 @@ class PicTextTagView: PicTagView {
         bgView = {
             let imageV = UIImageView(frame: CGRect(x: 15, y: 0, width: labelW + 20, height: kPicTextTagH))
             imageV.image = UIImage(named: "pic_text_tag_bg")
-            imageV.contentMode = .ScaleToFill
+            imageV.contentMode = .scaleToFill
             return imageV
         }()
 
@@ -73,18 +73,18 @@ class PicTextTagView: PicTagView {
         frame.size = CGSize(width: 15 + bgView.frame.width, height: kPicTextTagH)
         
         switch direction {
-        case .Right:
+        case .right:
             break
-        case .Left:
+        case .left:
             
-            transform = CGAffineTransformMakeRotation(CGFloat(M_PI))
-            contentView.transform = CGAffineTransformMakeRotation(CGFloat(M_PI))
+            transform = CGAffineTransform(rotationAngle: CGFloat(M_PI))
+            contentView.transform = CGAffineTransform(rotationAngle: CGFloat(M_PI))
             
             frame.origin = CGPoint(x: location.x - frame.size.width + 5, y: frame.origin.y)
 
-        case .None:
+        case .none:
             
-            self.direction = .Right
+            self.direction = .right
             
             if (location.x + frame.size.width) >= inSize.width {
                 rotate()

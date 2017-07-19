@@ -12,12 +12,12 @@ import SnapKit
 private let themeColor = UIColor.color(withHex: 0x18BD83)
 
 final class EditProjectNameAlertView: UIView {
-    var doneHandler: (String -> Void)!
+    var doneHandler: ((String) -> Void)!
     var cancelHandler: (() -> Void)!
     
-    private lazy var textField: UITextField = {
+    fileprivate lazy var textField: UITextField = {
         let field = UITextField()
-        field.font = UIFont.systemFontOfSize(14)
+        field.font = UIFont.systemFont(ofSize: 14)
         field.layer.cornerRadius = 2.0
         
         field.tintColor = themeColor
@@ -25,31 +25,31 @@ final class EditProjectNameAlertView: UIView {
         field.backgroundColor = UIColor.color(withHex: 0xf0f0f0)
         
         field.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 30))
-        field.leftViewMode = .Always
+        field.leftViewMode = .always
         return field
     }()
     
-    private lazy var cancelButton: UIButton = {
+    fileprivate lazy var cancelButton: UIButton = {
         let button = UIButton()
-        button.backgroundColor = UIColor.whiteColor()
-        button.setTitle("取消", forState: .Normal)
-        button.setTitleColor(UIColor.color(withHex: 0x888888), forState: .Normal)
-        button.titleLabel?.font = UIFont.systemFontOfSize(15)
+        button.backgroundColor = UIColor.white
+        button.setTitle("取消", for: UIControlState())
+        button.setTitleColor(UIColor.color(withHex: 0x888888), for: UIControlState())
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 15)
         return button
     }()
     
-    private lazy var doneButton: UIButton = {
+    fileprivate lazy var doneButton: UIButton = {
         let button = UIButton()
-        button.backgroundColor = UIColor.whiteColor()
-        button.setTitle("确定", forState: .Normal)
-        button.setTitleColor(themeColor, forState: .Normal)
-        button.titleLabel?.font = UIFont.systemFontOfSize(15)
+        button.backgroundColor = UIColor.white
+        button.setTitle("确定", for: UIControlState())
+        button.setTitleColor(themeColor, for: UIControlState())
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 15)
         return button
     }()
     
     // MARK: - Init
     init(text: String) {
-        super.init(frame: CGRectZero)
+        super.init(frame: CGRect.zero)
         layer.cornerRadius = 2.0
         layer.masksToBounds = true
         backgroundColor = UIColor.color(withHex: 0xf0f0f0)
@@ -66,8 +66,8 @@ final class EditProjectNameAlertView: UIView {
     
     // MARK: - Button Actions
     func addActions() {
-        cancelButton.addTarget(self, action: #selector(cancelButtonClicked), forControlEvents: .TouchUpInside)
-        doneButton.addTarget(self, action: #selector(doneButtonClicked), forControlEvents: .TouchUpInside)
+        cancelButton.addTarget(self, action: #selector(cancelButtonClicked), for: .touchUpInside)
+        doneButton.addTarget(self, action: #selector(doneButtonClicked), for: .touchUpInside)
         
         textField.becomeFirstResponder()
     }
@@ -89,7 +89,7 @@ final class EditProjectNameAlertView: UIView {
     func makeUI() {
         
         let topContainter = UIView()
-        topContainter.backgroundColor = UIColor.whiteColor()
+        topContainter.backgroundColor = UIColor.white
         
         topContainter.addSubview(textField)
         addSubview(topContainter)

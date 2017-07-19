@@ -35,19 +35,19 @@ let kSyncSuccessNotification                   = "kSyncSuccessNotification"
 
 
 enum CreateDate:Int {
-    case None
-    case Today           = 1
-    case Yesterday       = 2
-    case BeforeYesterday = 3
-    case Earlyday        = 4
+    case none
+    case today           = 1
+    case yesterday       = 2
+    case beforeYesterday = 3
+    case earlyday        = 4
 }
 
 enum SourceMindControType:Int {
-    case ComeFromHome = 0//"ProjectCollectionViewController"
-    case ComeFromSearch //= "SearchMainViewController"
-    case ComeFromSelf //= "MindViewController"
-    case ComeFromStructLevel //= "StructLevelView"
-    case ComeFromOutLine //= ""
+    case comeFromHome = 0//"ProjectCollectionViewController"
+    case comeFromSearch //= "SearchMainViewController"
+    case comeFromSelf //= "MindViewController"
+    case comeFromStructLevel //= "StructLevelView"
+    case comeFromOutLine //= ""
 }
 
 enum SearchType:String {

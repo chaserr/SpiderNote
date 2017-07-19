@@ -22,13 +22,13 @@ class AboutMeCell: UITableViewCell {
 
     }
 
-    override func setSelected(selected: Bool, animated: Bool) {
+    override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state
     }
     
-    class func cellWithTableView(tableview:UITableView, indexPath:NSIndexPath) -> UITableViewCell {
+    class func cellWithTableView(_ tableview:UITableView, indexPath:IndexPath) -> UITableViewCell {
         var identifier = ""
         var index = 0
         
@@ -48,14 +48,14 @@ class AboutMeCell: UITableViewCell {
             break
         }
         
-        var cell = tableview.dequeueReusableCellWithIdentifier(identifier)
+        var cell = tableview.dequeueReusableCell(withIdentifier: identifier)
         if cell == nil {
-            cell = NSBundle.mainBundle().loadNibNamed(className, owner: nil, options: nil)![index] as! AboutMeCell
+            cell = Bundle.main.loadNibNamed(className, owner: nil, options: nil)![index] as! AboutMeCell
         }
         return cell!
     }
     
-    func setDefaultValue(indexPath:NSIndexPath, titleArray:Array<AnyObject>) -> Void {
+    func setDefaultValue(_ indexPath:IndexPath, titleArray:Array<AnyObject>) -> Void {
         
         let sectionOTitle:Array = (titleArray[indexPath.section]) as! Array<AnyObject>
         

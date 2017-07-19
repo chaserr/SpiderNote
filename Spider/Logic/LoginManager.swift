@@ -13,21 +13,21 @@ let LOGINMANAGER = LoginManager.getInstance()
 
 
 enum LoginState:Int {
-    case Not = -1 // 未登录
-    case Logining = 0 // 登录中
-    case Logined = 1 // 已经登录
+    case not = -1 // 未登录
+    case logining = 0 // 登录中
+    case logined = 1 // 已经登录
 }
 
 enum AppState:Int {
-    case None = 0 // 保留
-    case DidEnterBackGrouond = 1 // 后台
-    case WillEnterForeground = 2 // 到前台
+    case none = 0 // 保留
+    case didEnterBackGrouond = 1 // 后台
+    case willEnterForeground = 2 // 到前台
 }
 
 enum UserEnterType:Int {
-    case Null = 0
-    case Register = 1 // 通过注册进入的客户端
-    case Login = 2 // 通过登录进入的客户端
+    case null = 0
+    case register = 1 // 通过注册进入的客户端
+    case login = 2 // 通过登录进入的客户端
 }
 
 class LoginManager: NSObject {
@@ -51,20 +51,20 @@ class LoginManager: NSObject {
     
     override init() {
         
-        loginState = LoginState.Not
-        appState = AppState.WillEnterForeground
+        loginState = LoginState.not
+        appState = AppState.willEnterForeground
         super.init()
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(willEnterForeground), name: KNotifcationApplicationWillEnterForeground, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(didEnterBackground), name: KNotifcationApplicationDidEnterBackground, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground), name: KNotifcationApplicationWillEnterForeground, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didEnterBackground), name: KNotifcationApplicationDidEnterBackground, object: nil)
     }
     
     deinit{
     
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
-    func setLoginState(state:LoginState) -> Void {
+    func setLoginState(_ state:LoginState) -> Void {
         if loginState == state {
             return
         }
@@ -73,15 +73,15 @@ class LoginManager: NSObject {
     }
     
     func didEnterBackground() -> Void {
-        appState = AppState.DidEnterBackGrouond
+        appState = AppState.didEnterBackGrouond
     }
     
     func willEnterForeground() -> Void {
-        appState = AppState.DidEnterBackGrouond
+        appState = AppState.didEnterBackGrouond
     }
     
     /** 用户注册*/
-    func startRegister(account: String, password: String, success: () -> Void, failure: () -> Void) -> Void {
+    func startRegister(_ account: String, password: String, success: () -> Void, failure: () -> Void) -> Void {
         
         var paramDic = [String : AnyObject]()
         paramDic["userName"] = account
@@ -116,7 +116,7 @@ class LoginManager: NSObject {
 
     }
     
-    func uploadOperation(uploadProObjID: [String]) -> Void {
+    func uploadOperation(_ uploadProObjID: [String]) -> Void {
         var paraDic = [String: AnyObject]()
         let dic: Dictionary = UPLOADPROMANAGER.getSecondRequestParam(uploadProObjID)
         paraDic["projectInfo"] = dic.dicToJSON(dic)
@@ -130,7 +130,7 @@ class LoginManager: NSObject {
     }
     
     /** 发送邮箱验证码*/
-    func sendVertifyEmail(userName:String, smsCode: String, success: () -> Void, failure: () -> Void) -> Void {
+    func sendVertifyEmail(_ userName:String, smsCode: String, success: () -> Void, failure: () -> Void) -> Void {
         
         AOHUDVIEW.showLoadingView("注册中...")
         var paramDic = [String : AnyObject]()
@@ -213,13 +213,13 @@ class LoginManager: NSObject {
      - parameter password: 密码
      - parameter verType:  登录类型（主动登录, 自动登录）
      */
-    func startLogin(account:String, password:String, manualLogin: Bool) -> Void {
-        loginMode = UserEnterType.Login
-        if loginState != LoginState.Not {
+    func startLogin(_ account:String, password:String, manualLogin: Bool) -> Void {
+        loginMode = UserEnterType.login
+        if loginState != LoginState.not {
             return
         }
         
-        setLoginState(LoginState.Logining)
+        setLoginState(LoginState.logining)
         if manualLogin { // 手动登录显示HUD
             AODlog("=======开始登录======")
             AOHUDVIEW.showLoadingView("登录中...")
@@ -296,7 +296,7 @@ class LoginManager: NSObject {
     }
     
     
-    func transToController(type: Bool) -> Void {
+    func transToController(_ type: Bool) -> Void {
         if type {
             AOHUDVIEW.hideHUD()
         }
@@ -305,7 +305,7 @@ class LoginManager: NSObject {
         AppNavigator.openMainNavControllerWithRoot(mainViewController, animated: true)
     }
     
-    func visitorLogin(complete: (() -> Void)?) -> Void {
+    func visitorLogin(_ complete: (() -> Void)?) -> Void {
         
         APP_USER.userID = "00000001"
         APP_USER.saveUserInfo()
@@ -318,11 +318,11 @@ class LoginManager: NSObject {
     }
     
     /** 用户登出 */
-    func logout(complete: (()-> Void)?) -> Void {
+    func logout(_ complete: (()-> Void)?) -> Void {
         AODlog("======注销======")
-        self.setLoginState(LoginState.Not)
+        self.setLoginState(LoginState.not)
         APP_UTILITY.clearCurrentUser()
-        loginMode = UserEnterType.Null
+        loginMode = UserEnterType.null
         if complete != nil {
             complete!()
         }

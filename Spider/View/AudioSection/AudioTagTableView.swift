@@ -12,12 +12,12 @@ private let cellID = "AudioSectionCellID"
 
 class AudioTagTableView: UITableView {
     init() {
-        super.init(frame: CGRect(x: 0, y: kAudioTitleHeight, width: kScreenWidth, height: kAudioTagInfoViewHeight), style: .Plain)
+        super.init(frame: CGRect(x: 0, y: kAudioTitleHeight, width: kScreenWidth, height: kAudioTagInfoViewHeight), style: .plain)
         
-        sectionIndexColor = UIColor.whiteColor()
-        registerClass(AudioTagInfoCell.self, forCellReuseIdentifier: cellID)
-        backgroundColor = UIColor.whiteColor()
-        separatorStyle = .None
+        sectionIndexColor = UIColor.white
+        register(AudioTagInfoCell.self, forCellReuseIdentifier: cellID)
+        backgroundColor = UIColor.white
+        separatorStyle = .none
         bounces = false
     }
     

@@ -7,6 +7,30 @@
 //
 
 import UIKit
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
+
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l > r
+  default:
+    return rhs < lhs
+  }
+}
+
 
 class ModifyUserInfoVC: MainViewController, UITextFieldDelegate {
 
@@ -20,7 +44,7 @@ class ModifyUserInfoVC: MainViewController, UITextFieldDelegate {
     
     @IBOutlet weak var modifyNicknameView: UIView!
     
-    private var selectSex: String?
+    fileprivate var selectSex: String?
     enum FromViewCell{
         case nickName
         case gendle
@@ -55,25 +79,25 @@ class ModifyUserInfoVC: MainViewController, UITextFieldDelegate {
         super.viewDidLoad()
         navigationTitleLabel.text = navTitle
         
-        setLeftBarButtonItem(UIBarButtonItem.init(title: "取消", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(backAction)))
-        setRightBarButtonItem(UIBarButtonItem.init(title: "完成", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(modifyDown)))
+        setLeftBarButtonItem(UIBarButtonItem.init(title: "取消", style: UIBarButtonItemStyle.plain, target: self, action: #selector(backAction)))
+        setRightBarButtonItem(UIBarButtonItem.init(title: "完成", style: UIBarButtonItemStyle.plain, target: self, action: #selector(modifyDown)))
         
         switch currentFromCell {
         case .nickName:
-            modifyGenderView.hidden = true
-            modifyNicknameView.hidden = false
+            modifyGenderView.isHidden = true
+            modifyNicknameView.isHidden = false
             
         case .gendle:
-            modifyNicknameView.hidden = true
-            modifyGenderView.hidden = false
-            maleBtn.selected = true
+            modifyNicknameView.isHidden = true
+            modifyGenderView.isHidden = false
+            maleBtn.isSelected = true
             
         }
     }
     
     
     
-    @objc private func modifyDown() -> Void {
+    @objc fileprivate func modifyDown() -> Void {
         
         AODlog("完成")
         let currentUsr = UserObject.fetchUserObj((APP_UTILITY.currentUser?.userID)!)
@@ -108,7 +132,7 @@ class ModifyUserInfoVC: MainViewController, UITextFieldDelegate {
     }
     
     
-    private func getFromCell(fromCell:String) -> FromViewCell {
+    fileprivate func getFromCell(_ fromCell:String) -> FromViewCell {
         if fromCell == "昵称" {
             return .nickName
         }else if fromCell == "性别" {
@@ -123,16 +147,16 @@ class ModifyUserInfoVC: MainViewController, UITextFieldDelegate {
     }
     
     
-    @IBAction func clickMaleBtn(sender: UIButton) {
-        maleArrow.hidden = false
-        femaleArrow.hidden = true
+    @IBAction func clickMaleBtn(_ sender: UIButton) {
+        maleArrow.isHidden = false
+        femaleArrow.isHidden = true
         selectGender(sender.currentTitle!)
         selectSex = sender.currentTitle
     }
 
-    @IBAction func clickFemaleBtn(sender: UIButton) {
-       femaleArrow.hidden = false
-        maleArrow.hidden = true
+    @IBAction func clickFemaleBtn(_ sender: UIButton) {
+       femaleArrow.isHidden = false
+        maleArrow.isHidden = true
         selectGender(sender.currentTitle!)
         selectSex = sender.currentTitle
 
@@ -159,7 +183,7 @@ class ModifyUserInfoVC: MainViewController, UITextFieldDelegate {
 // MARK: -- UITextFieldDelegate
 extension ModifyUserInfoVC{
 
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         
         if textField == modifyTtextField {
             textField.resignFirstResponder()
@@ -169,7 +193,7 @@ extension ModifyUserInfoVC{
         return true
     }
     
-    func textFieldDidEndEditing(textField: UITextField) {
+    func textFieldDidEndEditing(_ textField: UITextField) {
 
         if textField.text?.length != 0 {
             modifyNickName(textField.text!)

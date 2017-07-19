@@ -34,7 +34,7 @@ class AlertView: NSObject, UIAlertViewDelegate {
     }
     
 
-    class func alert(title: String?, message: String?, cancleBtnTitle: String?, otherButtonTitle: String?, theCancleBtnBlock: AlertViewBlock, theOtherBtnBlock: AlertViewBlock) -> AlertView {
+    class func alert(_ title: String?, message: String?, cancleBtnTitle: String?, otherButtonTitle: String?, theCancleBtnBlock: AlertViewBlock, theOtherBtnBlock: AlertViewBlock) -> AlertView {
         let alert = AlertView.init(title: title!, message: message!, cancleBtnTitle: cancleBtnTitle!, otherButtonTitle: otherButtonTitle!, theCancleBtnBlock: theCancleBtnBlock, theOtherBtnBlock: theOtherBtnBlock)
         
         return alert
@@ -44,7 +44,7 @@ class AlertView: NSObject, UIAlertViewDelegate {
 
 extension AlertView{
 
-    func alertView(alertView: UIAlertView, clickedButtonAtIndex buttonIndex: Int) {
+    func alertView(_ alertView: UIAlertView, clickedButtonAt buttonIndex: Int) {
         switch buttonIndex {
         case 0:
             if cancleBtnBlock != nil {
@@ -59,7 +59,7 @@ extension AlertView{
         }
     }
     
-    func alertViewCancel(alertView: UIAlertView) {
+    func alertViewCancel(_ alertView: UIAlertView) {
         if cancleBtnBlock != nil {
             cancleBtnBlock!()
         }

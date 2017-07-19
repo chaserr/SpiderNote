@@ -10,10 +10,10 @@ import UIKit
 import AVFoundation
 
 class PicAudioTagView: PicTagView, AVAudioPlayerDelegate {
-    private var player: AVAudioPlayer? = nil
-    private var audioInfo: AudioInfo!
+    fileprivate var player: AVAudioPlayer? = nil
+    fileprivate var audioInfo: AudioInfo!
     
-    private var icon: UIImageView = {
+    fileprivate var icon: UIImageView = {
         let view = UIImageView(frame: CGRect(x: 12, y: (kPicAudioBGH - kPicAudioiConH) / 2, width: kPicAudioiConW, height: kPicAudioiConH))
         view.animationImages = [
             UIImage(named: "pic_audio_tag_icon1")!,
@@ -27,7 +27,7 @@ class PicAudioTagView: PicTagView, AVAudioPlayerDelegate {
     
     init(location: CGPoint, audioInfo: AudioInfo, direction: TagDirection, inSize: CGSize) {
         super.init(frame: CGRect(x: location.x - 5, y: location.y - kPicAudioBGH / 2, width: kPicAudioBGW + 15, height: kPicAudioBGH))
-        self.type      = .Audio
+        self.type      = .audio
         self.audioInfo = audioInfo
         self.direction = direction
         
@@ -47,27 +47,27 @@ class PicAudioTagView: PicTagView, AVAudioPlayerDelegate {
         contentView = {
             let label = UILabel(frame: CGRect(x: 15+12+kPicAudioiConW+4, y: 0, width: kPicAudioLabelW, height: kPicAudioBGH))
             label.text = "\(audioInfo.duration)\""
-            label.textAlignment = .Center
-            label.textColor = UIColor.whiteColor()
-            label.font = UIFont.systemFontOfSize(11)
+            label.textAlignment = .center
+            label.textColor = UIColor.white
+            label.font = UIFont.systemFont(ofSize: 11)
             return label
         }()
         
         addSubview(dot)
         addSubview(bg)
         addSubview(contentView)
-        userInteractionEnabled = true
+        isUserInteractionEnabled = true
         
         switch direction {
-        case .Right:
+        case .right:
             break
             
-        case .Left:
-            transform = CGAffineTransformMakeRotation(CGFloat(M_PI))
-            contentView.transform = CGAffineTransformMakeRotation(CGFloat(M_PI))
+        case .left:
+            transform = CGAffineTransform(rotationAngle: CGFloat(M_PI))
+            contentView.transform = CGAffineTransform(rotationAngle: CGFloat(M_PI))
             frame.origin = CGPoint(x: location.x - kPicAudioBGW - 15 + 5, y: location.y - kPicAudioBGH / 2)
-        case .None:
-            self.direction = .Right
+        case .none:
+            self.direction = .right
             
             if (location.x + kPicAudioBGW + 15) > inSize.width {
                 rotate()
@@ -80,7 +80,7 @@ class PicAudioTagView: PicTagView, AVAudioPlayerDelegate {
         
         if let player = player {
             
-            if player.playing {
+            if player.isPlaying {
                 
                 player.pause()
                 icon.stopAnimating()
@@ -97,7 +97,7 @@ class PicAudioTagView: PicTagView, AVAudioPlayerDelegate {
             guard let audioURL = APP_UTILITY.getAudioFilePath(audioInfo.id) else { return }
             
             do {
-                try player = AVAudioPlayer(contentsOfURL: audioURL, fileTypeHint: AVFileTypeAppleM4A)
+                try player = AVAudioPlayer(contentsOf: audioURL, fileTypeHint: AVFileTypeAppleM4A)
                 player?.delegate = self
                 player?.prepareToPlay()
                 
@@ -117,7 +117,7 @@ class PicAudioTagView: PicTagView, AVAudioPlayerDelegate {
         icon.image = UIImage(named: "pic_audio_tag_icon3")
     }
     
-    func audioPlayerDidFinishPlaying(player: AVAudioPlayer, successfully flag: Bool) {
+    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
         stop()
     }
     

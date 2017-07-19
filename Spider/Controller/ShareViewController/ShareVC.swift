@@ -21,10 +21,10 @@ class ShareVC: UIViewController, ShareViewDelegate, MFMailComposeViewControllerD
     lazy var shareView: ShareView? = {
 
         let shareView = ShareView.createShareView()
-        shareView.frame = CGRectMake(0, kScreenHeight, kScreenWidth, kShareViewH)
+        shareView.frame = CGRect(x: 0, y: kScreenHeight, width: kScreenWidth, height: kShareViewH)
         shareView.delegate = self
         shareView.layer.cornerRadius = 1
-        shareView.layer.shadowOffset = CGSizeZero
+        shareView.layer.shadowOffset = CGSize.zero
         shareView.layer.shadowOpacity = 0.3
         return shareView
         
@@ -49,48 +49,48 @@ class ShareVC: UIViewController, ShareViewDelegate, MFMailComposeViewControllerD
     
     func popShareView() -> Void {
         
-        backView = UIButton.init(type: UIButtonType.System)
-        backView?.frame = CGRectMake(0, 0, kScreenWidth, kScreenHeight)
+        backView = UIButton.init(type: UIButtonType.system)
+        backView?.frame = CGRect(x: 0, y: 0, width: kScreenWidth, height: kScreenHeight)
         backView?.backgroundColor = UIColor(white: 0, alpha: 0.5)
         navigationController!.view.addSubview(backView!)
         backView!.addSubview(self.shareView!)
 
-        self.shareView!.transform = CGAffineTransformIdentity;
-        self.shareView!.layer.shadowPath = UIBezierPath.init(roundedRect: shareView!.bounds, cornerRadius: shareView!.layer.cornerRadius).CGPath
+        self.shareView!.transform = CGAffineTransform.identity;
+        self.shareView!.layer.shadowPath = UIBezierPath.init(roundedRect: shareView!.bounds, cornerRadius: shareView!.layer.cornerRadius).cgPath
         
         shareView?.switchValueChange({ (switchOn: Bool) in
             AODlog(switchOn ? "带密操作" : "不带密操作")
         })
-        UIView.animateWithDuration(0.25, animations: { 
+        UIView.animate(withDuration: 0.25, animations: { 
             self.shareView?.centerY -= kShareViewH
-        }) { (finshed: Bool) in
+        }, completion: { (finshed: Bool) in
             
-        }
+        }) 
 
-        backView?.addTarget(self, action: #selector(closeAction), forControlEvents: UIControlEvents.TouchUpInside)
+        backView?.addTarget(self, action: #selector(closeAction), for: UIControlEvents.touchUpInside)
     }
     
     func closeAction() -> Void {
 
-        UIView.animateWithDuration(0.25, animations: {
+        UIView.animate(withDuration: 0.25, animations: {
             self.shareView?.centerY += kShareViewH
-        }) { (finshed: Bool) in
+        }, completion: { (finshed: Bool) in
             
-            UIView.animateWithDuration(0.1, animations: {
+            UIView.animate(withDuration: 0.1, animations: {
                 self.backView!.alpha = 0.1
-            }) { (finished: Bool) in
+            }, completion: { (finished: Bool) in
                 
                 self.backView!.removeFromSuperview()
                 self.view.removeFromSuperview()
                 self.removeFromParentViewController()
-            }
+            }) 
             
-        }
+        }) 
 
     }
     
     // MARK: shareViewDelegate
-    func shareView(shareType: ShareType) {
+    func shareView(_ shareType: ShareType) {
         switch shareType {
         case .CopyLink:
             closeAction()
@@ -171,13 +171,14 @@ extension ShareVC{
         }else{
         
             let alertView = CustomSystemAlertView.init(title: "", message: "用户没有设置邮箱，是否去设置？", cancelButtonTitle: "取消", sureButtonTitle: "确定")
+        
             alertView.clickIndexClosure({ (index) in
                 switch (index) {
                 
-                case ClickButtonType.Cancle.rawValue: break
-                case ClickButtonType.Sure.rawValue:
+                case ClickButtonType.cancle.rawValue: break
+                case ClickButtonType.sure.rawValue:
                 
-                    UIApplication.sharedApplication().openURL(NSURL.init(string: "mailto://devprograms@apple.com")!)
+                    UIApplication.shared.openURL(URL.init(string: "mailto://devprograms@apple.com")!)
                     
                 default:
                     break
@@ -188,16 +189,16 @@ extension ShareVC{
     }
     
     // MFMailComposeViewControllerDelegate
-    func mailComposeController(controller: MFMailComposeViewController, didFinishWithResult result: MFMailComposeResult, error: NSError?) {
-        dismissViewControllerAnimated(true, completion: nil)
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        dismiss(animated: true, completion: nil)
         switch result {
-        case .Sent:
+        case .sent:
             alert("邮件发送成功", message: nil, parentVC: self)
-        case .Cancelled:
+        case .cancelled:
             alert("邮件已取消", message: nil, parentVC: self)
-        case .Saved:
+        case .saved:
             alert("邮件已保存", message: nil, parentVC: self)
-        case .Failed:
+        case .failed:
             alert("邮件发送失败", message: nil, parentVC: self)
         }
     }
@@ -252,7 +253,7 @@ extension ShareVC{
             
         ];
         activityVC.excludedActivityTypes = cludeActivitys
-        APP_DELEGATE.window?.rootViewController?.presentViewController(activityVC, animated: true, completion: {
+        APP_DELEGATE.window?.rootViewController?.present(activityVC, animated: true, completion: {
             ez.runThisAfterDelay(seconds: 1, after: {
                 self.closeAction()
             })

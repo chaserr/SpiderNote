@@ -12,29 +12,29 @@ class OutlineNewView: UIView {
     
     var doneHandler: ((String, MindType) -> Void)?
     
-    private var type = MindType.Mind
+    fileprivate var type = MindType.mind
     
-    private var tap: UITapGestureRecognizer!
+    fileprivate var tap: UITapGestureRecognizer!
     
-    private var newMind: UIButton = {
+    fileprivate var newMind: UIButton = {
         let button = UIButton(frame: CGRect(x: 0, y: 0, width: 200, height: 40))
-        button.backgroundColor = UIColor.whiteColor()
-        button.setTitle("新建节点", forState: .Normal)
-        button.setTitleColor(SpiderConfig.Color.DarkText, forState: .Normal)
-        button.titleLabel?.font = UIFont.systemFontOfSize(15)
+        button.backgroundColor = UIColor.white
+        button.setTitle("新建节点", for: UIControlState())
+        button.setTitleColor(SpiderConfig.Color.DarkText, for: UIControlState())
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 15)
         return button
     }()
     
-    private var newArticle: UIButton = {
+    fileprivate var newArticle: UIButton = {
         let button = UIButton(frame: CGRect(x: 0, y: 0, width: 200, height: 40))
-        button.backgroundColor = UIColor.whiteColor()
-        button.setTitle("新建长文", forState: .Normal)
-        button.setTitleColor(SpiderConfig.Color.DarkText, forState: .Normal)
-        button.titleLabel?.font = UIFont.systemFontOfSize(15)
+        button.backgroundColor = UIColor.white
+        button.setTitle("新建长文", for: UIControlState())
+        button.setTitleColor(SpiderConfig.Color.DarkText, for: UIControlState())
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 15)
         return button
     }()
     
-    private lazy var addView: AddNewMindView = {
+    fileprivate lazy var addView: AddNewMindView = {
         let view = AddNewMindView()
         view.doneHandler = { [weak self] text in
             self?.doneHandler?(text, self!.type)
@@ -56,11 +56,11 @@ class OutlineNewView: UIView {
         
         switch state {
             
-        case .InNewMind, .NewMind:
+        case .inNewMind, .newMind:
             newMind.center = center
             addSubview(newMind)
             
-        case .NewBoth:
+        case .newBoth:
             newMind.center = CGPoint(x: center.x, y: center.y - 20.5)
             addSubview(newMind)
             newArticle.center = CGPoint(x: center.x, y: center.y + 20.5)
@@ -72,55 +72,55 @@ class OutlineNewView: UIView {
         
         tap = UITapGestureRecognizer(target: self, action: #selector(didTap))
         addGestureRecognizer(tap)
-        newMind.addTarget(self, action: #selector(newMindClicked), forControlEvents: .TouchUpInside)
-        newArticle.addTarget(self, action: #selector(newArticleClicked), forControlEvents: .TouchUpInside)
+        newMind.addTarget(self, action: #selector(newMindClicked), for: .touchUpInside)
+        newArticle.addTarget(self, action: #selector(newArticleClicked), for: .touchUpInside)
     }
     
-    func moveTo(view: UIView) {
+    func moveTo(_ view: UIView) {
         view.addSubview(self)
-        UIView.animateWithDuration(0.3) {
+        UIView.animate(withDuration: 0.3, animations: {
             self.alpha = 1
-        }
+        }) 
     }
     
-    func didTap(ges: UITapGestureRecognizer) {
+    func didTap(_ ges: UITapGestureRecognizer) {
         
-        UIView.animateWithDuration(0.3, animations: {
+        UIView.animate(withDuration: 0.3, animations: {
             self.alpha = 0
-        }) { done in
+        }, completion: { done in
             self.removeFromSuperview()
-        }
+        }) 
     }
     
     func newMindClicked() {
-        type = .Mind
+        type = .mind
         addTextView()
     }
     
     func newArticleClicked() {
-        type = .Article
+        type = .article
         addTextView()
     }
     
     func addTextView() {
-        tap.enabled = false
+        tap.isEnabled = false
         addView.alpha = 0
         addSubview(addView)
-        newArticle.hidden = true
-        newMind.hidden = true
+        newArticle.isHidden = true
+        newMind.isHidden = true
         
-        UIView.animateWithDuration(0.3, animations: {
+        UIView.animate(withDuration: 0.3, animations: {
             self.addView.alpha = 1
         }, completion: nil)
     }
     
     func quitAdd() {
-        UIView.animateWithDuration(0.3, animations: { 
+        UIView.animate(withDuration: 0.3, animations: { 
             self.alpha = 0
-        }) { done in
+        }, completion: { done in
             self.addView.removeFromSuperview()
             self.removeFromSuperview()
-        }
+        }) 
     }
         
     required init?(coder aDecoder: NSCoder) {

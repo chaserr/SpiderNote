@@ -14,7 +14,7 @@ public struct TXDiskCacheHelper {
     /**
      本地缓存对象
      */
-    static func saveObj(key:String,value:AnyObject?,completeHandler:(()->())? = nil){
+    static func saveObj(_ key:String,value:AnyObject?,completeHandler:(()->())? = nil){
         
         TXDiskCache.sharedCacheObj.stroe(key, value: value, image: nil, data: nil, completeHandler: completeHandler)
         
@@ -23,7 +23,7 @@ public struct TXDiskCacheHelper {
     /**
      本地缓存图片
      */
-    static func saveImg(key:String,image:UIImage?,completeHandler:(()->())? = nil){
+    static func saveImg(_ key:String,image:UIImage?,completeHandler:(()->())? = nil){
         
         TXDiskCache.sharedCacheImage.stroe(key, value: nil, image: image, data: nil, completeHandler: completeHandler)
         
@@ -32,7 +32,7 @@ public struct TXDiskCacheHelper {
     /**
      本地缓存音频 或者其他 NSData类型
      */
-    static func saveVoc(key:String,data:NSData?,completeHandler:(()->())? = nil){
+    static func saveVoc(_ key:String,data:Data?,completeHandler:(()->())? = nil){
         
         TXDiskCache.sharedCacheVoice.stroe(key, value: nil, image: nil, data: data, completeHandler: completeHandler)
         
@@ -41,7 +41,7 @@ public struct TXDiskCacheHelper {
     /**
      获得本地缓存的对象
      */
-    static func getObj(key:String,compelete:((obj:AnyObject?)->())){
+    static func getObj(_ key:String,compelete:@escaping ((_ obj:AnyObject?)->())){
         
         TXDiskCache.sharedCacheObj.retrieve(key, objectGetHandler: compelete, imageGetHandler: nil, voiceGetHandler: nil)
         
@@ -50,7 +50,7 @@ public struct TXDiskCacheHelper {
     /**
      获得本地缓存的图像
      */
-    static func getImg(key:String,compelete:((image:UIImage?)->())){
+    static func getImg(_ key:String,compelete:@escaping ((_ image:UIImage?)->())){
         
         TXDiskCache.sharedCacheImage.retrieve(key, objectGetHandler: nil, imageGetHandler: compelete, voiceGetHandler: nil)
         
@@ -59,7 +59,7 @@ public struct TXDiskCacheHelper {
     /**
      获得本地缓存的音频数据文件
      */
-    static func getVoc(key:String,compelete:((data:NSData?)->())){
+    static func getVoc(_ key:String,compelete:@escaping ((_ data:Data?)->())){
         
         TXDiskCache.sharedCacheVoice.retrieve(key, objectGetHandler: nil, imageGetHandler: nil, voiceGetHandler: compelete)
         

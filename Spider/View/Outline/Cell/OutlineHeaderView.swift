@@ -13,26 +13,26 @@ class OutlineHeaderView: UIView {
     var putInHandler: (() -> Void)?
     var addHandler: ((String, MindType) -> Void)?
     
-    private var state: OutlineState = .MoveMind
+    fileprivate var state: OutlineState = .MoveMind
     
-    private lazy var putInButton: UIButton = {
+    fileprivate lazy var putInButton: UIButton = {
         let button = UIButton(frame: CGRect(x: 10, y: (kOutlineCellHeight - 35) / 2, width: 85, height: 35))
-        button.setImage(UIImage(named: "outline_label"), forState: .Normal)
-        button.addTarget(self, action: #selector(putInButtonClicked), forControlEvents: .TouchUpInside)
+        button.setImage(UIImage(named: "outline_label"), for: UIControlState())
+        button.addTarget(self, action: #selector(putInButtonClicked), for: .touchUpInside)
         return button
     }()
     
-    private lazy var doneButton: UIButton = {
+    fileprivate lazy var doneButton: UIButton = {
         let button = UIButton(frame: CGRect(x: 20 + 85, y: (kOutlineCellHeight - 30) / 2, width: 30, height: 30))
-        button.setImage(UIImage(named: "outline_done"), forState: .Normal)
-        button.addTarget(self, action: #selector(doneButtonClicked), forControlEvents: .TouchUpInside)
+        button.setImage(UIImage(named: "outline_done"), for: UIControlState())
+        button.addTarget(self, action: #selector(doneButtonClicked), for: .touchUpInside)
         return button
     }()
     
-    private lazy var moreButton: UIButton = {
+    fileprivate lazy var moreButton: UIButton = {
         let button = UIButton(frame: CGRect(x: 20 + 85, y: (kOutlineCellHeight - 30) / 2, width: 30, height: 30))
-        button.setImage(UIImage(named: "outline_more"), forState: .Normal)
-        button.addTarget(self, action: #selector(moreButtonClicked), forControlEvents: .TouchUpInside)
+        button.setImage(UIImage(named: "outline_more"), for: UIControlState())
+        button.addTarget(self, action: #selector(moreButtonClicked), for: .touchUpInside)
         return button
     }()
     
@@ -50,8 +50,8 @@ class OutlineHeaderView: UIView {
     }
     
     func putInButtonClicked() {
-        if !doneButton.isDescendantOfView(self) {
-            UIView.animateWithDuration(0.3, animations: { 
+        if !doneButton.isDescendant(of: self) {
+            UIView.animate(withDuration: 0.3, animations: { 
                 self.moreButton.frame.origin.x = 20 + 85 + 40
                 self.addSubview(self.doneButton)
             })
@@ -69,7 +69,7 @@ class OutlineHeaderView: UIView {
     func moreButtonClicked() {
         guard let currentVC = APP_NAVIGATOR.topVC?.presentedViewController else { return }
         
-        let addView = OutlineNewView(state: state == .MoveMind ? .NewMind : .NewBoth)
+        let addView = OutlineNewView(state: state == .MoveMind ? .newMind : .newBoth)
         
         addView.doneHandler = { [weak self] (text, type) in
             self?.addHandler?(text, type)

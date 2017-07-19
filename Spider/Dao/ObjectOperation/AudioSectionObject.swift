@@ -20,12 +20,12 @@ class AudioSectionObject: Object {
     
     dynamic var audioTagIds: String = ""
     /** 标记 */
-    let tags = List<TagObject>()
+    var tags = List<TagObject>()
     
     convenience init(url: String, duration: String) {
         self.init()
         
-        self.id = NSUUID().UUIDString
+        self.id = UUID().uuidString
         self.url = url
         self.duration = duration
     }
@@ -37,7 +37,7 @@ class AudioSectionObject: Object {
 
 public struct AudioInfo {
     var id: String  = ""
-    var url: NSURL? = nil
+    var url: URL? = nil
     var duration: String = ""
     var ownerID: String = ""
     

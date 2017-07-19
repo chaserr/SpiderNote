@@ -18,39 +18,39 @@ class PicAddTextTagView: UIView {
     
     lazy var textView: UITextView = {
         let view = UITextView(frame: CGRect(x: 10, y: 10, width: kScreenWidth - 20, height: 70))
-        view.textColor = UIColor.blackColor()
-        view.font = UIFont.systemFontOfSize(14)
-        view.returnKeyType = .Done
+        view.textColor = UIColor.black
+        view.font = UIFont.systemFont(ofSize: 14)
+        view.returnKeyType = .done
         view.delegate = self
         view.enablesReturnKeyAutomatically = true
         return view
     }()
     
-    lazy private var doneButton: UIButton = {
+    lazy fileprivate var doneButton: UIButton = {
         let button = UIButton(frame: CGRect(x: kScreenWidth - 10 - 40, y: kTagTextViewH - 9 - 20, width: 40, height: 20))
         
-        button.setTitle("完成", forState: .Normal)
-        button.titleLabel?.font = UIFont.systemFontOfSize(10)
-        button.titleLabel?.textColor = UIColor.whiteColor()
-        button.titleLabel?.textAlignment = .Center
+        button.setTitle("完成", for: UIControlState())
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 10)
+        button.titleLabel?.textColor = UIColor.white
+        button.titleLabel?.textAlignment = .center
         
         button.backgroundColor = enableColor
         button.layer.cornerRadius = 2.0
-        button.addTarget(self, action: #selector(self.doneClicked), forControlEvents: .TouchUpInside)
+        button.addTarget(self, action: #selector(self.doneClicked), for: .touchUpInside)
         return button
     }()
     
-    lazy private var cancelButton: UIButton = {
+    lazy fileprivate var cancelButton: UIButton = {
         let button = UIButton(frame: CGRect(x: 10, y: kTagTextViewH - 9 - 20, width: 40, height: 20))
         
-        button.setTitle("取消", forState: .Normal)
-        button.titleLabel?.font = UIFont.systemFontOfSize(10)
-        button.titleLabel?.textColor = UIColor.whiteColor()
-        button.titleLabel?.textAlignment = .Center
+        button.setTitle("取消", for: UIControlState())
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 10)
+        button.titleLabel?.textColor = UIColor.white
+        button.titleLabel?.textAlignment = .center
         
         button.backgroundColor = enableColor
         button.layer.cornerRadius = 2.0
-        button.addTarget(self, action: #selector(self.cancelClicked), forControlEvents: .TouchUpInside)
+        button.addTarget(self, action: #selector(self.cancelClicked), for: .touchUpInside)
         return button
     }()
     
@@ -66,7 +66,7 @@ class PicAddTextTagView: UIView {
         bgView.addSubview(textView)
         
         if text.isEmpty {
-            doneButton.enabled = false
+            doneButton.isEnabled = false
             doneButton.backgroundColor = disableColor
         }
         bgView.addSubview(doneButton)
@@ -92,13 +92,13 @@ class PicAddTextTagView: UIView {
 }
 
 extension PicAddTextTagView: UITextViewDelegate {
-    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         
         if textView.text.isEmpty {
-            doneButton.enabled = false
+            doneButton.isEnabled = false
             doneButton.backgroundColor = disableColor
         } else {
-            doneButton.enabled = true
+            doneButton.isEnabled = true
             doneButton.backgroundColor = enableColor
         }
         

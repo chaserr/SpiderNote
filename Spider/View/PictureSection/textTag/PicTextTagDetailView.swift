@@ -17,11 +17,11 @@ class PicTextTagDetailView: UITextView {
         
         backgroundColor = UIColor(white: 0, alpha: 0.5)
         self.text = text
-        font = UIFont.systemFontOfSize(13)
-        textColor = UIColor.whiteColor()
+        font = UIFont.systemFont(ofSize: 13)
+        textColor = UIColor.white
         
         textContainerInset = UIEdgeInsets(top: 7, left: 10, bottom: 15, right: 10)
-        editable = false
+        isEditable = false
     }
     
     required init?(coder aDecoder: NSCoder) {

@@ -19,34 +19,34 @@ class ArticleBaseCell: UITableViewCell {
         }
     }
         
-    private var addSectionView: AddSectionView = {
+    fileprivate var addSectionView: AddSectionView = {
         return AddSectionView()
     }()
     
-    private lazy var topSeparator: UIView = {
+    fileprivate lazy var topSeparator: UIView = {
         let view = UIView(frame: CGRect(x: 0, y: 0, width: kScreenWidth, height: 4))
         view.backgroundColor = SpiderConfig.Color.EditTheme
         return view
     }()
     
-    private lazy var chooseView: UIView = {
+    fileprivate lazy var chooseView: UIView = {
         let view = UIView(frame: CGRect(x: kScreenWidth - 6 - 18, y: 4, w: 18, h: 18))
         view.layer.borderWidth = 1.0
-        view.layer.borderColor = UIColor.color(withHex: 0xf8f8f8).CGColor
+        view.layer.borderColor = UIColor.color(withHex: 0xf8f8f8).cgColor
         view.addSubview(self.chooseIndicator)
         return view
     }()
     
-    private lazy var chooseIndicator: UIView = {
+    fileprivate lazy var chooseIndicator: UIView = {
         let view = UIView(frame: CGRect(x: 4, y: 4, w: 10, h: 10))
         view.backgroundColor = unChooseColor
         return view
     }()
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: .Default, reuseIdentifier: reuseIdentifier)
+        super.init(style: .default, reuseIdentifier: reuseIdentifier)
         
-        selectionStyle = .None
+        selectionStyle = .none
         
         contentView.addSubview(addSectionView)
         addSectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -57,21 +57,21 @@ class ArticleBaseCell: UITableViewCell {
         }
     }
     
-    func configureSection(layout: SectionLayout, editing: Bool) {
+    func configureSection(_ layout: SectionLayout, editing: Bool) {
         
         if editing {
             
-            addSectionView.hidden = true
+            addSectionView.isHidden = true
             
-            if !chooseView.isDescendantOfView(contentView) { contentView.addSubview(chooseView) }
-            if !topSeparator.isDescendantOfView(contentView) { contentView.addSubview(topSeparator) }
+            if !chooseView.isDescendant(of: contentView) { contentView.addSubview(chooseView) }
+            if !topSeparator.isDescendant(of: contentView) { contentView.addSubview(topSeparator) }
             
             chooseIndicator.backgroundColor = layout.selected ? choosedColor : unChooseColor
             contentView.alpha = layout.selected ? 1 : 0.6
             
         } else {
             
-            addSectionView.hidden = false
+            addSectionView.isHidden = false
             chooseView.removeFromSuperview()
             topSeparator.removeFromSuperview()
             

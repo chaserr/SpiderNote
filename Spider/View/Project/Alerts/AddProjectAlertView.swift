@@ -13,22 +13,22 @@ private let themeColor = UIColor.color(withHex: 0x18BD83)
 
 final class AddProjectAlertView: UIView {
     var addProjectHandler: ((String) -> Void)!
-    private var isDone = false
+    fileprivate var isDone = false
     
-    private lazy var titleLabel: UILabel = {
+    fileprivate lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.text = "新建项目"
-        label.font = UIFont.systemFontOfSize(17)
+        label.font = UIFont.systemFont(ofSize: 17)
         label.textColor = UIColor.color(withHex: 0x555555)
-        label.textAlignment = .Center
+        label.textAlignment = .center
         
         return label
     }()
     
-    private lazy var textField: UITextField = {
+    fileprivate lazy var textField: UITextField = {
         let field = UITextField()
         field.placeholder = "请输入项目名"
-        field.font = UIFont.systemFontOfSize(14)
+        field.font = UIFont.systemFont(ofSize: 14)
         field.layer.cornerRadius = 2.0
         
         field.tintColor = themeColor
@@ -36,11 +36,11 @@ final class AddProjectAlertView: UIView {
         field.backgroundColor = UIColor.color(withHex: 0xf0f0f0)
         
         field.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 30))
-        field.leftViewMode = .Always
+        field.leftViewMode = .always
         return field
     }()
     
-    private lazy var alertContainter: UIView = {
+    fileprivate lazy var alertContainter: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 3.0
         view.layer.masksToBounds = true
@@ -48,22 +48,22 @@ final class AddProjectAlertView: UIView {
         return view
     }()
     
-    private lazy var cancelButton: UIButton = {
+    fileprivate lazy var cancelButton: UIButton = {
         let button = UIButton()
-        button.backgroundColor = UIColor.whiteColor()
-        button.setTitle("取消", forState: .Normal)
-        button.setTitleColor(UIColor.color(withHex: 0x888888), forState: .Normal)
-        button.titleLabel?.font = UIFont.systemFontOfSize(15)
+        button.backgroundColor = UIColor.white
+        button.setTitle("取消", for: UIControlState())
+        button.setTitleColor(UIColor.color(withHex: 0x888888), for: UIControlState())
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 15)
         return button
     }()
     
-    private lazy var doneButton: UIButton = {
+    fileprivate lazy var doneButton: UIButton = {
         let button = UIButton()
-        button.backgroundColor = UIColor.whiteColor()
-        button.setTitle("确定", forState: .Normal)
-        button.setTitleColor(themeColor, forState: .Normal)
-        button.setTitleColor(SpiderConfig.Color.HintText, forState: .Disabled)
-        button.titleLabel?.font = UIFont.systemFontOfSize(15)
+        button.backgroundColor = UIColor.white
+        button.setTitle("确定", for: UIControlState())
+        button.setTitleColor(themeColor, for: UIControlState())
+        button.setTitleColor(SpiderConfig.Color.HintText, for: .disabled)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 15)
         return button
     }()
     
@@ -76,48 +76,48 @@ final class AddProjectAlertView: UIView {
         alpha = 0.5
         makeUI()
         addActions()
-        doneButton.enabled = false
+        doneButton.isEnabled = false
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(keyboardWillShow), name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(keyboardWillHide), name: UIKeyboardWillHideNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
     }
     
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func keyboardWillShow(notification: NSNotification) {
+    func keyboardWillShow(_ notification: Notification) {
         guard let info = notification.userInfo else { return }
         
-        let keyboardFrame = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
+        let keyboardFrame = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue
         
         alertContainter.frame.origin.y = (keyboardFrame.origin.y - 150) / 2
 
-        UIView.animateWithDuration(0.7, animations: {
+        UIView.animate(withDuration: 0.7, animations: {
             self.alpha = 1
         })
     }
     
-    func keyboardWillHide(notification: NSNotification) {
+    func keyboardWillHide(_ notification: Notification) {
         guard let info = notification.userInfo else { return }
         
-        let duration: NSTimeInterval = (info[UIKeyboardAnimationDurationUserInfoKey] as! NSNumber).doubleValue
+        let duration: TimeInterval = (info[UIKeyboardAnimationDurationUserInfoKey] as! NSNumber).doubleValue
         
         if isDone {
             
-            UIView.animateWithDuration(duration*1.2, animations: {
+            UIView.animate(withDuration: duration*1.2, animations: {
                 self.alpha = 0
-            }) { done in
+            }, completion: { done in
                 self.removeFromSuperview()
-            }
+            }) 
             
         } else {
             
-            UIView.animateWithDuration(duration, animations: { 
+            UIView.animate(withDuration: duration, animations: { 
                 self.alpha = 0
             }, completion: { done in
                 self.removeFromSuperview()
@@ -128,8 +128,8 @@ final class AddProjectAlertView: UIView {
     // MARK: - Button Actions
     
     func addActions() {
-        cancelButton.addTarget(self, action: #selector(cancelButtonClicked), forControlEvents: .TouchUpInside)
-        doneButton.addTarget(self, action: #selector(doneButtonClicked), forControlEvents: .TouchUpInside)
+        cancelButton.addTarget(self, action: #selector(cancelButtonClicked), for: .touchUpInside)
+        doneButton.addTarget(self, action: #selector(doneButtonClicked), for: .touchUpInside)
         
         textField.becomeFirstResponder()
     }
@@ -140,7 +140,7 @@ final class AddProjectAlertView: UIView {
     }
     
     func doneButtonClicked() {
-        if let text = textField.text?.stringByReplacingOccurrencesOfString(" ", withString: "") where text.isEmpty {
+        if let text = textField.text?.replacingOccurrences(of: " ", with: ""), text.isEmpty {
             
             guard let currentVC = AppNavigator.instance?.topVC else { return }
             SpiderAlert.tellYou(message: "项目名不能为空！", inViewController: currentVC)
@@ -156,7 +156,7 @@ final class AddProjectAlertView: UIView {
     
     func makeUI() {
         let topContainter = UIView()
-        topContainter.backgroundColor = UIColor.whiteColor()
+        topContainter.backgroundColor = UIColor.white
         topContainter.addSubview(titleLabel)
         topContainter.addSubview(textField)
         textField.delegate = self
@@ -202,8 +202,8 @@ final class AddProjectAlertView: UIView {
 }
 
 extension AddProjectAlertView: UITextFieldDelegate {
-    func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
-        doneButton.enabled = true
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        doneButton.isEnabled = true
         return true
     }
 }

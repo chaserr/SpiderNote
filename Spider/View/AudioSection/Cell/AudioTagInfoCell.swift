@@ -13,11 +13,11 @@ private let cellID = "AudioSectionCellID"
 class AudioTagInfoCell: UITableViewCell {
     var tagInfoView: AudioTagCellContentView! //AudioTagInfoView!
     
-    private var tagInfo: AudioTagInfo!
+    fileprivate var tagInfo: AudioTagInfo!
     
     init(info: AudioTagInfo) {
-        super.init(style: .Default, reuseIdentifier: cellID)
-        selectionStyle = .None
+        super.init(style: .default, reuseIdentifier: cellID)
+        selectionStyle = .none
         tagInfo = info
         tagInfoView = AudioTagCellContentView(info: info) // AudioTagInfoView(info: info, height: height)
         contentView.addSubview(tagInfoView)

@@ -7,12 +7,12 @@
 //
 
 import UIKit
-let loopTime: NSTimeInterval = 60    //客户端在后台轮询时间，单位秒,
-let bgLoopTime: NSTimeInterval = 60   //客户端在前台轮询时间，单位秒
+let loopTime: TimeInterval = 60    //客户端在后台轮询时间，单位秒,
+let bgLoopTime: TimeInterval = 60   //客户端在前台轮询时间，单位秒
 
 class NotifyManager: NSObject {
 
-    var timer: NSTimer?
+    var timer: Timer?
     
     
     
@@ -29,7 +29,7 @@ class NotifyManager: NSObject {
     func start() -> Void {
         
         if timer == nil {
-            timer = NSTimer.scheduledTimerWithTimeInterval(bgLoopTime, target: self, selector: #selector(timerFire), userInfo: nil, repeats: true)
+            timer = Timer.scheduledTimer(timeInterval: bgLoopTime, target: self, selector: #selector(timerFire), userInfo: nil, repeats: true)
         }
     }
     
@@ -39,7 +39,7 @@ class NotifyManager: NSObject {
         timer = nil
     }
     
-    func timerFire(timer: NSTimer) -> Void {
+    func timerFire(_ timer: Timer) -> Void {
         
         
     }

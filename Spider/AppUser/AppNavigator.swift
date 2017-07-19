@@ -28,20 +28,20 @@ class AppNavigator: NSObject, CAAnimationDelegate {
     }
     
     // 显示模态视图
-    class func presentViewController(viewcontroller:UIViewController, animation:Bool, completion: (() -> Void)?) -> Void {
+    class func presentViewController(_ viewcontroller:UIViewController, animation:Bool, completion: (() -> Void)?) -> Void {
         let presentCon = AppNavigator.getInstance().mainNav?.presentedViewController
-        if presentCon != nil && (presentCon?.isKindOfClass(BaseNavViewController))! {
-            (presentCon as! BaseNavViewController).presentViewController(viewcontroller, animated: animation, completion: completion)
+        if presentCon != nil && (presentCon?.isKind(of: BaseNavViewController.self))! {
+            (presentCon as! BaseNavViewController).present(viewcontroller, animated: animation, completion: completion)
         }else{
         
-            AppNavigator.getInstance().mainNav?.presentViewController(viewcontroller, animated: animation, completion: completion)
+            AppNavigator.getInstance().mainNav?.present(viewcontroller, animated: animation, completion: completion)
         }
     }
     
     
     // 打开根视图界面
-    class func openMainNavControllerWithRoot(rootViewController:UIViewController, animated:Bool) -> Void {
-        let delegate:AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+    class func openMainNavControllerWithRoot(_ rootViewController:UIViewController, animated:Bool) -> Void {
+        let delegate:AppDelegate = UIApplication.shared.delegate as! AppDelegate
         
         // 执行动画
         if animated {
@@ -51,7 +51,7 @@ class AppNavigator: NSObject, CAAnimationDelegate {
             animation.timingFunction = CAMediaTimingFunction.init(name: kCAMediaTimingFunctionEaseInEaseOut)
             animation.type = kCATransitionFade
             animation.subtype = kCATransitionFromLeft
-            delegate.window?.layer.addAnimation(animation, forKey: "animation")
+            delegate.window?.layer.add(animation, forKey: "animation")
         }        
         
         let nav:BaseNavViewController = BaseNavViewController(rootViewController: rootViewController)
@@ -65,22 +65,22 @@ class AppNavigator: NSObject, CAAnimationDelegate {
     }
     
     // MARK: push操作
-    class func pushViewController(viewcontroller:UIViewController,animated:Bool) -> Void {
+    class func pushViewController(_ viewcontroller:UIViewController,animated:Bool) -> Void {
         // 如果不使用系统的动画，就是用自定义动画
         if animated == false {
-            let delegate:AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+            let delegate:AppDelegate = UIApplication.shared.delegate as! AppDelegate
             let animation:CATransition = CATransition()
 //            animation.delegate = self
             animation.duration = 0.2
             animation.timingFunction = CAMediaTimingFunction.init(name: kCAMediaTimingFunctionEaseInEaseOut)
             animation.type = kCATransitionFromRight
             
-            delegate.window?.layer.addAnimation(animation, forKey: "animation")
+            delegate.window?.layer.add(animation, forKey: "animation")
             
         }
         
         let pressentCon = (AppNavigator.getInstance().mainNav?.presentedViewController)
-        if pressentCon != nil && pressentCon?.isKindOfClass(BaseNavViewController) != nil {
+        if pressentCon != nil && pressentCon?.isKind(of: BaseNavViewController.self) != nil {
             (pressentCon as! BaseNavViewController).pushViewController(viewcontroller, animated: animated)
             
         } else{
@@ -90,10 +90,10 @@ class AppNavigator: NSObject, CAAnimationDelegate {
         
     }
     // MARK:pop操作
-    class func popViewControllerAnimated(animated:Bool) -> Void {
+    class func popViewControllerAnimated(_ animated:Bool) -> Void {
         // 如果不使用系统的动画，就是用自定义动画
         if animated == false {
-            let delegate:AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+            let delegate:AppDelegate = UIApplication.shared.delegate as! AppDelegate
             let animation:CATransition = CATransition.init()
 //            animation.delegate = self
             animation.duration = 0.2
@@ -101,15 +101,15 @@ class AppNavigator: NSObject, CAAnimationDelegate {
             animation.type = kCATransitionFade;
             animation.subtype = kCATransitionFromRight;
             
-            delegate.window?.layer.addAnimation(animation, forKey: "animation")
+            delegate.window?.layer.add(animation, forKey: "animation")
         }
         
         let pressentCon = (AppNavigator.getInstance().mainNav?.presentedViewController)
-        if pressentCon != nil && pressentCon?.isKindOfClass(BaseNavViewController) != nil {
-            (pressentCon as! BaseNavViewController).popViewControllerAnimated(animated)
+        if pressentCon != nil && pressentCon?.isKind(of: BaseNavViewController.self) != nil {
+            (pressentCon as! BaseNavViewController).popViewController(animated: animated)
         }else{
             
-            AppNavigator.getInstance().mainNav?.popViewControllerAnimated(animated)
+            AppNavigator.getInstance().mainNav?.popViewController(animated: animated)
         }
     }
     
@@ -121,13 +121,13 @@ class AppNavigator: NSObject, CAAnimationDelegate {
     }
     
     // MARK: push到根视图
-    class func popToRootViewController(animation:Bool) -> Void {
-        APP_NAVIGATOR.mainNav?.popToRootViewControllerAnimated(animation)
+    class func popToRootViewController(_ animation:Bool) -> Void {
+        APP_NAVIGATOR.mainNav?.popToRootViewController(animated: animation)
     }
     
     // 切换window根视图到注册/登录界面
-    class func openRegisterOrLoginViewControllerWithRoot(rootViewController:UIViewController, animated:Bool) -> Void {
-        let delegate:AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+    class func openRegisterOrLoginViewControllerWithRoot(_ rootViewController:UIViewController, animated:Bool) -> Void {
+        let delegate:AppDelegate = UIApplication.shared.delegate as! AppDelegate
         
         // 执行动画
         if !animated {
@@ -137,7 +137,7 @@ class AppNavigator: NSObject, CAAnimationDelegate {
             animation.timingFunction = CAMediaTimingFunction.init(name: kCAMediaTimingFunctionEaseInEaseOut)
             animation.type = kCATransitionFade
             animation.subtype = kCATransitionFromRight
-            delegate.window?.layer.addAnimation(animation, forKey: "animation")
+            delegate.window?.layer.add(animation, forKey: "animation")
         }
         
         let nav:BaseNavViewController = BaseNavViewController(rootViewController: rootViewController)
@@ -159,7 +159,7 @@ class AppNavigator: NSObject, CAAnimationDelegate {
     // 打开登录界面
     class func openLoginController() -> Void {
         let storyBoard = UIStoryboard.init(name: "RegisterLogin", bundle: nil)
-        let log: LoginVC = storyBoard.instantiateViewControllerWithIdentifier("LoginVC") as! LoginVC
+        let log: LoginVC = storyBoard.instantiateViewController(withIdentifier: "LoginVC") as! LoginVC
         let loginVCNav = BaseNavViewController(rootViewController: log)
         AppNavigator.presentViewController(loginVCNav, animation: true) {
             
@@ -169,7 +169,7 @@ class AppNavigator: NSObject, CAAnimationDelegate {
     // 打开登录界面
     class func openOtherAccountLoginController() -> Void {
         let storyBoard = UIStoryboard.init(name: "RegisterLogin", bundle: nil)
-        let log: OtherAccountLoginVC = storyBoard.instantiateViewControllerWithIdentifier("OtherAccountLoginVC") as! OtherAccountLoginVC
+        let log: OtherAccountLoginVC = storyBoard.instantiateViewController(withIdentifier: "OtherAccountLoginVC") as! OtherAccountLoginVC
         let loginVCNav = BaseNavViewController(rootViewController: log)
         AppNavigator.presentViewController(loginVCNav, animation: true) {
             

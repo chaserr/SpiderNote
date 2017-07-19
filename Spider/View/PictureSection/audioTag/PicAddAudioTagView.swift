@@ -14,65 +14,65 @@ class PicAddAudioTagView: UIView {
     var cancelRecorderHandler: (() -> Void)?
     var saveRecorderHandler: ((String, String) -> Void)?
     
-    private let audioID = NSUUID().UUIDString
+    fileprivate let audioID = UUID().uuidString
     
-    private lazy var recordSettings = {
-        return [AVSampleRateKey : NSNumber(float: Float(44100.0)),//声音采样率
-            AVFormatIDKey : NSNumber(unsignedInt: kAudioFormatMPEG4AAC),//编码格式
-            AVNumberOfChannelsKey : NSNumber(int: 2),//采集音轨
+    fileprivate lazy var recordSettings = {
+        return [AVSampleRateKey : NSNumber(value: Float(44100.0) as Float),//声音采样率
+            AVFormatIDKey : NSNumber(value: kAudioFormatMPEG4AAC as UInt32),//编码格式
+            AVNumberOfChannelsKey : NSNumber(value: 2 as Int32),//采集音轨
             AVEncoderBitRateKey : 64000,
-            AVEncoderAudioQualityKey : NSNumber(int: Int32(AVAudioQuality.Medium.rawValue))]//音频质量
+            AVEncoderAudioQualityKey : NSNumber(value: Int32(AVAudioQuality.medium.rawValue) as Int32)]//音频质量
     }()
     
-    lazy private var cancelButton: UIButton = {
+    lazy fileprivate var cancelButton: UIButton = {
         let button = UIButton(frame: CGRect(x: kScreenWidth - 20 - 14, y: 20, width: 14, height: 14))
-        button.setBackgroundImage(UIImage(named: "pic_record_cancel"), forState: .Normal)
+        button.setBackgroundImage(UIImage(named: "pic_record_cancel"), for: UIControlState())
         
-        button.addTarget(self, action: #selector(cancelRecord), forControlEvents: .TouchUpInside)
+        button.addTarget(self, action: #selector(cancelRecord), for: .touchUpInside)
         return button
     }()
     
-    lazy private var recordButton: UIButton = {
+    lazy fileprivate var recordButton: UIButton = {
         let button = UIButton()
         button.frame.size = CGSize(width: 94, height: 94)
         button.center = self.bottomView.getCenter()
-        button.setImage(UIImage(named: "pic_record_hold"), forState: .Normal)
+        button.setImage(UIImage(named: "pic_record_hold"), for: UIControlState())
         button.adjustsImageWhenHighlighted = false
         
-        button.addTarget(self, action: #selector(startRecord), forControlEvents: .TouchDown)
-        button.addTarget(self, action: #selector(doneRecord), forControlEvents: .TouchUpInside)
+        button.addTarget(self, action: #selector(startRecord), for: .touchDown)
+        button.addTarget(self, action: #selector(doneRecord), for: .touchUpInside)
         return button
     }()
     
-    lazy  private var timeLabel: UILabel = {
+    lazy  fileprivate var timeLabel: UILabel = {
         let label = UILabel()
         label.frame.size = CGSize(width: 60, height: 20)
-        label.textColor = UIColor.whiteColor()
-        label.font = UIFont.systemFontOfSize(15)
-        label.textAlignment = .Center
+        label.textColor = UIColor.white
+        label.font = UIFont.systemFont(ofSize: 15)
+        label.textAlignment = .center
         label.text = "00:\(recordTimeLimit)"
         label.center = CGPoint(x: kScreenWidth / 2, y: 30)
-        label.hidden = true
+        label.isHidden = true
         return label
     }()
     
-    lazy private var bottomView: UIView = {
+    lazy fileprivate var bottomView: UIView = {
         let view = UIView(frame: CGRect(x: 0, y: kScreenHeight - kPicRecordViewH, width: kScreenWidth, height: kPicRecordViewH))
         view.backgroundColor = UIColor(white: 0, alpha: 0.4)
         return view
     }()
     
-    private var doneView: UIView!
+    fileprivate var doneView: UIView!
     
-    private var recordTimer: NSTimer!
-    private var playTimer: NSTimer!
+    fileprivate var recordTimer: Timer!
+    fileprivate var playTimer: Timer!
     
-    private var recorder: AVAudioRecorder!
-    private var player: AVAudioPlayer!
-    private var timeOut = false
+    fileprivate var recorder: AVAudioRecorder!
+    fileprivate var player: AVAudioPlayer!
+    fileprivate var timeOut = false
     
-    private var duration = recordTimeLimit
-    private var playTime: NSTimeInterval = 0
+    fileprivate var duration = recordTimeLimit
+    fileprivate var playTime: TimeInterval = 0
     
     init() {
         super.init(frame: CGRect(x: 0, y: 0, width: kScreenWidth, height: kScreenHeight))
@@ -96,19 +96,19 @@ class PicAddAudioTagView: UIView {
             doneView = UIView(frame: CGRect(x: 0, y: kPicRecordViewH - 44, width: kScreenWidth, height: 44))
             
             let reRecordButton = UIButton(frame: CGRect(x: 0, y: 0, width: kScreenWidth / 2, height: 44))
-            reRecordButton.titleLabel?.font = UIFont.systemFontOfSize(16)
-            reRecordButton.titleLabel?.textColor = UIColor.whiteColor()
-            reRecordButton.titleLabel?.textAlignment = .Center
-            reRecordButton.addTarget(self, action: #selector(reRecord), forControlEvents: .TouchUpInside)
-            reRecordButton.setTitle("重录", forState: .Normal)
+            reRecordButton.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+            reRecordButton.titleLabel?.textColor = UIColor.white
+            reRecordButton.titleLabel?.textAlignment = .center
+            reRecordButton.addTarget(self, action: #selector(reRecord), for: .touchUpInside)
+            reRecordButton.setTitle("重录", for: UIControlState())
             doneView.addSubview(reRecordButton)
             
             let doneButton = UIButton(frame: CGRect(x: kScreenWidth / 2, y: 0, width: kScreenWidth / 2, height: 44))
-            doneButton.titleLabel?.font = UIFont.systemFontOfSize(16)
-            doneButton.titleLabel?.textColor = UIColor.whiteColor()
-            doneButton.titleLabel?.textAlignment = .Center
-            doneButton.addTarget(self, action: #selector(saveRecord), forControlEvents: .TouchUpInside)
-            doneButton.setTitle("添加", forState: .Normal)
+            doneButton.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+            doneButton.titleLabel?.textColor = UIColor.white
+            doneButton.titleLabel?.textAlignment = .center
+            doneButton.addTarget(self, action: #selector(saveRecord), for: .touchUpInside)
+            doneButton.setTitle("添加", for: UIControlState())
             doneView.addSubview(doneButton)
             
             let lineH = UIImageView(frame: CGRect(x: 0, y: 0, width: kScreenWidth, height: 0.5))
@@ -122,7 +122,7 @@ class PicAddAudioTagView: UIView {
             bottomView.addSubview(doneView)
         }
         
-        doneView.hidden = false
+        doneView.isHidden = false
     }
     
     func saveRecord() {
@@ -141,7 +141,7 @@ class PicAddAudioTagView: UIView {
     }
     
     func reRecord() {
-        if player.playing {
+        if player.isPlaying {
             player.stop()
         }
         
@@ -153,29 +153,29 @@ class PicAddAudioTagView: UIView {
         }
         
         if doneView != nil {
-            doneView.hidden = true
+            doneView.isHidden = true
         }
         
-        timeLabel.hidden = true
+        timeLabel.isHidden = true
         timeLabel.text = "00:\(recordTimeLimit)"
         duration = recordTimeLimit
         
-        recordButton.setImage(UIImage(named: "pic_record_hold"), forState: .Normal)
-        recordButton.removeTarget(nil, action: nil, forControlEvents: .AllTouchEvents)
-        recordButton.addTarget(self, action: #selector(startRecord), forControlEvents: .TouchDown)
-        recordButton.addTarget(self, action: #selector(doneRecord), forControlEvents: .TouchUpInside)
+        recordButton.setImage(UIImage(named: "pic_record_hold"), for: UIControlState())
+        recordButton.removeTarget(nil, action: nil, for: .allTouchEvents)
+        recordButton.addTarget(self, action: #selector(startRecord), for: .touchDown)
+        recordButton.addTarget(self, action: #selector(doneRecord), for: .touchUpInside)
     }
     
     func startRecord() {
-        recordButton.setImage(UIImage(named: "pic_recording"), forState: .Normal)
-        timeLabel.hidden = false
+        recordButton.setImage(UIImage(named: "pic_recording"), for: UIControlState())
+        timeLabel.isHidden = false
         
-        recordTimer = NSTimer(timeInterval: 1, target: self, selector: #selector(recordTimerAction), userInfo: nil, repeats: true)
-        NSRunLoop.mainRunLoop().addTimer(recordTimer, forMode: NSRunLoopCommonModes)
+        recordTimer = Timer(timeInterval: 1, target: self, selector: #selector(recordTimerAction), userInfo: nil, repeats: true)
+        RunLoop.main.add(recordTimer, forMode: RunLoopMode.commonModes)
         
         do {
             let audioURL = APP_UTILITY.getAudioFilePath(audioID)!
-            try recorder = AVAudioRecorder(URL: audioURL, settings: recordSettings)
+            try recorder = AVAudioRecorder(url: audioURL, settings: recordSettings)
             recorder.prepareToRecord()
             
             try AVAudioSession.sharedInstance().setActive(true)
@@ -195,14 +195,14 @@ class PicAddAudioTagView: UIView {
         if recordTimeLimit - duration < 1 {
             
             duration = recordTimeLimit
-            recordButton.setImage(UIImage(named: "pic_record_hold"), forState: .Normal)
+            recordButton.setImage(UIImage(named: "pic_record_hold"), for: UIControlState())
             SpiderAlert.alert(type: .ShortRecord, inView: bottomView)
             
         } else {
             
             do {
                 let audioURL = APP_UTILITY.getAudioFilePath(audioID)!
-                try player = AVAudioPlayer(contentsOfURL: audioURL, fileTypeHint: AVFileTypeAppleM4A)
+                try player = AVAudioPlayer(contentsOf: audioURL, fileTypeHint: AVFileTypeAppleM4A)
                 player.delegate = self
             } catch {
                 println("play tag error: \(error)")
@@ -210,9 +210,9 @@ class PicAddAudioTagView: UIView {
             
             showDoneView()
             
-            recordButton.setImage(UIImage(named: "pic_record_play"), forState: .Normal)
-            recordButton.removeTarget(nil, action: nil, forControlEvents: .AllTouchEvents)
-            recordButton.addTarget(self, action: #selector(play), forControlEvents: .TouchUpInside)
+            recordButton.setImage(UIImage(named: "pic_record_play"), for: UIControlState())
+            recordButton.removeTarget(nil, action: nil, for: .allTouchEvents)
+            recordButton.addTarget(self, action: #selector(play), for: .touchUpInside)
         }
     }
     
@@ -221,20 +221,20 @@ class PicAddAudioTagView: UIView {
         if timeOut {
             timeOut = false
         } else {
-            if player.playing {
+            if player.isPlaying {
                 
                 player.pause()
                 playTimer.invalidate()
                 playTimer = nil
                 
-                recordButton.setImage(UIImage(named: "pic_record_play"), forState: .Normal)
+                recordButton.setImage(UIImage(named: "pic_record_play"), for: UIControlState())
                 
             } else {
                 
-                playTimer = NSTimer(timeInterval: 1.0, target: self, selector: #selector(playTimerAction), userInfo: nil, repeats: true)
-                NSRunLoop.mainRunLoop().addTimer(playTimer, forMode: NSRunLoopCommonModes)
+                playTimer = Timer(timeInterval: 1.0, target: self, selector: #selector(playTimerAction), userInfo: nil, repeats: true)
+                RunLoop.main.add(playTimer, forMode: RunLoopMode.commonModes)
                 
-                recordButton.setImage(UIImage(named: "pic_record_pause"), forState: .Normal)
+                recordButton.setImage(UIImage(named: "pic_record_pause"), for: UIControlState())
                 player.play()
             }
         }
@@ -274,7 +274,7 @@ class PicAddAudioTagView: UIView {
 }
 
 extension PicAddAudioTagView: AVAudioPlayerDelegate {
-    func audioPlayerDidFinishPlaying(player: AVAudioPlayer, successfully flag: Bool) {
-        recordButton.setImage(UIImage(named: "pic_record_play"), forState: .Normal)
+    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+        recordButton.setImage(UIImage(named: "pic_record_play"), for: UIControlState())
     }
 }

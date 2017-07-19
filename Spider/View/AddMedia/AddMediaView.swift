@@ -14,18 +14,18 @@ class AddMediaView: UIVisualEffectView {
     
     var addPicHandler:   (() -> Void)?
     var addAudioHandler: (() -> Void)?
-    var addTextHandler:  (String -> Void)?
+    var addTextHandler:  ((String) -> Void)?
     
-    private enum MediaType: Int {
-        case Text  = 11
-        case Pic   = 22
-        case Audio = 33
+    fileprivate enum MediaType: Int {
+        case text  = 11
+        case pic   = 22
+        case audio = 33
     }
     
-    private var unDoc: Bool = false
+    fileprivate var unDoc: Bool = false
     
     init(unDoc: Bool) {
-        let blurEffect = UIBlurEffect(style: .ExtraLight)
+        let blurEffect = UIBlurEffect(style: .extraLight)
         super.init(effect: blurEffect)
         
         self.unDoc = unDoc
@@ -44,33 +44,33 @@ class AddMediaView: UIVisualEffectView {
         }
     }
     
-    func addTo(view: UIView) {
+    func addTo(_ view: UIView) {
         alpha = 0
         view.addSubview(self)
-        UIView.animateWithDuration(0.3) { 
+        UIView.animate(withDuration: 0.3, animations: { 
             self.alpha = 1
-        }
+        }) 
     }
     
     override func removeFromSuperview() {
-        UIView.animateWithDuration(0.3, animations: {
+        UIView.animate(withDuration: 0.3, animations: {
             self.alpha = 0.0
-        }) { done in
+        }, completion: { done in
             super.removeFromSuperview()
-        }
+        }) 
     }
     
-    func addMediaClicked(sender: UIButton) {
+    func addMediaClicked(_ sender: UIButton) {
         
         guard let type = MediaType(rawValue: sender.tag),
-                  currentVC = AppNavigator.instance?.topVC else {
+                  let currentVC = AppNavigator.instance?.topVC else {
                     
             return
         }
         
         switch type {
             
-        case .Text:
+        case .text:
 
             if unDoc {
                 
@@ -87,23 +87,23 @@ class AddMediaView: UIVisualEffectView {
                 addTextSectionView.moveTo(currentVC.view)
             }
 
-        case .Pic:
+        case .pic:
             
             let picker = TZImagePickerController(maxCount: 4, animated: false, completion: { [weak self] photos in
                 let vc = PicDetailViewController(photos: photos)
                 
                 if self!.unDoc {
-                    currentVC.presentViewController(vc, animated: true, completion: nil)
+                    currentVC.present(vc, animated: true, completion: nil)
                 } else {
                     APP_NAVIGATOR.mainNav?.pushViewController(vc, animated: true)
                 }
             })
             
-            currentVC.presentViewController(picker, animated: true, completion: nil)
+            currentVC.present(picker, animated: true, completion: nil)
 
-        case .Audio:
+        case .audio:
             
-            currentVC.presentViewController(AudioSectionViewController(), animated: true, completion: nil)
+            currentVC.present(AudioSectionViewController(), animated: true, completion: nil)
         }
         
         didTap()
@@ -134,11 +134,11 @@ class AddMediaView: UIVisualEffectView {
         let logoLabel = MediaLabel(frame: CGRect(x: 0, y: 0, width: logoS * 2, height: 40), text: "蜘蛛笔记")
         logoLabel.center = CGPoint(x: logo.center.x, y: logo.center.y + logoS / 2 + 35)
         if #available(iOS 8.2, *) {
-            logoLabel.font = UIFont.systemFontOfSize(20, weight: 30)
+            logoLabel.font = UIFont.systemFont(ofSize: 20, weight: 30)
         } else {
             // Fallback on earlier versions
         }
-        logoLabel.textColor = UIColor.whiteColor()
+        logoLabel.textColor = UIColor.white
         self.contentView.addSubview(logoLabel)
         
         let textLabel = MediaLabel(frame: CGRect(x: 0, y: 0, width: buttonS, height: labelH), text: "文字")
@@ -162,9 +162,9 @@ class AddMediaView: UIVisualEffectView {
 private class MediaLabel: UILabel {
     init(frame: CGRect, text: String) {
         super.init(frame: frame)
-        self.textAlignment = .Center
+        self.textAlignment = .center
         self.text = text
-        textColor = UIColor.grayColor()
+        textColor = UIColor.gray
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -177,10 +177,10 @@ private class MediaButton: UIButton {
         super.init(frame: CGRect(x: 0, y: 0, width: 60, height: 60))
         let centerX = superView.center.x + CGFloat(index - 2) * 120
         center = CGPoint(x: centerX, y: superView.center.y)
-        setImage(UIImage(named: imageName), forState: .Normal)
+        setImage(UIImage(named: imageName), for: UIControlState())
         tag = index * 11
         
-        addTarget(superView, action: #selector(AddMediaView.addMediaClicked(_:)), forControlEvents: .TouchUpInside)
+        addTarget(superView, action: #selector(AddMediaView.addMediaClicked(_:)), for: .touchUpInside)
     }
     
     required init?(coder aDecoder: NSCoder) {

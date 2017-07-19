@@ -34,17 +34,17 @@ class AboutMeVC: BaseTableViewController {
 
 extension AboutMeVC{
 
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    func numberOfSectionsInTableView(_ tableView: UITableView) -> Int {
         let sectionNum = self.cellTitle.count
         return sectionNum
     }
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let cellArr = self.cellTitle[section]
         return cellArr.count
     }
     
-    override func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         switch section {
         case 1,2:
             return 22
@@ -53,11 +53,11 @@ extension AboutMeVC{
         }
     }
     
-    func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let sectionHeader = UIView.init(frame: CGRectMake(0, 0, kScreenWidth, 22))
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let sectionHeader = UIView.init(frame: CGRect(x: 0, y: 0, width: kScreenWidth, height: 22))
         sectionHeader.backgroundColor = RGBCOLORV(0xfafafa)
-        let titleLabel = UILabel.init(frame:CGRectMake(10, 0, kScreenWidth - 20, 22))
-        titleLabel.textAlignment = NSTextAlignment.Left
+        let titleLabel = UILabel.init(frame:CGRect(x: 10, y: 0, width: kScreenWidth - 20, height: 22))
+        titleLabel.textAlignment = NSTextAlignment.left
         titleLabel.textColor = RGBCOLORV(0x999999)
         titleLabel.font = SYSTEMFONT(11)
         sectionHeader.addSubview(titleLabel)
@@ -75,7 +75,7 @@ extension AboutMeVC{
         return sectionHeader
     }
     
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForRowAtIndexPath indexPath: IndexPath) -> CGFloat {
         switch (indexPath.section, indexPath.row) {
         case (0, 0):
             return 180
@@ -87,11 +87,11 @@ extension AboutMeVC{
         }
     }
     
-    func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: IndexPath) -> CGFloat {
         return 55
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = AboutMeCell.cellWithTableView(tableView, indexPath: indexPath) as! AboutMeCell
         cell.setDefaultValue(indexPath, titleArray: cellTitle)
@@ -99,7 +99,7 @@ extension AboutMeVC{
         return cell
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAtIndexPath indexPath: IndexPath) {
         switch (indexPath.section, indexPath.row) {
         case (0,1):
             let modifyNickname = ModifyUserInfoVC.init(navigationTitle: "修改昵称", fromCell: cellTitle[0][1])
@@ -118,20 +118,20 @@ extension AboutMeVC{
 extension AboutMeVC{
     
     override func viewDidLayoutSubviews() {
-        if tableView.respondsToSelector(Selector("setSeparatorInset:")) {
-            tableView.separatorInset = UIEdgeInsetsZero
+        if tableView.responds(to: Selector("setSeparatorInset:")) {
+            tableView.separatorInset = UIEdgeInsets.zero
         }
-        if tableView.respondsToSelector(Selector("setLayoutMargins:")) {
-            tableView.layoutMargins = UIEdgeInsetsZero
+        if tableView.responds(to: Selector("setLayoutMargins:")) {
+            tableView.layoutMargins = UIEdgeInsets.zero
         }
     }
     
-    func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
-        if cell.respondsToSelector(Selector("setSeparatorInset:")) {
-            cell.separatorInset = UIEdgeInsetsZero
+    func tableView(_ tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: IndexPath) {
+        if cell.responds(to: Selector("setSeparatorInset:")) {
+            cell.separatorInset = UIEdgeInsets.zero
         }
-        if cell.respondsToSelector(Selector("setLayoutMargins:")) {
-            cell.layoutMargins = UIEdgeInsetsZero
+        if cell.responds(to: Selector("setLayoutMargins:")) {
+            cell.layoutMargins = UIEdgeInsets.zero
         }
     }
     
@@ -140,7 +140,7 @@ extension AboutMeVC{
 // MARK: 让tableview的section不悬停
 extension AboutMeVC{
     
-    func scrollViewDidScroll(scrollView: UIScrollView) {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let sectionHeaderHeight:CGFloat = 15
         if scrollView.contentOffset.y <= sectionHeaderHeight && scrollView.contentOffset.y >= 0 {
             scrollView.contentInset = UIEdgeInsetsMake(-scrollView.contentOffset.y, 0, 0, 0)

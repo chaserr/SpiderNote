@@ -26,12 +26,12 @@ class LocalPushManager: NSObject {
     required convenience init?(coder aDecoder: NSCoder) {
         self.init()
         // 因为这个检测不了Int型的属性，所以还是要手动添加归档
-        decodeAutoWithAutoCoder(aDecoder)
+        decodeAuto(withAutoCoder: aDecoder)
         
     }
     
-    func encodeWithCoder(aCoder: NSCoder) {
-        encodeAutoWithCoder(aCoder)
+    func encodeWithCoder(_ aCoder: NSCoder) {
+        encodeAuto(with: aCoder)
     }
     
     

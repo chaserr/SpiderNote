@@ -14,11 +14,11 @@ class BaseObject: NSObject, NSCoding {
     
     required init?(coder aDecoder: NSCoder) {
         super.init()
-        decodeAutoWithAutoCoder(aDecoder)
+        decodeAuto(withAutoCoder: aDecoder)
     }
     
-    func encodeWithCoder(aCoder: NSCoder) {
-        encodeAutoWithCoder(aCoder)
+    func encode(with aCoder: NSCoder) {
+        encodeAuto(with: aCoder)
         
 
     }

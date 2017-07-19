@@ -68,38 +68,38 @@ class AppUser: NSObject {
     required convenience init?(coder aDecoder: NSCoder) {
         self.init()
         // 因为这个检测不了Int型的属性，所以还是要手动添加归档
-        decodeAutoWithAutoCoder(aDecoder)
+        decodeAuto(withAutoCoder: aDecoder)
 //        account = aDecoder.decodeObjectForKey("account") as! String
 //        password = aDecoder.decodeObjectForKey("password") as! String
 //        token = aDecoder.decodeObjectForKey("token") as! String
 //        userId = aDecoder.decodeObjectForKey("userId") as! String
 //        nickName = aDecoder.decodeObjectForKey("nickName") as! String
-        autoSync = aDecoder.decodeObjectForKey("autoSync") as! Int
-        wifiSync = aDecoder.decodeObjectForKey("wifiSync") as! Int
+        autoSync = aDecoder.decodeObject(forKey: "autoSync") as! Int
+        wifiSync = aDecoder.decodeObject(forKey: "wifiSync") as! Int
 //        syncrate = aDecoder.decodeObjectForKey("syncrate") as! String
 //        uploadPhotoSizeLiimit = aDecoder.decodeObjectForKey("uploadPhotoSizeLiimit") as! String
 
         
     }
     
-    func encodeWithCoder(aCoder: NSCoder) {
-         encodeAutoWithCoder(aCoder)
+    func encodeWithCoder(_ aCoder: NSCoder) {
+         encodeAuto(with: aCoder)
 //        aCoder.encodeObject(account, forKey: "account")
 //        aCoder.encodeObject(password, forKey: "password")
 //        aCoder.encodeObject(self.userId, forKey: "userId")
 //        aCoder.encodeObject(nickName, forKey: "nickName")
-        aCoder.encodeObject(NSNumber.init(integer: autoSync), forKey: "autoSync")
-        aCoder.encodeObject(NSNumber.init(integer: wifiSync), forKey: "wifiSync")
+        aCoder.encode(NSNumber.init(value: autoSync as Int), forKey: "autoSync")
+        aCoder.encode(NSNumber.init(value: wifiSync as Int), forKey: "wifiSync")
 //        aCoder.encodeObject(syncrate, forKey: "syncrate")
 //        aCoder.encodeObject(uploadPhotoSizeLiimit, forKey: "uploadPhotoSizeLiimit")
 //        aCoder.encodeObject(token, forKey: "token")
     }
     
-    class func objectForKey(key:String) ->AnyObject?{
+    class func objectForKey(_ key:String) ->AnyObject?{
         
         let path = dataFilePathForKey(key)
         if path != nil {
-            let obj = NSKeyedUnarchiver.unarchiveObjectWithFile(path!)
+            let obj = NSKeyedUnarchiver.unarchiveObject(withFile: path!)
             
             return obj
         }else{
@@ -110,19 +110,19 @@ class AppUser: NSObject {
         
     }
     
-    class func setObject(value:AnyObject, key:String) -> AnyObject? {
+    class func setObject(_ value:AnyObject, key:String) -> AnyObject? {
         let path:String = dataFilePathForKey(key)!
         
         return NSKeyedArchiver.archiveRootObject(value, toFile: path)
     }
     
-    class func dataFilePathForKey(key:String) -> String? {
+    class func dataFilePathForKey(_ key:String) -> String? {
         let document = APP_UTILITY.userDocumentPath()
         let dir = document!.stringByAppendingPathComponent("userdata")
-        if !NSFileManager.defaultManager().fileExistsAtPath(dir) {
+        if !FileManager.default.fileExists(atPath: dir) {
             do{
                 
-                try NSFileManager.defaultManager().createDirectoryAtPath(dir, withIntermediateDirectories: true, attributes: nil)
+                try FileManager.default.createDirectory(atPath: dir, withIntermediateDirectories: true, attributes: nil)
                 
                 
             }catch let error as NSError{
@@ -143,34 +143,34 @@ class AppUser: NSObject {
     }
     
     /** 存储头像 */
-    func saveProtrialImage(image:UIImage, path:String) -> Bool {
-        let fileMgr = NSFileManager.defaultManager()
+    func saveProtrialImage(_ image:UIImage, path:String) -> Bool {
+        let fileMgr = FileManager.default
         let imageCacheMgrDir = getImageCachePath()
-        if !fileMgr.fileExistsAtPath(imageCacheMgrDir) {
+        if !fileMgr.fileExists(atPath: imageCacheMgrDir) {
             do{
                 
-                try NSFileManager.defaultManager().createDirectoryAtPath(imageCacheMgrDir, withIntermediateDirectories: true, attributes: nil)
+                try FileManager.default.createDirectory(atPath: imageCacheMgrDir, withIntermediateDirectories: true, attributes: nil)
             }catch let error as NSError{
                 
                 AODlog(error.description)
             }
         }
         
-        return (UIImageJPEGRepresentation(image, 0.6)?.writeToFile(imageCacheMgrDir.stringByAppendingPathComponent(path.md5()), atomically: true))!
+        return ((try? UIImageJPEGRepresentation(image, 0.6)?.write(to: URL(fileURLWithPath: imageCacheMgrDir.stringByAppendingPathComponent(path.md5())), options: [.atomic])) != nil)!
     }
     
     /** 读取数据 */
-    func readPhotoFromLocalCache(path:String) -> UIImage? {
+    func readPhotoFromLocalCache(_ path:String) -> UIImage? {
         // 图片缓存目录
         let imageCacheMgrDir:String = getImageCachePath()
         // 最终图片路径 = 图片缓存目录/url.md5
         let imageCacheMgrPath:String = imageCacheMgrDir.stringByAppendingPathComponent(path.md5())
         
-        var reader:NSData?
+        var reader:Data?
         
         do{
             
-            reader = try NSData.init(contentsOfFile: imageCacheMgrPath, options: NSDataReadingOptions.DataReadingMappedIfSafe)
+            reader = try Data.init(contentsOf: URL(fileURLWithPath: imageCacheMgrPath), options: NSData.ReadingOptions.mappedIfSafe)
             return UIImage.init(data: reader!)
 
         }catch let error as NSError{
@@ -182,15 +182,15 @@ class AppUser: NSObject {
     }
     
     /** 删除图片 */
-    func deleteProtrialFileWithPath(path:String) -> Bool {
+    func deleteProtrialFileWithPath(_ path:String) -> Bool {
         // 图片缓存目录
         let imageCacheMgrDir:String = getImageCachePath()
         // 最终图片路径 = 图片缓存目录/url.md5
         let imageCacheMgrPath:String = imageCacheMgrDir.stringByAppendingPathComponent(path.md5())
-        let fileMgr = NSFileManager.defaultManager()
+        let fileMgr = FileManager.default
         var isSucceed:Bool!
         do{
-            try fileMgr.removeItemAtPath(imageCacheMgrPath)
+            try fileMgr.removeItem(atPath: imageCacheMgrPath)
             isSucceed = true
             
         }catch let error as NSError{
@@ -208,7 +208,7 @@ class AppUser: NSObject {
     }
     
     func getCachePath() -> String {
-        let path:String = NSSearchPathForDirectoriesInDomains(.CachesDirectory, .UserDomainMask, true).first!
+        let path:String = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first!
         return path
         
     }

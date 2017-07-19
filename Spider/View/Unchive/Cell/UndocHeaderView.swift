@@ -10,12 +10,12 @@ import UIKit
 
 class UndocHeaderView: UICollectionReusableView {
     
-    private var beEditing = false
+    fileprivate var beEditing = false
     
-    private var timeLabel: UILabel = {
+    fileprivate var timeLabel: UILabel = {
         let label = UILabel()
         
-        label.font = UIFont.systemFontOfSize(14)
+        label.font = UIFont.systemFont(ofSize: 14)
         label.textColor = UIColor.color(withHex: 0x444444)
 
         return label
@@ -34,21 +34,21 @@ class UndocHeaderView: UICollectionReusableView {
         }
     }
     
-    func configureWith(time: String, beEditing: Bool = false) {
+    func configureWith(_ time: String, beEditing: Bool = false) {
         self.beEditing = beEditing
         timeLabel.text = time.toUndocHeaderTime()
-        backgroundColor = beEditing ? UIColor.clearColor() : UIColor.color(withHex: 0xfafafa)
+        backgroundColor = beEditing ? UIColor.clear : UIColor.color(withHex: 0xfafafa)
     }
     
-    override func drawRect(rect: CGRect) {
+    override func draw(_ rect: CGRect) {
         
         if !beEditing {
             let path = UIBezierPath()
-            path.moveToPoint(CGPointZero)
-            path.addLineToPoint(CGPoint(x: kScreenWidth, y: 0))
+            path.move(to: CGPoint.zero)
+            path.addLine(to: CGPoint(x: kScreenWidth, y: 0))
             
-            path.moveToPoint(CGPoint(x: 0, y: kBoxHeaderHeight))
-            path.addLineToPoint(CGPoint(x: kScreenWidth, y: kBoxHeaderHeight))
+            path.move(to: CGPoint(x: 0, y: kBoxHeaderHeight))
+            path.addLine(to: CGPoint(x: kScreenWidth, y: kBoxHeaderHeight))
             
             path.lineWidth = 1
             

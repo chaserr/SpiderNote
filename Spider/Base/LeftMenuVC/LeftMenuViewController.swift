@@ -11,7 +11,7 @@ import UIKit
 class LeftMenuViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate {
 
     enum Menu:Int {
-        case Main = 0
+        case main = 0
         case setting
         case feedback
     }
@@ -36,7 +36,7 @@ class LeftMenuViewController: UIViewController, UITableViewDelegate, UITableView
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = UIColor.whiteColor()
+        view.backgroundColor = UIColor.white
         // 添加子视图
         addSubView()
         // 添加约束
@@ -60,10 +60,10 @@ class LeftMenuViewController: UIViewController, UITableViewDelegate, UITableView
         tableView.delegate = self
         tableView.dataSource = self
         tableView.showsVerticalScrollIndicator = false
-        tableView.separatorStyle = UITableViewCellSeparatorStyle.None
+        tableView.separatorStyle = UITableViewCellSeparatorStyle.none
         view.addSubview(tableView)
-        let headerView = UIView.init(frame: CGRectMake(0, 0, tableView.w, 26))
-        headerView.backgroundColor = UIColor.whiteColor()
+        let headerView = UIView.init(frame: CGRect(x: 0, y: 0, width: tableView.w, height: 26))
+        headerView.backgroundColor = UIColor.white
         tableView.tableHeaderView = headerView
         tableView.tableFooterView = UIView()
         tableView.contentInset.top = 0
@@ -74,9 +74,9 @@ class LeftMenuViewController: UIViewController, UITableViewDelegate, UITableView
         headImageView = UIImageView.init(image: UIImage(named: "default_protrial"))
         //        headImageView.frame = CGRectMake(headX, headY, headH, headH)
         headImageView.clipsToBounds = true
-        headImageView.userInteractionEnabled = true
+        headImageView.isUserInteractionEnabled = true
         headImageView.layer.cornerRadius = headH/2
-        headImageView.autoresizingMask = .FlexibleTopMargin
+        headImageView.autoresizingMask = .flexibleTopMargin
         view.addSubview(headImageView)
         headImageView.addTapGesture { [unowned self] (tapGesture) in
             
@@ -115,9 +115,9 @@ class LeftMenuViewController: UIViewController, UITableViewDelegate, UITableView
         // 用户昵称
         nicknameLable = UILabel()
         nicknameLable.textColor = RGBCOLORV(0x555555)
-        nicknameLable.textAlignment = NSTextAlignment.Center
-        nicknameLable.font = UIFont.systemFontOfSize(14)
-        nicknameLable.autoresizingMask = .FlexibleTopMargin
+        nicknameLable.textAlignment = NSTextAlignment.center
+        nicknameLable.font = UIFont.systemFont(ofSize: 14)
+        nicknameLable.autoresizingMask = .flexibleTopMargin
         view.addSubview(nicknameLable)
         
         // 头部分割线
@@ -137,15 +137,15 @@ class LeftMenuViewController: UIViewController, UITableViewDelegate, UITableView
         footerButton = UIImageView()
         footerButton.image = UIImage(named: "lastTime_synch")
         footerButton.animationDuration = 1
-        footerButton.userInteractionEnabled = true
-        footerButton.contentMode = UIViewContentMode.Center
+        footerButton.isUserInteractionEnabled = true
+        footerButton.contentMode = UIViewContentMode.center
         footerButton.addTapGesture { [weak self] (UITapGestureRecognizer) in
             
             if APP_UTILITY.checkCurrentUser() {
             
                 // 异步线程同步
                 self!.startSync()
-                self!.footerButton.userInteractionEnabled = false
+                self!.footerButton.isUserInteractionEnabled = false
                 var paraDic = [String: AnyObject]()
                 let dic: Dictionary = SYNCPROMANAGER.getFirstRequestParam()
                 paraDic["projectInfo"] = dic.dicToJSON(dic)
@@ -178,7 +178,7 @@ class LeftMenuViewController: UIViewController, UITableViewDelegate, UITableView
     }
     
     
-    func uploadOperation(uploadProObjID: [String]) -> Void {
+    func uploadOperation(_ uploadProObjID: [String]) -> Void {
         var paraDic = [String: AnyObject]()
         let dic: Dictionary = UPLOADPROMANAGER.getSecondRequestParam(uploadProObjID)
         paraDic["projectInfo"] = dic.dicToJSON(dic)
@@ -201,17 +201,17 @@ class LeftMenuViewController: UIViewController, UITableViewDelegate, UITableView
             animation.byValue = (M_PI*2)
             animation.duration = 1.0
             animation.repeatCount = Float.infinity
-            animation.cumulative = true
-            animation.removedOnCompletion = false
-            self.footerButton.layer.addAnimation(animation, forKey: "rotation")
+            animation.isCumulative = true
+            animation.isRemovedOnCompletion = false
+            self.footerButton.layer.add(animation, forKey: "rotation")
             lock = true
         }
     }
     
     func endSync() -> Void {
         lock = false
-        footerButton.userInteractionEnabled = true
-        self.footerButton.layer.removeAnimationForKey("rotation")
+        footerButton.isUserInteractionEnabled = true
+        self.footerButton.layer.removeAnimation(forKey: "rotation")
     }
     
     func addViewConstranit() -> Void {
@@ -273,7 +273,7 @@ class LeftMenuViewController: UIViewController, UITableViewDelegate, UITableView
         }
     }
     
-    func updateInfo(notification:NSNotification) -> Void {
+    func updateInfo(_ notification:Notification) -> Void {
         
         AODlog(notification.userInfo)
         let name = notification.userInfo!["username"] as! String
@@ -295,24 +295,24 @@ class LeftMenuViewController: UIViewController, UITableViewDelegate, UITableView
 
 extension LeftMenuViewController{
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         return menus.count
     }
     
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 55
     }
     
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        var cell = tableView.dequeueReusableCellWithIdentifier("cell")
-        cell?.selectionStyle = UITableViewCellSelectionStyle.None
+        var cell = tableView.dequeueReusableCell(withIdentifier: "cell")
+        cell?.selectionStyle = UITableViewCellSelectionStyle.none
         
         if cell == nil {
             
-            cell = UITableViewCell.init(style: .Default, reuseIdentifier: "cell")
+            cell = UITableViewCell.init(style: .default, reuseIdentifier: "cell")
             cell?.textLabel?.textColor = RGBCOLORV(0x555555)
             cell?.textLabel?.font = SYSTEMFONT(14)
         }
@@ -333,7 +333,7 @@ extension LeftMenuViewController{
         
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         switch (indexPath.row) {
 //        case 0:

@@ -26,9 +26,9 @@ class VersionManage: NSObject {
     
     /**获取本地版本号*/
     func appLocalVersion() -> String {
-        let info:[String:AnyObject] = NSBundle.mainBundle().infoDictionary!
+        let info:[String:AnyObject] = Bundle.main.infoDictionary!
         let version:String = info["CFBundleVersion"] as! String
-        return version.stringByTrimmingCharactersInSet(NSCharacterSet.letterCharacterSet())
+        return version.trimmingCharacters(in: CharacterSet.letters)
         
     }
 
@@ -36,7 +36,7 @@ class VersionManage: NSObject {
     /** 是否显示引导页*/
     func showGuidePage() -> Bool {
         if Defaults.hasKey(CurrentAppVersionKey){
-            let version:String             = Defaults.objectForKey(CurrentAppVersionKey) as! String
+            let version:String             = Defaults.object(forKey: CurrentAppVersionKey) as! String
             if version == appLocalVersion() {
                 return false
             }else{

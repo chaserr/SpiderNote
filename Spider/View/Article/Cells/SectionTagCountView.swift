@@ -16,16 +16,16 @@ class SectionTagCountView: UIImageView {
         }
     }
     
-    private var label: UILabel!
+    fileprivate var label: UILabel!
     
     init() {
-        super.init(frame: CGRectZero)
+        super.init(frame: CGRect.zero)
         image = UIImage(named: "article_bookmark")
         
         label                           = UILabel()
-        label.font                      = UIFont.systemFontOfSize(10)
-        label.textColor                 = UIColor.whiteColor()
-        label.textAlignment             = .Center
+        label.font                      = UIFont.systemFont(ofSize: 10)
+        label.textColor                 = UIColor.white
+        label.textAlignment             = .center
         label.adjustsFontSizeToFitWidth = true
         
         addSubview(label)

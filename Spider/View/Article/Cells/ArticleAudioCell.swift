@@ -12,11 +12,11 @@ private let commonCenterY = kArticleAudioCellVS - kArticlePlusHeight / 2 + kArti
 
 class ArticleAudioCell: ArticleBaseCell {
     
-    private var beEditing = false
+    fileprivate var beEditing = false
     
-    private var audioPlayerView: AudioPlayerView!
+    fileprivate var audioPlayerView: AudioPlayerView!
     
-    private var tagCountView: SectionTagCountView = {
+    fileprivate var tagCountView: SectionTagCountView = {
         return SectionTagCountView()
     }()
     
@@ -37,7 +37,7 @@ class ArticleAudioCell: ArticleBaseCell {
         }
     }
     
-    func congfigureWithSection(section: SectionObject, layout: SectionLayout, editing: Bool) {
+    func congfigureWithSection(_ section: SectionObject, layout: SectionLayout, editing: Bool) {
         super.configureSection(layout, editing: editing)
         
         let audioInfo = AudioInfo(section: section)
@@ -48,7 +48,7 @@ class ArticleAudioCell: ArticleBaseCell {
             beEditing = editing
             
             audioPlayerView.center.y = editing ? frame.height / 2 + 2 : commonCenterY
-            tagCountView.hidden = editing
+            tagCountView.isHidden = editing
         }
     }
     

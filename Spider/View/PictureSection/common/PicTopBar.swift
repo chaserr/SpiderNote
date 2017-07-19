@@ -11,10 +11,10 @@ import UIKit
 private let cellID = "PicTopThumbCell"
 
 protocol PicTopBarDelegate: class {
-    func didSelectItemAtIndex(index: Int)
+    func didSelectItemAtIndex(_ index: Int)
     func addPicClicked()
     func beginDeleting()
-    func deletePicAtIndex(index: Int)
+    func deletePicAtIndex(_ index: Int)
 }
 
 class PicTopBar: UIView {
@@ -23,40 +23,40 @@ class PicTopBar: UIView {
     
     var cancelHandler:      (() -> Void)?
     var doneHandler:        (() -> Void)?
-    var deleteHandler:      (Int -> Void)?
+    var deleteHandler:      ((Int) -> Void)?
     var beginDeleteHandler: (() -> Void)?
-    var selectPicHandler:   (Int -> Void)?
+    var selectPicHandler:   ((Int) -> Void)?
     var addPicHandler:      (() -> Void)?
     
-    private var picSource = [UIImage?]()
+    fileprivate var picSource = [UIImage?]()
     
-    private var lastIndex = NSIndexPath(forItem: 0, inSection: 0)
-    private var deleteIndex: NSIndexPath? = nil
-    private var cellFrames = [CGRect]()
+    fileprivate var lastIndex = IndexPath(item: 0, section: 0)
+    fileprivate var deleteIndex: IndexPath? = nil
+    fileprivate var cellFrames = [CGRect]()
     
-    private lazy var cancelButton : UIButton! = {
+    fileprivate lazy var cancelButton : UIButton! = {
         let button = UIButton(frame: CGRect(x: kPicBackRO, y: kPicBackOy, width: kPicBackS, height: kPicBackS))
-        button.setBackgroundImage(UIImage(named: "pic_cancel_button"), forState: .Normal)
-        button.addTarget(self, action: #selector(cancelButtonClicked), forControlEvents: .TouchUpInside)
+        button.setBackgroundImage(UIImage(named: "pic_cancel_button"), for: UIControlState())
+        button.addTarget(self, action: #selector(cancelButtonClicked), for: .touchUpInside)
         return button
     }()
     
-    private lazy var doneButton: UIButton! = {
+    fileprivate lazy var doneButton: UIButton! = {
         let button = UIButton(frame: CGRect(x: kPicDoneOx, y: kPicDoneOy, width: kPicDoneW, height: kPicDoneH))
-        button.setBackgroundImage(UIImage(named: "pic_done_button"), forState: .Normal)
-        button.addTarget(self, action: #selector(doneButtonClicked), forControlEvents: .TouchUpInside)
+        button.setBackgroundImage(UIImage(named: "pic_done_button"), for: UIControlState())
+        button.addTarget(self, action: #selector(doneButtonClicked), for: .touchUpInside)
         return button
     }()
     
-    private lazy var thumbView: UICollectionView! = {
+    fileprivate lazy var thumbView: UICollectionView! = {
         let layout = UICollectionViewFlowLayout()
         layout.itemSize = CGSize(width: kPicThumbS, height: kPicThumbS)
         layout.minimumInteritemSpacing = 8
         layout.sectionInset = UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 0)
         
         let view = UICollectionView(frame: CGRect(x: kPicThumbOx, y: kPicThumbOy - 10, width: kPicThumbsW, height: kPicThumbS+20), collectionViewLayout: layout)
-        view.backgroundColor = UIColor.clearColor()
-        view.registerClass(PicTopToolBarCell.self, forCellWithReuseIdentifier: cellID)
+        view.backgroundColor = UIColor.clear
+        view.register(PicTopToolBarCell.self, forCellWithReuseIdentifier: cellID)
         view.delegate = self
         view.dataSource = self
         
@@ -80,35 +80,35 @@ class PicTopBar: UIView {
         thumbView.addGestureRecognizer(longPress)
     }
     
-    func update(image: UIImage?, at index: Int) {   // 加载完图片资源后更新图片
+    func update(_ image: UIImage?, at index: Int) {   // 加载完图片资源后更新图片
         picSource[index] = image
         
-        let indexPath = NSIndexPath(forItem: index, inSection: 0)
-        guard let cell = thumbView.cellForItemAtIndexPath(indexPath) as? PicTopToolBarCell else { return }
+        let indexPath = IndexPath(item: index, section: 0)
+        guard let cell = thumbView.cellForItem(at: indexPath) as? PicTopToolBarCell else { return }
         
         cell.imageView.image = image
     }
     
-    func didLongPress(sender: UILongPressGestureRecognizer) {
+    func didLongPress(_ sender: UILongPressGestureRecognizer) {
         
-        if sender.state == .Began {
+        if sender.state == .began {
             
             cancelDelete()
-            let location = sender.locationInView(thumbView)
+            let location = sender.location(in: thumbView)
             
             for i in 0 ..< cellFrames.count {
                 
                 if cellFrames.count > 2 {
                     
-                    if CGRectContainsPoint(cellFrames[i], location) {
+                    if cellFrames[i].contains(location) {
                         
                         if i != picSource.count - 1 {
                             
                             beginDeleteHandler?()
                             
-                            deleteIndex = NSIndexPath(forItem: i, inSection: 0)
+                            deleteIndex = IndexPath(item: i, section: 0)
                             
-                            let cell = thumbView.cellForItemAtIndexPath(deleteIndex!) as! PicTopToolBarCell
+                            let cell = thumbView.cellForItem(at: deleteIndex!) as! PicTopToolBarCell
                             cell.toDelete()
                         }
                         
@@ -126,7 +126,7 @@ class PicTopBar: UIView {
     func cancelDelete() {
         
         if deleteIndex != nil {
-            let cell = thumbView.cellForItemAtIndexPath(deleteIndex!) as! PicTopToolBarCell
+            let cell = thumbView.cellForItem(at: deleteIndex!) as! PicTopToolBarCell
             cell.cancelDelete()
             deleteIndex = nil
         }
@@ -134,12 +134,12 @@ class PicTopBar: UIView {
 
     // 添加照片后更新
     
-    func addPics(images: [UIImage]) {
+    func addPics(_ images: [UIImage]) {
         
-        let lastCell = thumbView.cellForItemAtIndexPath(lastIndex) as! PicTopToolBarCell
+        let lastCell = thumbView.cellForItem(at: lastIndex) as! PicTopToolBarCell
         lastCell.deselct()
         
-        lastIndex = NSIndexPath(forItem: picSource.count - 1, inSection: 0)
+        lastIndex = IndexPath(item: picSource.count - 1, section: 0)
         picSource.removeLast()
         
         for image in images {
@@ -152,28 +152,28 @@ class PicTopBar: UIView {
     }
     
     // 更新为当前显示的图片
-    func updateIndex(index: Int) {
+    func updateIndex(_ index: Int) {
         
-        let lastCell = thumbView.cellForItemAtIndexPath(lastIndex) as! PicTopToolBarCell
+        let lastCell = thumbView.cellForItem(at: lastIndex) as! PicTopToolBarCell
         lastCell.deselct()
         
-        lastIndex = NSIndexPath(forItem: index, inSection: 0)
-        let cell = thumbView.cellForItemAtIndexPath(lastIndex) as! PicTopToolBarCell
+        lastIndex = IndexPath(item: index, section: 0)
+        let cell = thumbView.cellForItem(at: lastIndex) as! PicTopToolBarCell
         cell.select()
     }
     
     // 重新载入
-    func reset(images: [UIImage?]) {
+    func reset(_ images: [UIImage?]) {
         
         picSource = images
         picSource.append(UIImage(named: "pic_add_pic_button")!)
         
         cancelDelete()
         
-        let lastCell = thumbView.cellForItemAtIndexPath(lastIndex) as! PicTopToolBarCell
+        let lastCell = thumbView.cellForItem(at: lastIndex) as! PicTopToolBarCell
         lastCell.deselct()
         
-        lastIndex = NSIndexPath(forItem: 0, inSection: 0)
+        lastIndex = IndexPath(item: 0, section: 0)
 
         thumbView.reloadData()
     }
@@ -193,17 +193,17 @@ class PicTopBar: UIView {
 
 extension PicTopBar: UICollectionViewDelegate {
     
-    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         if deleteIndex != nil {
             if indexPath == deleteIndex! {  // 删除选中的图片
                 cancelDelete()
                 
                 // -Bug: cell复用
-                let lastCell = collectionView.cellForItemAtIndexPath(lastIndex) as! PicTopToolBarCell
+                let lastCell = collectionView.cellForItem(at: lastIndex) as! PicTopToolBarCell
                 lastCell.deselct()
                 
-                picSource.removeAtIndex(indexPath.item)
+                picSource.remove(at: indexPath.item)
                 
                 // 当前选框的移动
                 var moveIndex = lastIndex.item
@@ -220,7 +220,7 @@ extension PicTopBar: UICollectionViewDelegate {
                     }
                 }
                 
-                lastIndex = NSIndexPath(forItem: moveIndex, inSection: 0)
+                lastIndex = IndexPath(item: moveIndex, section: 0)
                 
                 cellFrames.removeAll()
                 thumbView.reloadData()
@@ -233,7 +233,7 @@ extension PicTopBar: UICollectionViewDelegate {
             
         } else {
             
-            let lastCell = collectionView.cellForItemAtIndexPath(lastIndex) as! PicTopToolBarCell
+            let lastCell = collectionView.cellForItem(at: lastIndex) as! PicTopToolBarCell
             
             if indexPath.item == (picSource.count - 1) && picSource.count < 5 {
                 
@@ -244,7 +244,7 @@ extension PicTopBar: UICollectionViewDelegate {
                 lastIndex = indexPath
                 lastCell.deselct()
                 
-                let cell = collectionView.cellForItemAtIndexPath(indexPath) as! PicTopToolBarCell
+                let cell = collectionView.cellForItem(at: indexPath) as! PicTopToolBarCell
                 cell.select()
                 
                 selectPicHandler?(indexPath.item)
@@ -255,11 +255,11 @@ extension PicTopBar: UICollectionViewDelegate {
 
 extension PicTopBar: UICollectionViewDataSource {
     
-    func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
     
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
         if picSource.count == 5 {
             
@@ -271,9 +271,9 @@ extension PicTopBar: UICollectionViewDataSource {
         }
     }
     
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(cellID, forIndexPath: indexPath) as! PicTopToolBarCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! PicTopToolBarCell
         
         if let image = picSource[indexPath.item] {
             cell.imageView.image = image

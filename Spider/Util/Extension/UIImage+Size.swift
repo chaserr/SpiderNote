@@ -13,8 +13,8 @@ extension UIImage {
         return CGSize(width: size.width / 2, height: size.height / 2)
     }
     
-    func resize(width: CGFloat) -> UIImage {
-        return UIImage(CGImage: self.CGImage!, scale: size.height / width, orientation: .Up)
+    func resize(_ width: CGFloat) -> UIImage {
+        return UIImage(cgImage: self.cgImage!, scale: size.height / width, orientation: .up)
     }
     
 
@@ -23,36 +23,36 @@ extension UIImage {
 // 将颜色转换为背景图片
 extension UIImage{
 
-    func imageWithColor(color:UIColor, size:CGSize) -> UIImage {
-        let rect:CGRect = CGRectMake(0, 0, size.width, size.height)
+    func imageWithColor(_ color:UIColor, size:CGSize) -> UIImage {
+        let rect:CGRect = CGRect(x: 0, y: 0, width: size.width, height: size.height)
         UIGraphicsBeginImageContext(rect.size)
-        let context:CGContextRef = UIGraphicsGetCurrentContext()!
-        CGContextSetFillColorWithColor(context, color.CGColor)
-        CGContextFillRect(context, rect)
+        let context:CGContext = UIGraphicsGetCurrentContext()!
+        context.setFillColor(color.cgColor)
+        context.fill(rect)
         let theImage:UIImage = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
         return theImage
     }
     
-    func imageWithColor(color:UIColor) -> UIImage {
-        return imageWithColor(color, size: CGSizeMake(1, 1))
+    func imageWithColor(_ color:UIColor) -> UIImage {
+        return imageWithColor(color, size: CGSize(width: 1, height: 1))
     }
 }
 
 
 extension UIImage {
     // 裁剪图片
-    func imageShape(image:UIImage, size:CGSize) -> UIImage {
-        let rect:CGRect = CGRectMake(0, 0, size.width, size.height)
-        let cgImage:CGImageRef = CGImageCreateWithImageInRect(image.CGImage!, rect)!
-        let result:UIImage = UIImage.init(CGImage: cgImage, scale: image.scale, orientation: image.imageOrientation)
+    func imageShape(_ image:UIImage, size:CGSize) -> UIImage {
+        let rect:CGRect = CGRect(x: 0, y: 0, width: size.width, height: size.height)
+        let cgImage:CGImage = image.cgImage!.cropping(to: rect)!
+        let result:UIImage = UIImage.init(cgImage: cgImage, scale: image.scale, orientation: image.imageOrientation)
         return result
     }
     
     // 等比例缩放
-    func scaleToSize(size: CGSize) -> UIImage {
-        var width: CGFloat = CGFloat(CGImageGetWidth(self.CGImage!))
-        var height: CGFloat = CGFloat(CGImageGetHeight(self.CGImage!))
+    func scaleToSize(_ size: CGSize) -> UIImage {
+        var width: CGFloat = CGFloat(self.cgImage!.width)
+        var height: CGFloat = CGFloat(self.cgImage!.height)
         let verticalRadio: CGFloat = CGFloat(size.height * 1.0 / height)
         let horizontalRadio: CGFloat = CGFloat(size.width * 1.0 / width)
         var radio: CGFloat = 1
@@ -70,7 +70,7 @@ extension UIImage {
         
         // 创建一个bitmap的context，并设置为当前context
         UIGraphicsBeginImageContext(size)
-        drawInRect(CGRectMake(xPos, yPos, width, height))
+        draw(in: CGRect(x: xPos, y: yPos, width: width, height: height))
         // 从当前context中创建一个改变大小后的图片
         let scaleImage: UIImage = UIGraphicsGetImageFromCurrentImageContext()!
         // 使当前的context出栈

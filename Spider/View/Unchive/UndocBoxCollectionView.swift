@@ -30,11 +30,11 @@ class UndocBoxCollectionView: UICollectionView {
             } else {
                 
                 bottomConstraint?.updateOffset(0)
-                backgroundColor = UIColor.whiteColor()
+                backgroundColor = UIColor.white
                 
                 let layout = collectionViewLayout as! UICollectionViewFlowLayout
                 layout.itemSize = CGSize(width: kScreenWidth / 2, height: kScreenWidth / 2)
-                layout.sectionInset = UIEdgeInsetsZero
+                layout.sectionInset = UIEdgeInsets.zero
                 layout.minimumInteritemSpacing = 0
                 layout.minimumLineSpacing = 0
             }
@@ -54,9 +54,9 @@ class UndocBoxCollectionView: UICollectionView {
             layout.sectionHeadersPinToVisibleBounds = true
         }
         
-        super.init(frame: CGRectZero, collectionViewLayout: layout)
+        super.init(frame: CGRect.zero, collectionViewLayout: layout)
         
-        backgroundColor = UIColor.whiteColor()
+        backgroundColor = UIColor.white
         showsVerticalScrollIndicator = false
         translatesAutoresizingMaskIntoConstraints = false
     }

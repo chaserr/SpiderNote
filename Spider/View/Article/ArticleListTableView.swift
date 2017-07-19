@@ -18,17 +18,17 @@ class ArticleListTableView: UITableView {
         
         didSet {
             
-            backgroundColor = beEditing ? SpiderConfig.Color.EditTheme : UIColor.whiteColor()
-            edgesContraint?.updateInsets(beEditing ? editEdge : commonEdge)
+            backgroundColor = beEditing ? SpiderConfig.Color.EditTheme : UIColor.white
+            edgesContraint?.updateInsets(amount: beEditing ? editEdge : commonEdge)
         }
     }
 
     init() {
-        super.init(frame: CGRectZero, style: .Plain)
+        super.init(frame: CGRect.zero, style: .plain)
 
-        backgroundColor = UIColor.whiteColor()
+        backgroundColor = UIColor.white
         tableFooterView = UIView()
-        separatorStyle  = .None
+        separatorStyle  = .none
         bounces         = false
         
         showsVerticalScrollIndicator = false

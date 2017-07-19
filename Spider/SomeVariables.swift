@@ -101,7 +101,7 @@ let kTagTextViewH = CGFloat(120)
 
 // MARK: - Audio Detail
 // color
-let adc_bg = UIColor.whiteColor()
+let adc_bg = UIColor.white
 let adc_separator = UIColor.color(withHex: 0xf1f1f1)
 let adc_title = UIColor.color(withHex: 0x222222)
 let adc_toolbar = UIColor.color(withHex: 0x555555)
@@ -152,9 +152,9 @@ let adfs_tag_text = CGFloat(12)
 // MARK: - Mind
 // color
 let mc_separator = UIColor.color(withHex: 0xf2f2f2)
-let mc_bg = UIColor.whiteColor()
+let mc_bg = UIColor.white
 let mc_add_mind = UIColor(white: 1, alpha: 0.9) //UIColor.color(withHex: 0xf0f0f0, alpha: 0.9)
-let mc_cell_bg = UIColor.whiteColor()
+let mc_cell_bg = UIColor.white
 
 // size
 let mo_add_mind_height = CGFloat(70)
@@ -172,7 +172,7 @@ let ac_head_bg = UIColor.color(withHex: 0x3e3e50)
 let ac_text = UIColor.color(withHex: 0x222222)
 
 let ac_separator = UIColor.color(withHex: 0xeaeaea)
-let ac_bg = UIColor.whiteColor()
+let ac_bg = UIColor.white
 
 // height
 let ao_audio_height = CGFloat(110)

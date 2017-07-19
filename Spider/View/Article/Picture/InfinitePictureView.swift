@@ -13,21 +13,21 @@ private let cellID = "InfiniteCell"
 
 class InfinitePictureView: UIView {
 
-    private var picInfos = [PicInfo]()
+    fileprivate var picInfos = [PicInfo]()
     
     var collectionView: UICollectionView!
-    private var pageControl: UIPageControl!
+    fileprivate var pageControl: UIPageControl!
     
-    private var prefetcher: ImagePrefetcher?
+    fileprivate var prefetcher: ImagePrefetcher?
 
 //    private var timer: NSTimer!
 //    private var timerDuration: NSTimeInterval = 3.0
     
-    private var currentIndex = 1
-    private var pictureCount = 0
+    fileprivate var currentIndex = 1
+    fileprivate var pictureCount = 0
     
     init() {
-        super.init(frame: CGRectZero)
+        super.init(frame: CGRect.zero)
         
         // handle dataSource
         picInfos = [PicInfo()]
@@ -38,16 +38,16 @@ class InfinitePictureView: UIView {
         layout.itemSize = CGSize(width: kScreenWidth, height: 250)
         layout.minimumLineSpacing = 0
         layout.minimumInteritemSpacing = 0
-        layout.scrollDirection = .Horizontal
+        layout.scrollDirection = .horizontal
         
         collectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: kScreenWidth, height: 250), collectionViewLayout: layout)
-        collectionView.pagingEnabled = true
+        collectionView.isPagingEnabled = true
         collectionView.bounces = false
-        collectionView.backgroundColor = UIColor.whiteColor()
+        collectionView.backgroundColor = UIColor.white
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.layer.masksToBounds = true
         
-        collectionView.registerClass(InfinitePictureViewCell.self, forCellWithReuseIdentifier: cellID)
+        collectionView.register(InfinitePictureViewCell.self, forCellWithReuseIdentifier: cellID)
         collectionView.delegate = self
         collectionView.dataSource = self
         addSubview(collectionView)
@@ -60,7 +60,7 @@ class InfinitePictureView: UIView {
         pageControl.currentPage = 0
         addSubview(pageControl)
         
-        pageControl.snp_makeConstraints { (make) in
+        pageControl.snp.makeConstraints { (make) in
             make.left.right.bottom.equalTo(self)
             make.height.equalTo(20)
         }
@@ -73,7 +73,7 @@ class InfinitePictureView: UIView {
         collectionView.reloadData()
     }
     
-    func update(picInfo: [PicInfo]) {
+    func update(_ picInfo: [PicInfo]) {
         
         /** 预加载 */
         var resources = [Resource]()
@@ -102,13 +102,13 @@ class InfinitePictureView: UIView {
             picInfos = picInfo
             
             picInfos.append(picInfo.first!)
-            picInfos.insert(picInfo.last!, atIndex: 0)
+            picInfos.insert(picInfo.last!, at: 0)
             pictureCount = picInfo.count
             
             pageControl.numberOfPages = pictureCount
             collectionView.reloadData()
             
-            collectionView.scrollToItemAtIndexPath(NSIndexPath(forItem: 1, inSection: 0), atScrollPosition: .None, animated: false)
+            collectionView.scrollToItem(at: IndexPath(item: 1, section: 0), at: UICollectionViewScrollPosition(), animated: false)
             
             // set timer
 //            timer = NSTimer(timeInterval: timerDuration, target: self, selector: #selector(updatePictureView), userInfo: nil, repeats: true)
@@ -138,26 +138,26 @@ class InfinitePictureView: UIView {
     
 // MARK: - timer function
     func updatePictureView() {
-        if !collectionView.tracking && !collectionView.decelerating {
+        if !collectionView.isTracking && !collectionView.isDecelerating {
             currentIndex += 1
-            collectionView.scrollToItemAtIndexPath(NSIndexPath(forItem: currentIndex, inSection: 0), atScrollPosition: .None, animated: true)
+            collectionView.scrollToItem(at: IndexPath(item: currentIndex, section: 0), at: UICollectionViewScrollPosition(), animated: true)
         }
     }
 }
 
 // MARK: - UICollectionView Delegate
 extension InfinitePictureView: UICollectionViewDelegate, UICollectionViewDataSource {
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return picInfos.count
     }
     
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(cellID, forIndexPath: indexPath) as! InfinitePictureViewCell
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! InfinitePictureViewCell
 
         return cell
     }
     
-    func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         
         guard let cell = cell as? InfinitePictureViewCell else {
             return
@@ -169,7 +169,7 @@ extension InfinitePictureView: UICollectionViewDelegate, UICollectionViewDataSou
 
 // MARK: - UIScrollView Delegate 
 extension InfinitePictureView {
-    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         let lastItemOffsetX = collectionView.contentSize.width - collectionView.frame.width
         let firstItemOffsetX = collectionView.frame.width
         
@@ -189,7 +189,7 @@ extension InfinitePictureView {
 //        NSRunLoop.mainRunLoop().addTimer(timer, forMode: NSDefaultRunLoopMode)
     }
     
-    func scrollViewDidEndScrollingAnimation(scrollView: UIScrollView) {
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
         if currentIndex == picInfos.count - 1 {
             collectionView.contentOffset = CGPoint(x: frame.width, y: 0)
             currentIndex = 1
@@ -197,7 +197,7 @@ extension InfinitePictureView {
         pageControl.currentPage = currentIndex - 1
     }
     
-    func scrollViewWillBeginDragging(scrollView: UIScrollView) {
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
 //        if timer != nil {
 //            timer.invalidate()
 //            timer = nil

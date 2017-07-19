@@ -10,14 +10,14 @@ import Foundation
 import RealmSwift
 
 public enum MindType: Int {
-    case Mind = 0
-    case Article = 1
+    case mind = 0
+    case article = 1
 }
 
 class MindObject: Object {
     
     dynamic var id: String = ""
-    dynamic var type: Int = MindType.Mind.rawValue
+    dynamic var type: Int = MindType.mind.rawValue
     dynamic var name: String = ""
     dynamic var modifiyFlag: Int = 0
     dynamic var deleteFlag: Int = 0
@@ -43,9 +43,9 @@ class MindObject: Object {
         self.init()
         self.type = type
         self.name = name
-        self.id = NSUUID().UUIDString
+        self.id = UUID().uuidString
         self.modifiyFlag = 1
-        self.createAtTime = NSDate().toString()
+        self.createAtTime = Date().toString()
         self.updateAtTime = createAtTime
         self.syncTimesTamp = createAtTime
     }
@@ -202,7 +202,7 @@ extension MindObject {
     var depth: Int {
         var depth = 1
         
-        func getDepth(mind: MindObject, deep: Int) {
+        func getDepth(_ mind: MindObject, deep: Int) {
             if mind.usefulMinds.isEmpty {
                 depth = max(depth, deep)
             } else {
@@ -224,25 +224,25 @@ extension MindObject {
         }
     }
     
-    func removeSubmind(mind: MindObject) {
+    func removeSubmind(_ mind: MindObject) {
         if let index = subMinds.indexOf(mind) {
             subMinds.removeAtIndex(index)
         }
     }
     
-    func removeSubmindWith(id: String) -> MindObject? {
+    func removeSubmindWith(_ id: String) -> MindObject? {
         guard let submind = REALM.realm.objectForPrimaryKey(MindObject.self, key: id) else { return nil }
         removeSubmind(submind)
         return submind
     }
     
-    func update(time: String = NSDate().toString()) {
+    func update(_ time: String = Date().toString()) {
         modifiyFlag = 1
         updateAtTime = time
 //        project?.update(time)
     }
     
-    func deleteAt(time: String = NSDate().toString()) {
+    func deleteAt(_ time: String = Date().toString()) {
         deleteFlag = 1
         modifiyFlag = 1
         updateAtTime = time
@@ -259,7 +259,7 @@ extension MindObject{
      
      - returns: MindObject
      */
-     func fetchAllMindTypeList(predicate: NSPredicate, sortDescriptors: [SortDescriptor]) -> [MindObject] {
+     func fetchAllMindTypeList(_ predicate: NSPredicate, sortDescriptors: [SortDescriptor]) -> [MindObject] {
         
         var mindTypes:Results<MindObject>
 

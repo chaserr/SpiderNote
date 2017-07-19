@@ -8,16 +8,16 @@
 
 import UIKit
 
-var doneHandler: (String -> Void)?
+var doneHandler: ((String) -> Void)?
 
 class AddUndocTextView: UIView, UITextViewDelegate {
     
-    private var backToRect: CGRect!
-    private var isNew = false
-    private var isDone = false
-    private var object: SectionObject?
+    fileprivate var backToRect: CGRect!
+    fileprivate var isNew = false
+    fileprivate var isDone = false
+    fileprivate var object: SectionObject?
     
-    private lazy var titleView: UIView = {
+    fileprivate lazy var titleView: UIView = {
         let view = UIView(frame: CGRect(x: 0, y: 0, width: kScreenWidth, height: 80))
         view.backgroundColor = SpiderConfig.Color.BackgroundDark
         let label = UILabel(frame: CGRect(x: 15, y: 0, width: 120, height: 40))
@@ -29,45 +29,45 @@ class AddUndocTextView: UIView, UITextViewDelegate {
         return view
     }()
     
-    private lazy var textView: UITextView = {
+    fileprivate lazy var textView: UITextView = {
         let textView                = UITextView(frame: CGRect(x: 0, y: 80, width: kScreenWidth, height: kScreenHeight))
         textView.font               = SpiderConfig.Font.Text
         textView.textColor          = SpiderConfig.Color.DarkText
-        textView.backgroundColor    = UIColor.whiteColor()
+        textView.backgroundColor    = UIColor.white
         textView.textContainerInset = UIEdgeInsetsMake(20, 12, 20, 12)
         textView.inputAccessoryView = self.accessoryView
         return textView
     }()
     
-    private lazy var accessoryView: UIToolbar = {
+    fileprivate lazy var accessoryView: UIToolbar = {
         let bar             = UIToolbar(frame: CGRect(x: 0, y: 0, w: kScreenWidth, h: 44))
-        bar.backgroundColor = UIColor.whiteColor()
+        bar.backgroundColor = UIColor.white
         
         let doneItem        = UIBarButtonItem(customView: self.doneButton)
         let cancelItem      = UIBarButtonItem(customView: self.cancelButton)
-        let flexibleSpace   = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: nil, action: nil)
+        let flexibleSpace   = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         bar.items           = [cancelItem, flexibleSpace, doneItem]
         return bar
     }()
     
-    private lazy var doneButton: UIButton = {
+    fileprivate lazy var doneButton: UIButton = {
         let button = UIButton(frame: CGRect(x: 0, y: 0, w: 60, h: 40))
-        button.setTitle("完成", forState: .Normal)
-        button.setTitleColor(SpiderConfig.Color.ButtonText, forState: .Normal)
-        button.setTitleColor(SpiderConfig.Color.HintText, forState: .Disabled)
+        button.setTitle("完成", for: UIControlState())
+        button.setTitleColor(SpiderConfig.Color.ButtonText, for: UIControlState())
+        button.setTitleColor(SpiderConfig.Color.HintText, for: .disabled)
         button.titleLabel?.font = SpiderConfig.Font.Text
         
-        button.addTarget(self, action: #selector(doneButtonClicked), forControlEvents: .TouchUpInside)
+        button.addTarget(self, action: #selector(doneButtonClicked), for: .touchUpInside)
         return button
     }()
     
-    private lazy var cancelButton: UIButton = {
+    fileprivate lazy var cancelButton: UIButton = {
         let button = UIButton(frame: CGRect(x: 0, y: 0, w: 60, h: 40))
-        button.setTitle("取消", forState: .Normal)
-        button.setTitleColor(SpiderConfig.Color.ButtonText, forState: .Normal)
+        button.setTitle("取消", for: UIControlState())
+        button.setTitleColor(SpiderConfig.Color.ButtonText, for: UIControlState())
         button.titleLabel?.font = SpiderConfig.Font.Text
         
-        button.addTarget(self, action: #selector(cancelButtonClicked), forControlEvents: .TouchUpInside)
+        button.addTarget(self, action: #selector(cancelButtonClicked), for: .touchUpInside)
         return button
     }()
     
@@ -84,35 +84,35 @@ class AddUndocTextView: UIView, UITextViewDelegate {
             
         } else {
             textView.text = ""
-            doneButton.enabled = false
+            doneButton.isEnabled = false
         }
         
         textView.delegate = self
         addSubview(titleView)
         addSubview(textView)
         
-        UIApplication.sharedApplication().setStatusBarStyle(.LightContent, animated: true)
+        UIApplication.shared.setStatusBarStyle(.lightContent, animated: true)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(keyboardWillShow), name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(keyboardWillHide), name: UIKeyboardWillHideNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
     }
     
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
-    func moveTo(view: UIView) {
+    func moveTo(_ view: UIView) {
         view.addSubview(self)
         textView.becomeFirstResponder()
     }
     
-    func keyboardWillShow(notification: NSNotification) {
+    func keyboardWillShow(_ notification: Notification) {
         guard let info = notification.userInfo else { return }
         
-        let keyboardFrame = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
-        let duration: NSTimeInterval = (info[UIKeyboardAnimationDurationUserInfoKey] as! NSNumber).doubleValue
+        let keyboardFrame = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue
+        let duration: TimeInterval = (info[UIKeyboardAnimationDurationUserInfoKey] as! NSNumber).doubleValue
         
-        UIView.animateWithDuration(duration, animations: {
+        UIView.animate(withDuration: duration, animations: {
             
             self.frame = CGRect(x: 0, y: 0, w: kScreenWidth, h: keyboardFrame.origin.y)
             self.textView.frame = CGRect(x: 0, y: 80, width: kScreenWidth, height: keyboardFrame.origin.y - 80)
@@ -120,15 +120,15 @@ class AddUndocTextView: UIView, UITextViewDelegate {
         })
     }
     
-    func keyboardWillHide(notification: NSNotification) {
+    func keyboardWillHide(_ notification: Notification) {
         guard let _ = notification.userInfo else { return }
         
-        UIApplication.sharedApplication().setStatusBarStyle(.Default, animated: true)
+        UIApplication.shared.setStatusBarStyle(.default, animated: true)
         
             
         if isDone {
 
-            UIView.animateWithDuration(0.4, animations: {
+            UIView.animate(withDuration: 0.4, animations: {
                 
                 self.frame.origin = CGPoint(x: 0, y: kScreenHeight)
                 self.alpha = 0
@@ -144,7 +144,7 @@ class AddUndocTextView: UIView, UITextViewDelegate {
             
         } else {
             
-            UIView.animateWithDuration(0.3, animations: {
+            UIView.animate(withDuration: 0.3, animations: {
                 
                 self.alpha = 0
                 
@@ -168,8 +168,8 @@ class AddUndocTextView: UIView, UITextViewDelegate {
         textView.resignFirstResponder()
     }
     
-    func textViewDidChange(textView: UITextView) {
-        doneButton.enabled = !textView.text.isEmpty
+    func textViewDidChange(_ textView: UITextView) {
+        doneButton.isEnabled = !textView.text.isEmpty
     }
  
     required init?(coder aDecoder: NSCoder) {

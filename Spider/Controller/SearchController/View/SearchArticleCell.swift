@@ -7,15 +7,39 @@
 //
 
 import UIKit
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
+
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l > r
+  default:
+    return rhs < lhs
+  }
+}
+
 enum ClickViewType:Int {
-    case Title = 0
-    case Text = 1
-    case Pic = 2
-    case Video = 3
+    case title = 0
+    case text = 1
+    case pic = 2
+    case video = 3
 }
 class SearchArticleCell: UITableViewCell {
     
-    typealias TapAction = (type:ClickViewType, textSec: SectionObject?, picSec: PicSectionObject?, videoSec: SectionObject?) -> Void
+    typealias TapAction = (_ type:ClickViewType, _ textSec: SectionObject?, _ picSec: PicSectionObject?, _ videoSec: SectionObject?) -> Void
     var tapAction:TapAction!
     
     /** cell */
@@ -46,40 +70,40 @@ class SearchArticleCell: UITableViewCell {
                 titleViewH = 40
             }
             
-            titleView.frame = CGRectMake(0, CGRectGetMaxY(sectionHeader.frame), kScreenWidth, titleViewH)
+            titleView.frame = CGRect(x: 0, y: sectionHeader.frame.maxY, width: kScreenWidth, height: titleViewH)
             
             
-            articleTitleLabel.attributedText = articleModel?.title!.colorSubString(searchKey, color: UIColor.redColor())
-            let articleUpdateTime = DateUtil.stringWithDateFormat(articleModel!.updateTime, sFormat: kDU_YYYYMMddhhmmss, dFormat: kDU_MMdd)
+            articleTitleLabel.attributedText = articleModel?.title!.colorSubString(searchKey, color: UIColor.red)
+            let articleUpdateTime = DateUtil.string(withDateFormat: articleModel!.updateTime, sFormat: kDU_YYYYMMddhhmmss, dFormat: kDU_MMdd)
             updateTime.text = articleUpdateTime
             if articleModel?.textSectionArr.count != 0 {
-                for (index,item) in articleModel!.textSectionArr.enumerate() {
+                for (index,item) in articleModel!.textSectionArr.enumerated() {
                     let headString = item.text
-                        let textSectionView = TextSectionView(frame: CGRectMake(0,CGRectGetMaxY(self.titleView.frame) + 90 * CGFloat(index), kScreenWidth, 90))
+                        let textSectionView = TextSectionView(frame: CGRect(x: 0,y: self.titleView.frame.maxY + 90 * CGFloat(index), width: kScreenWidth, height: 90))
                         contentView.addSubview(textSectionView)
                         textSectionView.tapTextView { (type) in
-                            self.tapAction(type: type, textSec: item, picSec: nil, videoSec: nil)
+                            self.tapAction(type, item, nil, nil)
                         }
                     
-                    if headString?.height(kScreenWidth - 30 - 20, font: SYSTEMFONT(16), lineBreakMode: NSLineBreakMode.ByWordWrapping) > 64 {
-                        let subSRange:Range = (headString?.rangeOfString(searchKey))!
-                        let subIndex:Int    = (headString?.startIndex.distanceTo(subSRange.startIndex))!
-                        let oneTosearchSub  = headString?.substringToIndex(headString!.startIndex.advancedBy(subIndex))
-                        if oneTosearchSub?.height(kScreenWidth - 30 - 20, font: SYSTEMFONT(16), lineBreakMode: NSLineBreakMode.ByWordWrapping) > 64 {
+                    if headString?.height(kScreenWidth - 30 - 20, font: SYSTEMFONT(16), lineBreakMode: NSLineBreakMode.byWordWrapping) > 64 {
+                        let subSRange:Range = (headString?.range(of: searchKey))!
+                        let subIndex:Int    = (headString?.characters.distance(from: (headString?.startIndex)!, to: subSRange.lowerBound))!
+                        let oneTosearchSub  = headString?.substring(to: headString!.characters.index(headString!.startIndex, offsetBy: subIndex))
+                        if oneTosearchSub?.height(kScreenWidth - 30 - 20, font: SYSTEMFONT(16), lineBreakMode: NSLineBreakMode.byWordWrapping) > 64 {
                             // 1. 前10个字符串
-                            let preTenString: String                   = (headString?.substringToIndex(headString!.startIndex.advancedBy(10)))!
+                            let preTenString: String                   = (headString?.substring(to: headString!.characters.index(headString!.startIndex, offsetBy: 10)))!
                             // 2. 靠近搜索关键字的字符串
-                            let range                                  = Range(subSRange.startIndex.advancedBy(-10)...subSRange.startIndex.advancedBy(10))
-                            let searchNearByS: String                  = (headString!.substringWithRange(range))
-                            let lastStr: String                        = (headString?.substringFromIndex(headString!.endIndex.advancedBy(-5)))!
+                            let range                                  = ClosedRange(subSRange.startIndex.advancedBy(-10)...subSRange.startIndex.advancedBy(10))
+                            let searchNearByS: String                  = (headString!.substring(with: range))
+                            let lastStr: String                        = (headString?.substring(from: headString!.characters.index(headString!.endIndex, offsetBy: -5)))!
                             let resultString                           = "\(preTenString)...\(searchNearByS)...\(lastStr)"
-                            textSectionView.contentText.attributedText = resultString.colorSubString(searchKey, color: UIColor.redColor())
+                            textSectionView.contentText.attributedText = resultString.colorSubString(searchKey, color: UIColor.red)
                             continue
                         }
                         
                         
                     }
-                        textSectionView.contentText.attributedText = headString!.colorSubString(searchKey, color: UIColor.redColor())
+                        textSectionView.contentText.attributedText = headString!.colorSubString(searchKey, color: UIColor.red)
                     
                     if index == (articleModel?.textSectionArr.count)! - 1 {
                         self.textSectionView = textSectionView
@@ -89,20 +113,20 @@ class SearchArticleCell: UITableViewCell {
             }
             else{
             
-                textSectionView = TextSectionView(frame: CGRectMake(0,CGRectGetMaxY(self.titleView.frame), kScreenWidth, 0))
+                textSectionView = TextSectionView(frame: CGRect(x: 0,y: self.titleView.frame.maxY, width: kScreenWidth, height: 0))
             }
             
             if articleModel?.picSectionArr.count != 0 {
 
-                for (index, item) in articleModel!.picSectionArr.enumerate() {
-                    let picSectionView = PicSectionView(frame: CGRectMake(0, CGRectGetMaxY(self.textSectionView.frame) + 250 * CGFloat(index), kScreenWidth, 250))
+                for (index, item) in articleModel!.picSectionArr.enumerated() {
+                    let picSectionView = PicSectionView(frame: CGRect(x: 0, y: self.textSectionView.frame.maxY + 250 * CGFloat(index), width: kScreenWidth, height: 250))
                     contentView.addSubview(picSectionView)
                     let headString = item.tags.filter(NSPredicate(format: "type == 0 AND content CONTAINS[c] %@", searchKey)).toArray().first?.content
                     picSectionView.tapPicView({ (type) in
-                        self.tapAction(type: type, textSec: nil, picSec: item, videoSec: nil)
+                        self.tapAction(type, nil, item, nil)
                     })
                     
-                    picSectionView.imageTagView.attributedText = headString!.colorSubString(searchKey, color: UIColor.redColor())
+                    picSectionView.imageTagView.attributedText = headString!.colorSubString(searchKey, color: UIColor.red)
                     picSectionView.imageView.spider_setImageWith(PicInfo(object: item))
                     
                     if index == articleModel!.picSectionArr.count - 1 {
@@ -112,14 +136,14 @@ class SearchArticleCell: UITableViewCell {
             }
             else{
             
-                picSectionView = PicSectionView(frame: CGRectMake(0,CGRectGetMaxY(self.titleView.frame), kScreenWidth, 0))
+                picSectionView = PicSectionView(frame: CGRect(x: 0,y: self.titleView.frame.maxY, width: kScreenWidth, height: 0))
 
             }
             
             if articleModel?.vedioSectionArr.count != 0 {
 
-                for (index, item) in articleModel!.vedioSectionArr.enumerate() {
-                    let vedioSectionView = VideoSectionView(frame: CGRectMake(0, CGRectGetMaxY(self.picSectionView.frame) + 106 * CGFloat(index), kScreenWidth, 106))
+                for (index, item) in articleModel!.vedioSectionArr.enumerated() {
+                    let vedioSectionView = VideoSectionView(frame: CGRect(x: 0, y: self.picSectionView.frame.maxY + 106 * CGFloat(index), width: kScreenWidth, height: 106))
                     contentView.addSubview(vedioSectionView)
                     let itemTag = item.audio!.tags.filter(NSPredicate(format: "type == 0 AND content CONTAINS[c] %@", searchKey)).toArray().first
                     let headString = itemTag?.content
@@ -129,18 +153,18 @@ class SearchArticleCell: UITableViewCell {
                     
                     vedioSectionView.startTime.text = itemTag?.location
                     vedioSectionView.endTime.text = item.audio!.duration
-                    vedioSectionView.videoTagView.attributedText = headString!.colorSubString(searchKey, color: UIColor.redColor())
+                    vedioSectionView.videoTagView.attributedText = headString!.colorSubString(searchKey, color: UIColor.red)
                     let timePresLeftW = kScreenWidth - 2*70
                     // 总时长
-                    let minutes = item.audio!.duration.substringToIndex(item.audio!.duration.startIndex.advancedBy(2))
-                    let second = item.audio!.duration.substringFromIndex(item.audio!.duration.startIndex.advancedBy(3))
+                    let minutes = item.audio!.duration.substring(to: item.audio!.duration.characters.index(item.audio!.duration.startIndex, offsetBy: 2))
+                    let second = item.audio!.duration.substring(from: item.audio!.duration.characters.index(item.audio!.duration.startIndex, offsetBy: 3))
                     let allSecond = CGFloat(minutes.toInt()! + second.toInt()!)
                     // 当前时长
-                    let currentMinutes = itemTag!.location.substringToIndex(itemTag!.location.startIndex.advancedBy(2))
-                    let currentSecond = itemTag!.location.substringFromIndex(itemTag!.location.startIndex.advancedBy(3))
+                    let currentMinutes = itemTag!.location.substring(to: itemTag!.location.characters.index(itemTag!.location.startIndex, offsetBy: 2))
+                    let currentSecond = itemTag!.location.substring(from: itemTag!.location.characters.index(itemTag!.location.startIndex, offsetBy: 3))
                     let currentAllSecond = CGFloat(currentMinutes.toInt()! + currentSecond.toInt()!)
  
-                    createGradient(vedioSectionView.timeProgress, frame: CGRectMake(0, 0, currentAllSecond * timePresLeftW / allSecond, 5))
+                    createGradient(vedioSectionView.timeProgress, frame: CGRect(x: 0, y: 0, width: currentAllSecond * timePresLeftW / allSecond, height: 5))
                     if index == articleModel!.vedioSectionArr.count - 1 {
                         self.videoSectionView = vedioSectionView
                     }
@@ -162,11 +186,11 @@ class SearchArticleCell: UITableViewCell {
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        selectionStyle = UITableViewCellSelectionStyle.None
+        selectionStyle = UITableViewCellSelectionStyle.none
         setupUI()
         addConstraints()
         titleView.addTapGesture { (tapgesture:UITapGestureRecognizer) in
-            self.tapAction(type: ClickViewType.Title, textSec: nil, picSec: nil, videoSec: nil)
+            self.tapAction(type: ClickViewType.title, textSec: nil, picSec: nil, videoSec: nil)
         }
         
     }
@@ -174,7 +198,7 @@ class SearchArticleCell: UITableViewCell {
     
     func setupUI() -> Void {
         sectionHeader                   = UIView()
-        sectionHeader.backgroundColor   = UIColor.groupTableViewBackgroundColor()
+        sectionHeader.backgroundColor   = UIColor.groupTableViewBackground
         contentView.addSubview(sectionHeader)
         titleView                       = UIView()
         contentView.addSubview(titleView)
@@ -182,7 +206,7 @@ class SearchArticleCell: UITableViewCell {
         articleTitleLabel.font          = SYSTEMFONT(18)
         articleTitleLabel.textColor     = RGBCOLORV(0x222222)
         articleTitleLabel.numberOfLines = 0
-        articleTitleLabel.lineBreakMode = NSLineBreakMode.ByTruncatingMiddle
+        articleTitleLabel.lineBreakMode = NSLineBreakMode.byTruncatingMiddle
         titleView.addSubview(articleTitleLabel)
         updateTime                      = UILabel()
         updateTime.font                 = SYSTEMFONT(12)
@@ -195,7 +219,7 @@ class SearchArticleCell: UITableViewCell {
     
     func addConstraints() -> Void {
 
-        sectionHeader.frame = CGRectMake(0, 0, kScreenWidth, 8)
+        sectionHeader.frame = CGRect(x: 0, y: 0, width: kScreenWidth, height: 8)
         
         articleTitleLabel.snp_makeConstraints { (make) in
             make.left.equalTo(15)
@@ -217,7 +241,7 @@ class SearchArticleCell: UITableViewCell {
 
     }
     
-    func TappedAction(action: TapAction) {
+    func TappedAction(_ action: @escaping TapAction) {
         tapAction = action
     }
     
@@ -228,21 +252,21 @@ class SearchArticleCell: UITableViewCell {
     
     
     // 添加渐变层
-    func createGradient(view:UIView, frame:CGRect) -> Void {
+    func createGradient(_ view:UIView, frame:CGRect) -> Void {
         progressLayer = CALayer()
         progressLayer.frame = frame
         view.layer.addSublayer(progressLayer)
-        progressLayer.backgroundColor = RGBCOLORV(0x959595).CGColor
+        progressLayer.backgroundColor = RGBCOLORV(0x959595).cgColor
     }
     
 
 
-    class func cellWithTableView(tableview:UITableView) -> UITableViewCell {
+    class func cellWithTableView(_ tableview:UITableView) -> UITableViewCell {
         
         let cellID = className + "Mind"
-        var cell = tableview.dequeueReusableCellWithIdentifier(cellID)
+        var cell = tableview.dequeueReusableCell(withIdentifier: cellID)
         if cell == nil {
-            cell = NSBundle.mainBundle().loadNibNamed(className, owner: nil, options: nil)!.last as! SearchArticleCell
+            cell = Bundle.main.loadNibNamed(className, owner: nil, options: nil)!.last as! SearchArticleCell
         }
         return cell!
     }
@@ -255,7 +279,7 @@ class SearchArticleCell: UITableViewCell {
         // Initialization code
     }
 
-    override func setSelected(selected: Bool, animated: Bool) {
+    override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state

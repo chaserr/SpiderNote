@@ -15,7 +15,7 @@ let REALM = RealmDAO.instance()
 
 class RealmDAO: NSObject {
     
-    let filemgr = NSFileManager.defaultManager()
+    let filemgr = FileManager.default
     
     var realm: Realm!
     
@@ -43,7 +43,7 @@ class RealmDAO: NSObject {
         
         let config = Realm.Configuration (
 
-            fileURL: NSURL.fileURLWithPath(APP_UTILITY.databasePath()),
+            fileURL: URL(fileURLWithPath: APP_UTILITY.databasePath()),
             schemaVersion: RealmDBSchema,
             deleteRealmIfMigrationNeeded: false,
             // 设置闭包，这个闭包将会在打开低于上面所设置版本号的 Realm 数据库的时候被自动调用
@@ -71,12 +71,12 @@ class RealmDAO: NSObject {
      *
      *  @since 1.0
      */
-    func copyObjectBetweenRealms<T : RealmSwift.Object>(oldRealmPath:String, willCopyObject:T.Type) -> Void {
+    func copyObjectBetweenRealms<T : RealmSwift.Object>(_ oldRealmPath:String, willCopyObject:T.Type) -> Void {
     
         // 默认的数据库路径
 //        let oldSqlPath = FileUtil.getFileUtil().getDocmentPath().stringByAppendingPathComponent(defaultUserID).stringByAppendingPathComponent("sql")
         let oldRealmConfig = Realm.Configuration(
-        fileURL:  NSURL.init(string: oldRealmPath),
+        fileURL:  URL.init(string: oldRealmPath),
         schemaVersion: RealmDBSchema + 1
         )
 //        migrateRealm(oldRealmConfig)

@@ -24,7 +24,6 @@
 #include "NSTimer+Ext.h"
 #include "IBActionSheet.h"
 #include "CALayer+AddUIColor.h"
-#include "RunTrace.h"
 #include "LXDSegmentControl.h"
 #include "LXDSegmentControlConfiguration.h"
 #include "LXDSegmentControlDefine.h"

@@ -11,31 +11,31 @@ import AVFoundation
 import MediaPlayer
 
 class AudioPlayer: NSObject {
-    private var player: AVAudioPlayer!
-    var duration: NSTimeInterval!
+    fileprivate var player: AVAudioPlayer!
+    var duration: TimeInterval!
     
-    init?(contentsOfURL url: NSURL, info: [String : AnyObject]? = nil) {
+    init?(contentsOfURL url: URL, info: [String : AnyObject]? = nil) {
         super.init()
         
-        player = try! AVAudioPlayer(contentsOfURL: url)
+        player = try! AVAudioPlayer(contentsOf: url)
         duration = player.duration
         player.prepareToPlay()
         
-        let center = MPRemoteCommandCenter.sharedCommandCenter()
-        center.pauseCommand.addTargetWithHandler { event -> MPRemoteCommandHandlerStatus in
+        let center = MPRemoteCommandCenter.shared()
+        center.pauseCommand.addTarget (handler: { event -> MPRemoteCommandHandlerStatus in
             self.player.pause()
-            return .Success
-        }
+            return .success
+        })
         
-        center.playCommand.addTargetWithHandler { event -> MPRemoteCommandHandlerStatus in
+        center.playCommand.addTarget (handler: { event -> MPRemoteCommandHandlerStatus in
             self.player.play()
-            return .Success
-        }
+            return .success
+        })
         
         if let aInfo = info {
             var centerInfo = [
                 MPMediaItemPropertyTitle: aInfo["title"] as! String,
-                MPMediaItemPropertyPlaybackDuration: NSNumber(double: self.player.duration)
+                MPMediaItemPropertyPlaybackDuration: NSNumber(value: self.player.duration as Double)
             ]
             
             if let imageName = aInfo["artwork"] as? String {
@@ -43,7 +43,7 @@ class AudioPlayer: NSObject {
                 centerInfo[MPMediaItemPropertyArtwork] = artwork
             }
             
-            MPNowPlayingInfoCenter.defaultCenter().nowPlayingInfo = centerInfo
+            MPNowPlayingInfoCenter.default().nowPlayingInfo = centerInfo
         }
     }
     

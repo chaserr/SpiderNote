@@ -18,10 +18,10 @@ class CustomSearchBar: UISearchBar {
         
         placeholder = "搜索"
         
-        let searchField = self.valueForKey("searchField") as! UITextField
+        let searchField = self.value(forKey: "searchField") as! UITextField
         searchField.backgroundColor = UIColor.color(withHex: 0xf0f0f0)
         
-        setBackgroundImage(UIImage(), forBarPosition: .Any, barMetrics: .Default)
+        setBackgroundImage(UIImage(), for: .any, barMetrics: .default)
     }
     
     init() {
@@ -32,10 +32,10 @@ class CustomSearchBar: UISearchBar {
         
         placeholder = "搜索"
         
-        let searchField = self.valueForKey("searchField") as! UITextField
+        let searchField = self.value(forKey: "searchField") as! UITextField
         searchField.backgroundColor = UIColor.color(withHex: 0xf0f0f0)
         
-        setBackgroundImage(UIImage(), forBarPosition: .Any, barMetrics: .Default)
+        setBackgroundImage(UIImage(), for: .any, barMetrics: .default)
     }
     
     required init?(coder aDecoder: NSCoder) {

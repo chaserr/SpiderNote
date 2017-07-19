@@ -24,7 +24,7 @@ class RegisterVerifyCodeVC: UIViewController {
     
     
     var secondCount:Int!
-    var timer:NSTimer!
+    var timer:Timer!
     var isFindPassword: Bool = false
 
     override func viewDidLoad() {
@@ -32,7 +32,7 @@ class RegisterVerifyCodeVC: UIViewController {
         navigationItem.title = navTitle ?? "注册"
         customLizeNavigationBarBackBtn()
         if isFindPassword == true {
-            registerBtn.setTitle("提交", forState: UIControlState.Normal)
+            registerBtn.setTitle("提交", for: UIControlState())
         }
         
         VertifyCodeBtn.adjustsImageWhenHighlighted = false
@@ -41,19 +41,19 @@ class RegisterVerifyCodeVC: UIViewController {
     }
     
     // MARK:控制器生命周期
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
     }
     
-    override func viewDidDisappear(animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
     }
 
@@ -62,11 +62,11 @@ class RegisterVerifyCodeVC: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         dismissKeyboard()
     }
     
-    func getUserInfo(nameBlock:UserNameBlock){
+    func getUserInfo(_ nameBlock:UserNameBlock){
         userNameBlock = nameBlock
     }
     
@@ -74,32 +74,32 @@ class RegisterVerifyCodeVC: UIViewController {
         
         secondCount = 60
         
-        timer = NSTimer.scheduledTimerWithTimeInterval(1.0, block: {
+        timer = Timer.scheduledTimer(withTimeInterval: 1.0, block: {
                 [weak self] in
                 if let strongSelf = self {
-                    strongSelf.VertifyCodeBtn.setBackgroundColor(RGBCOLORV(0xcdcdcd), forState: UIControlState.Normal)
-                    strongSelf.VertifyCodeBtn.userInteractionEnabled = false
+                    strongSelf.VertifyCodeBtn.setBackgroundColor(RGBCOLORV(0xcdcdcd), forState: UIControlState())
+                    strongSelf.VertifyCodeBtn.isUserInteractionEnabled = false
                     strongSelf.secondCount = strongSelf.secondCount - 1
-                    strongSelf.VertifyCodeBtn.setTitle("重新获取(\(strongSelf.secondCount))", forState: UIControlState.Normal)
+                    strongSelf.VertifyCodeBtn.setTitle("重新获取(\(strongSelf.secondCount))", for: UIControlState())
                     
                     if strongSelf.secondCount == 0 {
                         strongSelf.timer.invalidate()
-                        strongSelf.VertifyCodeBtn.setTitle("重新获取", forState: UIControlState.Normal)
-                        strongSelf.VertifyCodeBtn.setBackgroundColor(RGBCOLORV(0x79c542), forState: UIControlState.Normal)
-                        strongSelf.VertifyCodeBtn.userInteractionEnabled = true
+                        strongSelf.VertifyCodeBtn.setTitle("重新获取", for: UIControlState())
+                        strongSelf.VertifyCodeBtn.setBackgroundColor(RGBCOLORV(0x79c542), forState: UIControlState())
+                        strongSelf.VertifyCodeBtn.isUserInteractionEnabled = true
                         
                     }
                 }
-            }, repeats: true) as! NSTimer
-        NSRunLoop.currentRunLoop().addTimer(timer, forMode: UITrackingRunLoopMode)
+            }, repeats: true) as! Timer
+        RunLoop.current.add(timer, forMode: RunLoopMode.UITrackingRunLoopMode)
     }
     
-    @IBAction func getVertifyCodeAgain(sender: AnyObject, forEvent event: UIEvent) {
+    @IBAction func getVertifyCodeAgain(_ sender: AnyObject, forEvent event: UIEvent) {
         getVertifyCode()
         
     }
     
-    @IBAction func registerAction(sender: UIButton, forEvent event: UIEvent) {
+    @IBAction func registerAction(_ sender: UIButton, forEvent event: UIEvent) {
         
         if isFindPassword {
             
@@ -110,7 +110,7 @@ class RegisterVerifyCodeVC: UIViewController {
             
             LOGINMANAGER.sendVertifyEmail(account!, smsCode: vertifyCodeTF.text!, success: { 
                 
-                NSNotificationCenter.defaultCenter().postNotificationName(kNotificationLoginSuccessed, object: nil, userInfo: ["username":account!])
+                NotificationCenter.default.post(name: Notification.Name(rawValue: kNotificationLoginSuccessed), object: nil, userInfo: ["username":account!])
                 AppNavigator.openMainViewController()
                 
                 }, failure: { 

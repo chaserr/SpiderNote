@@ -23,19 +23,19 @@ extension UIView {
 }
 
 extension UIView {
-    func addHeight(height: CGFloat) {
+    func addHeight(_ height: CGFloat) {
         frame.size = CGSize(width: frame.width, height: frame.height + height)
     }
     
-    func addOffset(offset: CGPoint) {
+    func addOffset(_ offset: CGPoint) {
         center = CGPoint(x: center.x + offset.x, y: center.y + offset.y)
     }
     
-    func leftMove(distance: CGFloat) {
+    func leftMove(_ distance: CGFloat) {
         frame = CGRect(x: frame.origin.x - distance, y: frame.origin.y, width: frame.width, height: frame.height)
     }
     
-    func moveInRect(rect: CGRect, with point: CGPoint) {
+    func moveInRect(_ rect: CGRect, with point: CGPoint) {
         var finalPoint = point
 
         if point.x <= rect.origin.x {
@@ -53,13 +53,13 @@ extension UIView {
         frame.origin = finalPoint
     }
     
-    func shfit(offset: CGFloat) {
+    func shfit(_ offset: CGFloat) {
         center = CGPoint(x: center.x + offset, y: center.y)
     }
 }
 
 extension CGPoint {
-    func addOffset(offset: CGPoint) -> CGPoint {
+    func addOffset(_ offset: CGPoint) -> CGPoint {
         return CGPoint(x: x + offset.x, y: y + offset.y)
     }
 }

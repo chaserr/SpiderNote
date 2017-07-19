@@ -13,21 +13,21 @@ class AudioTagToast: UIImageView {
     var editHandler: (() -> Void)?
     var deleteHandler: (() -> Void)?
     
-    private var type = ""
+    fileprivate var type = ""
     
-    private lazy var editButton: UIButton = {
+    fileprivate lazy var editButton: UIButton = {
         let button = UIButton()
-        button.setTitle("编辑", forState: .Normal)
-        button.setTitleColor(UIColor.whiteColor(), forState: .Normal)
-        button.titleLabel?.font = UIFont.systemFontOfSize(13)
+        button.setTitle("编辑", for: UIControlState())
+        button.setTitleColor(UIColor.white, for: UIControlState())
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 13)
         return button
     }()
     
-    private lazy var deleteButton: UIButton = {
+    fileprivate lazy var deleteButton: UIButton = {
         let button = UIButton()
-        button.setTitle("删除", forState: .Normal)
-        button.setTitleColor(UIColor.whiteColor(), forState: .Normal)
-        button.titleLabel?.font = UIFont.systemFontOfSize(13)
+        button.setTitle("删除", for: UIControlState())
+        button.setTitleColor(UIColor.white, for: UIControlState())
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 13)
         return button
     }()
     
@@ -40,7 +40,7 @@ class AudioTagToast: UIImageView {
             image = UIImage(named: "audio_pic_tag_toast")
         }
         
-        userInteractionEnabled = true
+        isUserInteractionEnabled = true
         self.type = type
         
         makeUI()
@@ -48,8 +48,8 @@ class AudioTagToast: UIImageView {
     }
     
     func addActions() {
-        editButton.addTarget(self, action: #selector(editButtonClicked), forControlEvents: .TouchUpInside)
-        deleteButton.addTarget(self, action: #selector(deleteButtonClicked), forControlEvents: .TouchUpInside)
+        editButton.addTarget(self, action: #selector(editButtonClicked), for: .touchUpInside)
+        deleteButton.addTarget(self, action: #selector(deleteButtonClicked), for: .touchUpInside)
     }
     
     func editButtonClicked() {

@@ -9,18 +9,18 @@
 import UIKit
 
 enum AppearStyle: Int {
-    case None = 0
-    case One
+    case none = 0
+    case one
 }
 
 enum DisappearStyle: Int {
-    case None
-    case One
-    case Two
-    case Left
-    case Right
-    case Bottom
-    case Top
+    case none
+    case one
+    case two
+    case left
+    case right
+    case bottom
+    case top
 }
 
 class LaunchController: NSObject {
@@ -29,15 +29,15 @@ class LaunchController: NSObject {
     var desLabelFrame: CGRect?
     var desLabel: UILabel?
     
-    func loadLaunchImage(imageName: String) -> Void {
+    func loadLaunchImage(_ imageName: String) -> Void {
         
     }
     
-    func loadLaunchImage(imageName: String, iconName: String) -> Void {
+    func loadLaunchImage(_ imageName: String, iconName: String) -> Void {
         
     }
     
-    func loadLaunchImage(imgName: String, iconName: String, appearSty: AppearStyle, bgImageName: String, disappearStyle: DisappearStyle, descriptionStr: String) -> Void {
+    func loadLaunchImage(_ imgName: String, iconName: String, appearSty: AppearStyle, bgImageName: String, disappearStyle: DisappearStyle, descriptionStr: String) -> Void {
         
     }
     

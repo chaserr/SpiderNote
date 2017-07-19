@@ -19,31 +19,31 @@ enum CacheFor:String{
     case Voice = "Voice"  //语音缓存 (缓存NSData)
 }
 
-public class TXDiskCache {
+open class TXDiskCache {
     
-    private let defaultCacheName = "_default"
-    private let cachePrex = "com.zz.disk.cache."
-    private let ioQueueName = "com.disk.cache.ioQueue."
+    fileprivate let defaultCacheName = "_default"
+    fileprivate let cachePrex = "com.zz.disk.cache."
+    fileprivate let ioQueueName = "com.disk.cache.ioQueue."
     
-    private var fileManager: NSFileManager!
-    private let ioQueue: dispatch_queue_t
+    fileprivate var fileManager: FileManager!
+    fileprivate let ioQueue: DispatchQueue
     var diskCachePath:String
     // 针对Page
-    public class var sharedCacheObj: TXDiskCache {
+    open class var sharedCacheObj: TXDiskCache {
         return page
     }
     
     // 针对Image
-    public class var sharedCacheImage: TXDiskCache {
+    open class var sharedCacheImage: TXDiskCache {
         return image
     }
     
     // 针对Voice
-    public class var sharedCacheVoice: TXDiskCache {
+    open class var sharedCacheVoice: TXDiskCache {
         return voice
     }
     
-    private var storeType:CacheFor
+    fileprivate var storeType:CacheFor
     
     init(type:CacheFor) {
         self.storeType = type
@@ -57,13 +57,13 @@ public class TXDiskCache {
             diskCachePath = (APP_UTILITY.userDocumentPath()?.stringByAppendingPathComponent("object"))!        }
         
         
-        ioQueue = dispatch_queue_create(ioQueueName+type.rawValue, DISPATCH_QUEUE_SERIAL)
+        ioQueue = DispatchQueue(label: ioQueueName+type.rawValue, attributes: [])
 
-        dispatch_sync(ioQueue) { () -> Void in
-            self.fileManager = NSFileManager()
+        ioQueue.sync { () -> Void in
+            self.fileManager = FileManager()
             //创建子目录对应的文件夹
             do {
-                try self.fileManager.createDirectoryAtPath(self.diskCachePath, withIntermediateDirectories: true, attributes: nil)
+                try self.fileManager.createDirectory(atPath: self.diskCachePath, withIntermediateDirectories: true, attributes: nil)
             } catch _ {}
             
         }
@@ -79,7 +79,7 @@ public class TXDiskCache {
      - parameter data:            data
      - parameter completeHandler: 完成回调
      */
-    public func stroe(key:String,value:AnyObject? = nil,image:UIImage?,data:NSData?,completeHandler:(()->())? = nil){
+    open func stroe(_ key:String,value:AnyObject? = nil,image:UIImage?,data:Data?,completeHandler:(()->())? = nil){
         let path = self.cachePathForKey(key)
         switch storeType{
         case .Object:
@@ -104,19 +104,19 @@ public class TXDiskCache {
      - parameter path: 路径
      - parameter completeHandler: 完成后回调
      */
-    private func stroeObject(key:String,value:AnyObject?,path:String,completeHandler:(()->())? = nil){
-        dispatch_async(ioQueue){
+    fileprivate func stroeObject(_ key:String,value:AnyObject?,path:String,completeHandler:(()->())? = nil){
+        ioQueue.async{
             let data = NSMutableData()  //声明一个可变的Data对象
             //创建归档对象
-            let keyArchiver = NSKeyedArchiver(forWritingWithMutableData: data)
+            let keyArchiver = NSKeyedArchiver(forWritingWith: data)
             //开始归档
-            keyArchiver.encodeObject(value, forKey: key.tx_MD5())  //对key进行MD5加密
+            keyArchiver.encode(value, forKey: key.md5())  //对key进行MD5加密
             //完成归档
             keyArchiver.finishEncoding() //归档完毕
             
             do {
                 //写入文件
-                try data.writeToFile(path, options: NSDataWritingOptions.DataWritingAtomic)  //存储
+                try data.write(toFile: path, options: NSData.WritingOptions.atomic)  //存储
                 //完成回调
                 completeHandler?()
             }catch let err{
@@ -133,11 +133,11 @@ public class TXDiskCache {
      - parameter path:            路径
      - parameter completeHandler: 完成回调
      */
-    private func storeImage(image:UIImage,forKey key:String,path:String,completeHandler:(()->())? = nil){
-        dispatch_async(ioQueue) {
+    fileprivate func storeImage(_ image:UIImage,forKey key:String,path:String,completeHandler:(()->())? = nil){
+        ioQueue.async {
             let data = UIImagePNGRepresentation(image.zz_normalizedImage())
             if let data = data {
-                self.fileManager.createFileAtPath(path, contents: data, attributes: nil)
+                self.fileManager.createFile(atPath: path, contents: data, attributes: nil)
             }
         }
     }
@@ -150,10 +150,10 @@ public class TXDiskCache {
      - parameter path:            路径
      - parameter completeHandler: 完成回调
      */
-    private func storeVoice(data:NSData?,forKey key:String,path:String,completeHandler:(()->())? = nil){
-        dispatch_async(ioQueue) {
+    fileprivate func storeVoice(_ data:Data?,forKey key:String,path:String,completeHandler:(()->())? = nil){
+        ioQueue.async {
             if let data = data {
-                self.fileManager.createFileAtPath(path, contents: data, attributes: nil)
+                self.fileManager.createFile(atPath: path, contents: data, attributes: nil)
             }
         }
     }
@@ -166,11 +166,11 @@ public class TXDiskCache {
      - parameter imageGetHandler:  图像完成回调
      - parameter voiceGetHandler:  音频完成回调
      */
-    public func retrieve(key:String,objectGetHandler:((obj:AnyObject?)->())? = nil,imageGetHandler:((image:UIImage?)->())? = nil,voiceGetHandler:((data:NSData?)->())?){
+    open func retrieve(_ key:String,objectGetHandler:((_ obj:AnyObject?)->())? = nil,imageGetHandler:((_ image:UIImage?)->())? = nil,voiceGetHandler:((_ data:Data?)->())?){
         let path = self.cachePathForKey(key)
         switch storeType{
         case .Object:
-            self.retrieveObject(key.tx_MD5(), path: path, objectGetHandler: objectGetHandler)
+            self.retrieveObject(key.md5(), path: path, objectGetHandler: objectGetHandler)
         case .Image:
             self.retrieveImage(path,imageGetHandler:imageGetHandler)
         case .Voice:
@@ -186,16 +186,16 @@ public class TXDiskCache {
      - parameter path:             路径
      - parameter objectGetHandler: 获得后回调闭包
      */
-    private func retrieveObject(key:String,path:String,objectGetHandler:((obj:AnyObject?)->())?){
+    fileprivate func retrieveObject(_ key:String,path:String,objectGetHandler:((_ obj:AnyObject?)->())?){
         //反归档 获取
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) { () -> Void in
-            if self.fileManager.fileExistsAtPath(path){
+        DispatchQueue.global(qos: DispatchQoS.QoSClass.default).async { () -> Void in
+            if self.fileManager.fileExists(atPath: path){
                 let mdata = NSMutableData(contentsOfFile:path)  //声明可变Data
-                let unArchiver = NSKeyedUnarchiver(forReadingWithData: mdata!) //反归档对象
-                let obj = unArchiver.decodeObjectForKey(key)    //反归档
-                objectGetHandler?(obj:obj)  //完成回调
+                let unArchiver = NSKeyedUnarchiver(forReadingWith: mdata! as Data) //反归档对象
+                let obj = unArchiver.decodeObject(forKey: key)    //反归档
+                objectGetHandler?(obj as AnyObject)  //完成回调
             }
-            objectGetHandler?(obj:nil)
+            objectGetHandler?(nil)
         }
     }
     
@@ -205,14 +205,14 @@ public class TXDiskCache {
      - parameter path:            路径
      - parameter imageGetHandler: 获得后回调闭包
      */
-    private func retrieveImage(path:String,imageGetHandler:((image:UIImage?)->())?){
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) { () -> Void in
-            if let data = NSData(contentsOfFile: path){
+    fileprivate func retrieveImage(_ path:String,imageGetHandler:((_ image:UIImage?)->())?){
+        DispatchQueue.global(qos: DispatchQoS.QoSClass.default).async { () -> Void in
+            if let data = try? Data(contentsOf: URL(fileURLWithPath: path)){
                 if let image = UIImage(data: data){
-                    imageGetHandler?(image: image)
+                    imageGetHandler?(image)
                 }
             }
-            imageGetHandler?(image: nil)
+            imageGetHandler?(nil)
         }
     }
     
@@ -222,24 +222,24 @@ public class TXDiskCache {
      - parameter path:            路径
      - parameter voiceGetHandler: 获得后回调闭包
      */
-    private func retrieveVoice(path:String,voiceGetHandler:((data:NSData?)->())?){
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) { () -> Void in
-            if let data = NSData(contentsOfFile: path){
-                voiceGetHandler?(data: data)
+    fileprivate func retrieveVoice(_ path:String,voiceGetHandler:((_ data:Data?)->())?){
+        DispatchQueue.global(qos: DispatchQoS.QoSClass.default).async { () -> Void in
+            if let data = try? Data(contentsOf: URL(fileURLWithPath: path)){
+                voiceGetHandler?(data)
             }
-            voiceGetHandler?(data: nil)
+            voiceGetHandler?(nil)
         }
     }
 }
 
 extension TXDiskCache{
-    func cachePathForKey(key: String) -> String {
+    func cachePathForKey(_ key: String) -> String {
         let fileName = cacheFileNameForKey(key)     //对name进行MD5加密
-        return (diskCachePath as NSString).stringByAppendingPathComponent(fileName)
+        return (diskCachePath as NSString).appendingPathComponent(fileName)
     }
     
-    func cacheFileNameForKey(key: String) -> String {
-        return key.tx_MD5()
+    func cacheFileNameForKey(_ key: String) -> String {
+        return key.md5()
     }
 }
 
@@ -247,12 +247,12 @@ extension TXDiskCache{
 extension UIImage {
     
     func zz_normalizedImage() -> UIImage {
-        if imageOrientation == .Up {
+        if imageOrientation == .up {
             return self
         }
         
         UIGraphicsBeginImageContextWithOptions(size, false, scale)
-        drawInRect(CGRect(origin: CGPointZero, size: size))
+        draw(in: CGRect(origin: CGPoint.zero, size: size))
         let normalizedImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         

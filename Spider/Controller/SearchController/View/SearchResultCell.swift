@@ -14,12 +14,12 @@ class SearchResultCell: UITableViewCell {
     @IBOutlet weak var structPath: UILabel!
     @IBOutlet weak var mindName: UILabel!
     
-    class func cellWithTableView(tableview:UITableView) -> UITableViewCell {
+    class func cellWithTableView(_ tableview:UITableView) -> UITableViewCell {
         
         let cellID = className + "Mind"
-        var cell = tableview.dequeueReusableCellWithIdentifier(cellID)
+        var cell = tableview.dequeueReusableCell(withIdentifier: cellID)
         if cell == nil {
-            cell = NSBundle.mainBundle().loadNibNamed(className, owner: nil, options: nil)!.last as! SearchResultCell
+            cell = Bundle.main.loadNibNamed(className, owner: nil, options: nil)!.last as! SearchResultCell
         }
         return cell!
     }
@@ -31,7 +31,7 @@ class SearchResultCell: UITableViewCell {
         // Initialization code
     }
 
-    override func setSelected(selected: Bool, animated: Bool) {
+    override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state

@@ -11,11 +11,11 @@ import UIKit
 class NavigationItemTitleView: UILabel {
     
     init(title: String) {
-        super.init(frame: CGRectMake(0, 0, 200, 46))
+        super.init(frame: CGRect(x: 0, y: 0, width: 200, height: 46))
         
-        textAlignment = .Center
-        font = UIFont.systemFontOfSize(18)
-        backgroundColor = UIColor.clearColor()
+        textAlignment = .center
+        font = UIFont.systemFont(ofSize: 18)
+        backgroundColor = UIColor.clear
         textColor = UIColor.color(withHex: 0x282828)
         text = title
     }

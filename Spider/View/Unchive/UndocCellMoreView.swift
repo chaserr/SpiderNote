@@ -9,39 +9,39 @@
 import UIKit
 
 enum UndocCellMoreType: Int, CustomStringConvertible {
-    case Move   = 0x66bb6a
-    case Delete = 0xf16c6c
-    case More   = 0x555555
+    case move   = 0x66bb6a
+    case delete = 0xf16c6c
+    case more   = 0x555555
     
     var description: String {
         switch self {
-        case .More:
+        case .more:
             return "更多..."
-        case .Delete:
+        case .delete:
             return "删除"
-        case .Move:
+        case .move:
             return "移动"
         }
     }
 }
 
 class UndocCellMoreView: UIView {
-    typealias ButtonHandler = (UndocCellMoreType -> Void)?
-    private var buttonHandler: ButtonHandler
+    typealias ButtonHandler = ((UndocCellMoreType) -> Void)?
+    fileprivate var buttonHandler: ButtonHandler
     
     init(handler: ButtonHandler) {
         super.init(frame: CGRect(x: 0, y: 0, width: kScreenWidth / 2, height: kScreenWidth / 2))
         buttonHandler = handler
         backgroundColor = UIColor.color(withHex: 0xffffff, alpha: 0.9)
         
-        addSubview(UndocCellMoreButton(type: .Move, inView: self))
-        addSubview(UndocCellMoreButton(type: .Delete, inView: self))
-        addSubview(UndocCellMoreButton(type: .More, inView: self))
+        addSubview(UndocCellMoreButton(type: .move, inView: self))
+        addSubview(UndocCellMoreButton(type: .delete, inView: self))
+        addSubview(UndocCellMoreButton(type: .more, inView: self))
         
         addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTap)))
     }
     
-    func buttonsClicked(sender: UIButton) {
+    func buttonsClicked(_ sender: UIButton) {
         
         guard let type = UndocCellMoreType(rawValue: sender.tag) else { return }
         buttonHandler?(type)
@@ -53,9 +53,9 @@ class UndocCellMoreView: UIView {
         removeFromSuperview()
     }
     
-    override func hitTest(point: CGPoint, withEvent event: UIEvent?) -> UIView? {
-        hidden = !bounds.contains(point)
-        return super.hitTest(point, withEvent: event)
+    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        isHidden = !bounds.contains(point)
+        return super.hitTest(point, with: event)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -69,11 +69,11 @@ private class UndocCellMoreButton: UIButton {
         super.init(frame: CGRect(x: 0, y: 0, width: 60, height: 60))
         
         switch type {
-        case .Move:
+        case .move:
             center = CGPoint(x: kScreenWidth / 4, y: kScreenWidth / 4 - 36)
-        case .Delete:
+        case .delete:
             center = CGPoint(x: kScreenWidth / 4 - 45, y: kScreenWidth / 4 + 36)
-        case .More:
+        case .more:
             center = CGPoint(x: kScreenWidth / 4 + 45, y: kScreenWidth / 4 + 36)
         }
         
@@ -81,13 +81,13 @@ private class UndocCellMoreButton: UIButton {
         layer.cornerRadius = 30
         layer.masksToBounds = true
         
-        setTitle(type.description, forState: .Normal)
-        setTitleColor(SpiderConfig.Color.LightText, forState: .Normal)
-        titleLabel?.font = UIFont.systemFontOfSize(14)
+        setTitle(type.description, for: UIControlState())
+        setTitleColor(SpiderConfig.Color.LightText, for: UIControlState())
+        titleLabel?.font = UIFont.systemFont(ofSize: 14)
         
         tag = type.rawValue
         
-        addTarget(view, action: #selector(UndocCellMoreView.buttonsClicked(_:)), forControlEvents: .TouchUpInside)
+        addTarget(view, action: #selector(UndocCellMoreView.buttonsClicked(_:)), for: .touchUpInside)
     }
     
     required init?(coder aDecoder: NSCoder) {

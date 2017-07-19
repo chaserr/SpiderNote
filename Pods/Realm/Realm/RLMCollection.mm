@@ -22,6 +22,7 @@
 #import "RLMObjectSchema_Private.hpp"
 #import "RLMObjectStore.h"
 #import "RLMObject_Private.hpp"
+#import "RLMProperty_Private.h"
 
 #import "collection_notifications.hpp"
 #import "list.hpp"
@@ -149,6 +150,17 @@ NSArray *RLMCollectionValueForKey(id<RLMFastEnumerable> collection, NSString *ke
         return results;
     }
 
+    for (RLMProperty *prop in info->rlmObjectSchema.swiftGenericProperties) {
+        if ([prop.name isEqual:key] && !prop.optional) {
+            for (size_t i = 0; i < count; i++) {
+                size_t rowIndex = [collection indexInSource:i];
+                RLMObjectBase *accessor = RLMCreateObjectAccessor(realm, *info, rowIndex);
+                [results addObject:[accessor valueForKey:key] ?: NSNull.null];
+            }
+            return results;
+        }
+    }
+
     RLMObject *accessor = RLMCreateManagedAccessor(info->rlmObjectSchema.accessorClass, realm, info);
     realm::Table *table = info->table();
     for (size_t i = 0; i < count; i++) {
@@ -219,13 +231,23 @@ NSString *RLMDescriptionWithMaxDepth(NSString *name,
 
 @implementation RLMCancellationToken {
     realm::NotificationToken _token;
+    __unsafe_unretained RLMRealm *_realm;
 }
-- (instancetype)initWithToken:(realm::NotificationToken)token {
+- (instancetype)initWithToken:(realm::NotificationToken)token realm:(RLMRealm *)realm {
     self = [super init];
     if (self) {
         _token = std::move(token);
+        _realm = realm;
     }
     return self;
+}
+
+- (RLMRealm *)realm {
+    return _realm;
+}
+
+- (void)suppressNextNotification {
+    _token.suppress_next();
 }
 
 - (void)stop {
@@ -336,7 +358,8 @@ RLMNotificationToken *RLMAddNotificationBlock(id objcCollection,
         }
     };
 
-    return [[RLMCancellationToken alloc] initWithToken:collection.add_notification_callback(cb)];
+    return [[RLMCancellationToken alloc] initWithToken:collection.add_notification_callback(cb)
+                                                 realm:(RLMRealm *)[objcCollection realm]];
 }
 
 // Explicitly instantiate the templated function for the two types we'll use it on

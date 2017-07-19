@@ -8,6 +8,30 @@
 
 import UIKit
 import AVFoundation
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
+
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func <= <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l <= r
+  default:
+    return !(rhs < lhs)
+  }
+}
+
 
 // Global Variables
 private let mainColor = UIColor.color(withHex: 0x3e3e50)
@@ -39,31 +63,31 @@ private var pauseImage : UIImage = {
 
 class AudioPlayerView: UIView, AVAudioPlayerDelegate {
     
-    private var audioInfo: AudioInfo!
-    private var playedTime: NSTimeInterval = 0
-    private var timer: NSTimer?
+    fileprivate var audioInfo: AudioInfo!
+    fileprivate var playedTime: TimeInterval = 0
+    fileprivate var timer: Timer?
 //    private var 
     
-    private var playButton: AudioPlayButton!
-    private var progressView: AudioProgressView!
-    private var timeLabel: AudioTimeLabel!
-    private var player: AVAudioPlayer!
-    private var cursor: UIImageView!
+    fileprivate var playButton: AudioPlayButton!
+    fileprivate var progressView: AudioProgressView!
+    fileprivate var timeLabel: AudioTimeLabel!
+    fileprivate var player: AVAudioPlayer!
+    fileprivate var cursor: UIImageView!
     
-    private var progressW: CGFloat!
-    private var labelC: CGFloat!
-    private var labelEdegR: CGFloat!
+    fileprivate var progressW: CGFloat!
+    fileprivate var labelC: CGFloat!
+    fileprivate var labelEdegR: CGFloat!
     
-    private var lastProgress = CGFloat(0)
-    private var touchToMove = false
+    fileprivate var lastProgress = CGFloat(0)
+    fileprivate var touchToMove = false
     
 //    var pan: UIPanGestureRecognizer!
     
     init(frame: CGRect, duration: String? = nil) {
         super.init(frame: frame)
         let centerY = frame.height / 2
-        backgroundColor = UIColor.whiteColor()
-        userInteractionEnabled = true
+        backgroundColor = UIColor.white
+        isUserInteractionEnabled = true
         
         // progress view
         
@@ -77,13 +101,13 @@ class AudioPlayerView: UIView, AVAudioPlayerDelegate {
         
         // play button
         playButton = AudioPlayButton(frame: CGRect(x: horOffset, y: centerY - buttonS / 2, width: buttonS, height: buttonS))
-        playButton.addTarget(self, action: #selector(buttonClicked), forControlEvents: .TouchUpInside)
+        playButton.addTarget(self, action: #selector(buttonClicked), for: .touchUpInside)
         addSubview(playButton)
         
         // cursor
         cursor = UIImageView(image: UIImage(named: "article_audio_cursor"))
         cursor.frame.size = CGSize(width: 3, height: pHeight + cursorOffsetH)
-        cursor.hidden = true
+        cursor.isHidden = true
         addSubview(cursor)
         
         timeLabel = AudioTimeLabel(center: CGPoint(x: progressView.frame.width - labelR, y: progressH / 2))
@@ -95,7 +119,7 @@ class AudioPlayerView: UIView, AVAudioPlayerDelegate {
 //        addGestureRecognizer(pan)
     }
     
-    func prepareToPaly(audioInfo: AudioInfo, playedTime: NSTimeInterval = 0) {
+    func prepareToPaly(_ audioInfo: AudioInfo, playedTime: TimeInterval = 0) {
         
         self.audioInfo = audioInfo
         self.playedTime = playedTime
@@ -103,7 +127,7 @@ class AudioPlayerView: UIView, AVAudioPlayerDelegate {
         timeLabel.text = audioInfo.duration
         progressView.progress = progressW * CGFloat(playedTime / audioInfo.duration.toTime())
         
-        playButton.setImage(playImage, forState: .Normal)
+        playButton.setImage(playImage, for: UIControlState())
         timer?.invalidate()
         timer = nil
         
@@ -111,11 +135,11 @@ class AudioPlayerView: UIView, AVAudioPlayerDelegate {
             
             if SpiderPlayer.sharedManager.playingID == audioInfo.ownerID {
                 
-                if player.playing { // 为当前播放的音频
+                if player.isPlaying { // 为当前播放的音频
                     
-                    playButton.setImage(pauseImage, forState: .Normal)
-                    timer = NSTimer(timeInterval: timeInterval, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
-                    NSRunLoop.mainRunLoop().addTimer(timer!, forMode: NSRunLoopCommonModes)
+                    playButton.setImage(pauseImage, for: UIControlState())
+                    timer = Timer(timeInterval: timeInterval, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
+                    RunLoop.main.add(timer!, forMode: RunLoopMode.commonModes)
             
                 }
             }
@@ -130,7 +154,7 @@ class AudioPlayerView: UIView, AVAudioPlayerDelegate {
         
         if let player = SpiderPlayer.sharedManager.player {
             
-            if player.playing {
+            if player.isPlaying {
                 
                 if SpiderPlayer.sharedManager.playingID == audioInfo.ownerID {
                     
@@ -138,7 +162,7 @@ class AudioPlayerView: UIView, AVAudioPlayerDelegate {
                     timer?.invalidate()
 
                     playedTime = player.currentTime
-                    playButton.setImage(playImage, forState: .Normal)
+                    playButton.setImage(playImage, for: UIControlState())
                     
                 } else {
                     
@@ -154,7 +178,7 @@ class AudioPlayerView: UIView, AVAudioPlayerDelegate {
                 if SpiderPlayer.sharedManager.playingID == audioInfo.ownerID {
                     
                     player.play()
-                    playButton.setImage(pauseImage, forState: .Normal)
+                    playButton.setImage(pauseImage, for: UIControlState())
                     
                 } else {
                     
@@ -162,7 +186,7 @@ class AudioPlayerView: UIView, AVAudioPlayerDelegate {
                     SpiderPlayer.sharedManager.changed = true
                     SpiderPlayer.sharedManager.play(at: playedTime)
                     
-                    playButton.setImage(pauseImage, forState: .Normal)
+                    playButton.setImage(pauseImage, for: UIControlState())
                 }
                 
                 startTimer()
@@ -173,7 +197,7 @@ class AudioPlayerView: UIView, AVAudioPlayerDelegate {
             SpiderPlayer.sharedManager.prepareToPlay(audioInfo)
             SpiderPlayer.sharedManager.play(at: playedTime)
             
-            playButton.setImage(pauseImage, forState: .Normal)
+            playButton.setImage(pauseImage, for: UIControlState())
             startTimer()
         }
     }
@@ -185,8 +209,8 @@ class AudioPlayerView: UIView, AVAudioPlayerDelegate {
     }
     
     func startTimer() {
-        timer = NSTimer(timeInterval: timeInterval, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
-        NSRunLoop.mainRunLoop().addTimer(timer!, forMode: NSRunLoopCommonModes)
+        timer = Timer(timeInterval: timeInterval, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
+        RunLoop.main.add(timer!, forMode: RunLoopMode.commonModes)
     }
     
     // audio info
@@ -195,7 +219,7 @@ class AudioPlayerView: UIView, AVAudioPlayerDelegate {
     }
     
     func pause() {
-        playButton.setImage(playImage, forState: .Normal)
+        playButton.setImage(playImage, for: UIControlState())
         //        gobalPlayer?.pause()
         player.pause()
 //        
@@ -203,8 +227,8 @@ class AudioPlayerView: UIView, AVAudioPlayerDelegate {
 //        timer = nil
     }
     
-    func audioPlayerDidFinishPlaying(player: AVAudioPlayer, successfully flag: Bool) {
-        playButton.setImage(playImage, forState: .Normal)
+    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+        playButton.setImage(playImage, for: UIControlState())
         progressView.progress = progressW
 //        timer.invalidate()
 //        timer = nil
@@ -295,7 +319,7 @@ class AudioPlayerView: UIView, AVAudioPlayerDelegate {
 //        (superview?.superview?.superview?.superview as! UITableView).scrollEnabled = true
 //    }
     
-    func getCursorHeight(location: CGPoint) -> CGFloat {
+    func getCursorHeight(_ location: CGPoint) -> CGFloat {
         if location.x <= labelEdegR {
             return pHeight + cursorOffsetH
         } else {
@@ -337,14 +361,14 @@ private class AudioProgressView: UIView {
         let angle = CGFloat(M_PI) - asin(pHeight / 2 / labelR)
         
         let path = UIBezierPath()
-        path.moveToPoint(p1)
-        path.addLineToPoint(rS)
-        path.addArcWithCenter(rC, radius: labelR, startAngle: -angle, endAngle: angle, clockwise: true)
-        path.addLineToPoint(p2)
-        path.addLineToPoint(p1)
+        path.move(to: p1)
+        path.addLine(to: rS)
+        path.addArc(withCenter: rC, radius: labelR, startAngle: -angle, endAngle: angle, clockwise: true)
+        path.addLine(to: p2)
+        path.addLine(to: p1)
         
         let maskLayer = CAShapeLayer()
-        maskLayer.path = path.CGPath
+        maskLayer.path = path.cgPath
         layer.mask = maskLayer
     }
     
@@ -352,7 +376,7 @@ private class AudioProgressView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func drawRect(rect: CGRect) {
+    override func draw(_ rect: CGRect) {
         let rect = CGRect(x: 0, y: 0, width: progress, height: frame.height)
         let path = UIBezierPath(rect: rect)
         mainColor.setFill()
@@ -367,10 +391,10 @@ private class AudioPlayButton: UIButton {
         
         layer.cornerRadius = frame.width / 2
         layer.borderWidth = borderWidth
-        layer.borderColor = mainColor.CGColor
+        layer.borderColor = mainColor.cgColor
         layer.masksToBounds = true
         
-        setImage(playImage, forState: .Normal)
+        setImage(playImage, for: UIControlState())
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -382,9 +406,9 @@ private class AudioPlayButton: UIButton {
 private class AudioTimeLabel: UILabel {
     init(center: CGPoint) {
         super.init(frame: CGRect(x: 0, y: 0, width: 30, height: 13))
-        font = UIFont.systemFontOfSize(10)
+        font = UIFont.systemFont(ofSize: 10)
         textColor = wordColor
-        textAlignment = .Center
+        textAlignment = .center
         
         adjustsFontSizeToFitWidth = true
         self.center = center

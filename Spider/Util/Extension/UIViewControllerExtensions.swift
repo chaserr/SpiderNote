@@ -12,96 +12,96 @@ extension UIViewController {
     // MARK: - Notifications
     //TODO: Document this part
     public func addNotificationObserver(name: String, selector: Selector) {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: selector, name: name, object: nil)
+        NotificationCenter.default.addObserver(self, selector: selector, name: NSNotification.Name(rawValue: name), object: nil)
     }
 
     public func removeNotificationObserver(name: String) {
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: name, object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: name), object: nil)
     }
 
     public func removeNotificationObserver() {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
     #if os(iOS)
 
     public func addKeyboardWillShowNotification() {
-        self.addNotificationObserver(UIKeyboardWillShowNotification, selector: #selector(UIViewController.keyboardWillShowNotification(_:)))
+        self.addNotificationObserver(name: NSNotification.Name.UIKeyboardWillShow.rawValue, selector: #selector(UIViewController.keyboardWillShowNotification(_:)))
     }
 
     public func addKeyboardDidShowNotification() {
-        self.addNotificationObserver(UIKeyboardDidShowNotification, selector: #selector(UIViewController.keyboardDidShowNotification(_:)))
+        self.addNotificationObserver(name: NSNotification.Name.UIKeyboardDidShow.rawValue, selector: #selector(UIViewController.keyboardDidShowNotification(_:)))
     }
 
     public func addKeyboardWillHideNotification() {
-        self.addNotificationObserver(UIKeyboardWillHideNotification, selector: #selector(UIViewController.keyboardWillHideNotification(_:)))
+        self.addNotificationObserver(name: NSNotification.Name.UIKeyboardWillHide.rawValue, selector: #selector(UIViewController.keyboardWillHideNotification(_:)))
     }
 
     public func addKeyboardDidHideNotification() {
-        self.addNotificationObserver(UIKeyboardDidHideNotification, selector: #selector(UIViewController.keyboardDidHideNotification(_:)))
+        self.addNotificationObserver(name: NSNotification.Name.UIKeyboardDidHide.rawValue, selector: #selector(UIViewController.keyboardDidHideNotification(_:)))
     }
 
     public func removeKeyboardWillShowNotification() {
-        self.removeNotificationObserver(UIKeyboardWillShowNotification)
+        self.removeNotificationObserver(name: NSNotification.Name.UIKeyboardWillShow.rawValue)
     }
 
     public func removeKeyboardDidShowNotification() {
-        self.removeNotificationObserver(UIKeyboardDidShowNotification)
+        self.removeNotificationObserver(name: NSNotification.Name.UIKeyboardDidShow.rawValue)
     }
 
     public func removeKeyboardWillHideNotification() {
-        self.removeNotificationObserver(UIKeyboardWillHideNotification)
+        self.removeNotificationObserver(name: NSNotification.Name.UIKeyboardWillHide.rawValue)
     }
 
     public func removeKeyboardDidHideNotification() {
-        self.removeNotificationObserver(UIKeyboardDidHideNotification)
+        self.removeNotificationObserver(name: NSNotification.Name.UIKeyboardDidHide.rawValue)
     }
 
-    public func keyboardDidShowNotification(notification: NSNotification) {
-        if let nInfo = notification.userInfo, value = nInfo[UIKeyboardFrameEndUserInfoKey] as? NSValue {
+    public func keyboardDidShowNotification(_ notification: Notification) {
+        if let nInfo = notification.userInfo, let value = nInfo[UIKeyboardFrameEndUserInfoKey] as? NSValue {
 
-            let frame = value.CGRectValue()
+            let frame = value.cgRectValue
             keyboardDidShowWithFrame(frame)
         }
     }
 
-    public func keyboardWillShowNotification(notification: NSNotification) {
-        if let nInfo = notification.userInfo, value = nInfo[UIKeyboardFrameEndUserInfoKey] as? NSValue {
+    public func keyboardWillShowNotification(_ notification: Notification) {
+        if let nInfo = notification.userInfo, let value = nInfo[UIKeyboardFrameEndUserInfoKey] as? NSValue {
 
-            let frame = value.CGRectValue()
+            let frame = value.cgRectValue
             keyboardWillShowWithFrame(frame)
         }
     }
 
-    public func keyboardWillHideNotification(notification: NSNotification) {
-        if let nInfo = notification.userInfo, value = nInfo[UIKeyboardFrameEndUserInfoKey] as? NSValue {
+    public func keyboardWillHideNotification(_ notification: Notification) {
+        if let nInfo = notification.userInfo, let value = nInfo[UIKeyboardFrameEndUserInfoKey] as? NSValue {
 
-            let frame = value.CGRectValue()
+            let frame = value.cgRectValue
             keyboardWillHideWithFrame(frame)
         }
     }
 
-    public func keyboardDidHideNotification(notification: NSNotification) {
-        if let nInfo = notification.userInfo, value = nInfo[UIKeyboardFrameEndUserInfoKey] as? NSValue {
+    public func keyboardDidHideNotification(_ notification: Notification) {
+        if let nInfo = notification.userInfo, let value = nInfo[UIKeyboardFrameEndUserInfoKey] as? NSValue {
 
-            let frame = value.CGRectValue()
+            let frame = value.cgRectValue
             keyboardDidHideWithFrame(frame)
         }
     }
 
-    public func keyboardWillShowWithFrame(frame: CGRect) {
+    public func keyboardWillShowWithFrame(_ frame: CGRect) {
 
     }
 
-    public func keyboardDidShowWithFrame(frame: CGRect) {
+    public func keyboardDidShowWithFrame(_ frame: CGRect) {
 
     }
 
-    public func keyboardWillHideWithFrame(frame: CGRect) {
+    public func keyboardWillHideWithFrame(_ frame: CGRect) {
 
     }
 
-    public func keyboardDidHideWithFrame(frame: CGRect) {
+    public func keyboardDidHideWithFrame(_ frame: CGRect) {
 
     }
 
@@ -122,11 +122,11 @@ extension UIViewController {
     /// EZSwiftExtensions
     public var top: CGFloat {
         get {
-            if let me = self as? UINavigationController, visibleViewController = me.visibleViewController {
+            if let me = self as? UINavigationController, let visibleViewController = me.visibleViewController {
                 return visibleViewController.top
             }
             if let nav = self.navigationController {
-                if nav.navigationBarHidden {
+                if nav.isNavigationBarHidden {
                     return view.top
                 } else {
                     return nav.navigationBar.bottom
@@ -140,11 +140,11 @@ extension UIViewController {
     /// EZSwiftExtensions
     public var bottom: CGFloat {
         get {
-            if let me = self as? UINavigationController, visibleViewController = me.visibleViewController {
+            if let me = self as? UINavigationController, let visibleViewController = me.visibleViewController {
                 return visibleViewController.bottom
             }
             if let tab = tabBarController {
-                if tab.tabBar.hidden {
+                if tab.tabBar.isHidden {
                     return view.bottom
                 } else {
                     return tab.tabBar.top
@@ -158,7 +158,7 @@ extension UIViewController {
     /// EZSwiftExtensions
     public var tabBarHeight: CGFloat {
         get {
-            if let me = self as? UINavigationController, visibleViewController = me.visibleViewController {
+            if let me = self as? UINavigationController, let visibleViewController = me.visibleViewController {
                 return visibleViewController.tabBarHeight
             }
             if let tab = self.tabBarController {
@@ -171,7 +171,7 @@ extension UIViewController {
     /// EZSwiftExtensions
     public var navigationBarHeight: CGFloat {
         get {
-            if let me = self as? UINavigationController, visibleViewController = me.visibleViewController {
+            if let me = self as? UINavigationController, let visibleViewController = me.visibleViewController {
                 return visibleViewController.navigationBarHeight
             }
             if let nav = self.navigationController {
@@ -184,7 +184,7 @@ extension UIViewController {
     /// EZSwiftExtensions
     public var navigationBarColor: UIColor? {
         get {
-            if let me = self as? UINavigationController, visibleViewController = me.visibleViewController {
+            if let me = self as? UINavigationController, let visibleViewController = me.visibleViewController {
                 return visibleViewController.navigationBarColor
             }
             return navigationController?.navigationBar.tintColor
@@ -210,66 +210,66 @@ extension UIViewController {
     // MARK: - VC Flow
 
     /// EZSwiftExtensions
-    public func pushVC(vc: UIViewController) {
+    public func pushVC(_ vc: UIViewController) {
         navigationController?.pushViewController(vc, animated: true)
     }
 
     /// EZSwiftExtensions
     public func popVC() {
-        navigationController?.popViewControllerAnimated(true)
+        navigationController?.popViewController(animated: true)
     }
 
     /// EZSwiftExtensions
-    public func presentVC(vc: UIViewController) {
-        presentViewController(vc, animated: true, completion: nil)
+    public func presentVC(_ vc: UIViewController) {
+        present(vc, animated: true, completion: nil)
     }
 
     /// EZSwiftExtensions
-    public func dismissVC(completion completion: (() -> Void)? ) {
-        dismissViewControllerAnimated(true, completion: completion)
+    public func dismissVC(completion: (() -> Void)? ) {
+        dismiss(animated: true, completion: completion)
     }
 
     /// EZSwiftExtensions
-    public func addAsChildViewController(vc: UIViewController, toView: UIView) {
+    public func addAsChildViewController(_ vc: UIViewController, toView: UIView) {
         toView.addSubview(vc.view)
         self.addChildViewController(vc)
-        vc.didMoveToParentViewController(self)
+        vc.didMove(toParentViewController: self)
     }
 
     ///EZSE: Adds image named: as a UIImageView in the Background
-    func setBackgroundImage(named: String) {
+    func setBackgroundImage(_ named: String) {
         let image = UIImage(named: named)
         let imageView = UIImageView(frame: view.frame)
         imageView.image = image
         view.addSubview(imageView)
-        view.sendSubviewToBack(imageView)
+        view.sendSubview(toBack: imageView)
     }
 
     ///EZSE: Adds UIImage as a UIImageView in the Background
-    @nonobjc func setBackgroundImage(image: UIImage) {
+    @nonobjc func setBackgroundImage(_ image: UIImage) {
         let imageView = UIImageView(frame: view.frame)
         imageView.image = image
         view.addSubview(imageView)
-        view.sendSubviewToBack(imageView)
+        view.sendSubview(toBack: imageView)
     }
     
     
     func customLizeNavigationBarBackBtn() -> Void {
         var backButton:UIButton!
-        backButton = UIButton.init(type: UIButtonType.Custom)
-        backButton.frame = CGRectMake(0.0, 0.0, 50.0, 44.0)
-        backButton.imageView?.contentMode = UIViewContentMode.Center
-        backButton.setImage(UIImage(named: "nav_back"), forState: UIControlState.Normal)
-        backButton.contentHorizontalAlignment = UIControlContentHorizontalAlignment.Left
-        backButton.addTarget(self, action: #selector(backAction), forControlEvents: UIControlEvents.TouchUpInside)
+        backButton = UIButton.init(type: UIButtonType.custom)
+        backButton.frame = CGRect(x: 0.0, y: 0.0, width: 50.0, height: 44.0)
+        backButton.imageView?.contentMode = UIViewContentMode.center
+        backButton.setImage(UIImage(named: "nav_back"), for: UIControlState())
+        backButton.contentHorizontalAlignment = UIControlContentHorizontalAlignment.left
+        backButton.addTarget(self, action: #selector(backAction), for: UIControlEvents.touchUpInside)
         let backBarBtnItem:UIBarButtonItem = UIBarButtonItem.init(customView: backButton)
-        backBarBtnItem.style = UIBarButtonItemStyle.Plain
+        backBarBtnItem.style = UIBarButtonItemStyle.plain
         setLeftBarButtonItem(backBarBtnItem)
         
     }
     
-    func setLeftBarButtonItem(barButtonItem:UIBarButtonItem) -> Void {
-        let negativeSpace:UIBarButtonItem = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
+    func setLeftBarButtonItem(_ barButtonItem:UIBarButtonItem) -> Void {
+        let negativeSpace:UIBarButtonItem = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonSystemItem.fixedSpace, target: nil, action: nil)
         
         if UIDevice.isHigherIOS7() {
             negativeSpace.width = 0
@@ -289,18 +289,18 @@ extension UIViewController {
     /**隐藏导航条下面的一条黑线*/
     func hiddenNavBottomLine() -> Void {
         let navBottomLine = getLineViewInNavigationBar((navigationController?.navigationBar)!)
-        navBottomLine?.hidden = true
+        navBottomLine?.isHidden = true
     }
     
     /**显示导航条下面的一条黑线*/
     func showNavBottomLine() -> Void {
         let navBottomLine = getLineViewInNavigationBar((navigationController?.navigationBar)!)
-        navBottomLine?.hidden = false
+        navBottomLine?.isHidden = false
     }
     
     /**找到导航栏下面的黑线*/
-    func getLineViewInNavigationBar(view:UIView) -> UIImageView? {
-        if view.isKindOfClass(UIImageView) && view.bounds.size.height <= 1.0 {
+    func getLineViewInNavigationBar(_ view:UIView) -> UIImageView? {
+        if view.isKind(of: UIImageView.self) && view.bounds.size.height <= 1.0 {
             return view as? UIImageView
         }
         

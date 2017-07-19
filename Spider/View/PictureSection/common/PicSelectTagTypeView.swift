@@ -19,19 +19,19 @@ class PicSelectTagTypeView: UIView {
         backgroundColor = UIColor(white: 0, alpha: 0.3)
         
         let view = UIView(frame: CGRect(x: 0, y: kScreenHeight - kPicAddTagViewH, width: kScreenWidth, height: kPicAddTagViewH))
-        view.backgroundColor = UIColor.whiteColor()
+        view.backgroundColor = UIColor.white
         addSubview(view)
         
         text = UIButton(frame: CGRect(x: kPicTagTypeOx1, y: kPicTagTypeOy, width: kPicTagTypeS, height: kPicTagTypeS))
-        text.setBackgroundImage(UIImage(named: "pic_tag_text_button"), forState: .Normal)
+        text.setBackgroundImage(UIImage(named: "pic_tag_text_button"), for: UIControlState())
         view.addSubview(text)
         
         pic = UIButton(frame: CGRect(x: kPicTagTypeOx2, y: kPicTagTypeOy, width: kPicTagTypeS, height: kPicTagTypeS))
-        pic.setBackgroundImage(UIImage(named: "pic_tag_pic_button"), forState: .Normal)
+        pic.setBackgroundImage(UIImage(named: "pic_tag_pic_button"), for: UIControlState())
         view.addSubview(pic)
         
         audio = UIButton(frame: CGRect(x: kPicTagTypeOx3, y: kPicTagTypeOy, width: kPicTagTypeS, height: kPicTagTypeS))
-        audio.setBackgroundImage(UIImage(named: "pic_tag_audio_button"), forState: .Normal)
+        audio.setBackgroundImage(UIImage(named: "pic_tag_audio_button"), for: UIControlState())
         view.addSubview(audio)
         
         let textLabel = PicTagLabel(text: "文字")
@@ -51,13 +51,13 @@ class PicSelectTagTypeView: UIView {
     }
     
     func hide() {
-        hidden = true
+        isHidden = true
     }
     
-    override func willMoveToWindow(newWindow: UIWindow?) {
+    override func willMove(toWindow newWindow: UIWindow?) {
         // 取消添加图片标签返回时隐藏
-        if hidden == false {
-            hidden = true
+        if isHidden == false {
+            isHidden = true
         }
     }
     
@@ -71,8 +71,8 @@ private class PicTagLabel: UILabel {
         super.init(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
         self.text = text
         textColor = UIColor.color(withHex: 0x555555)
-        textAlignment = .Center
-        font = UIFont.systemFontOfSize(12)
+        textAlignment = .center
+        font = UIFont.systemFont(ofSize: 12)
         sizeToFit()
     }
     

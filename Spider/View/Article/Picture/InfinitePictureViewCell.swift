@@ -16,7 +16,7 @@ class InfinitePictureViewCell: UICollectionViewCell {
         super.init(frame: frame)
         
         imageView = UIImageView(frame: bounds)
-        imageView.contentMode = .ScaleAspectFill
+        imageView.contentMode = .scaleAspectFill
         imageView.layer.masksToBounds = true
         addSubview(imageView)
     }
@@ -27,7 +27,7 @@ class InfinitePictureViewCell: UICollectionViewCell {
         imageView.image = nil
     }
     
-    func configureCellWith(info: PicInfo) {
+    func configureCellWith(_ info: PicInfo) {
         
         if let image = info.image {
             imageView.image = image

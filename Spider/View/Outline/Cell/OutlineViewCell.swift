@@ -16,42 +16,42 @@ private let yOpenLineY = kOutlineCellHeight - yOpenLineH
 
 class OutlineViewCell: UITableViewCell {
     
-    private var icon: UIButton = {
+    fileprivate var icon: UIButton = {
         let button = UIButton()
-        button.contentMode = .ScaleAspectFit
+        button.contentMode = .scaleAspectFit
         button.imageEdgeInsets = UIEdgeInsets(top: 6, left: 6, bottom: 6, right: 6)
-        button.userInteractionEnabled = false
+        button.isUserInteractionEnabled = false
         button.adjustsImageWhenHighlighted = false
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
-    private var xLine: UIImageView = {
+    fileprivate var xLine: UIImageView = {
         let view = UIImageView(image: UIImage(named: "outline_xline"))
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
 
-    private var label: UILabel = {
+    fileprivate var label: UILabel = {
         let label = UILabel()
         label.font = SpiderConfig.Font.Title
         label.textColor = SpiderConfig.Color.DarkText
-        label.lineBreakMode = .ByTruncatingMiddle
+        label.lineBreakMode = .byTruncatingMiddle
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     init(mind: MindObject, status: OutlineStatus, choosed: Bool) {
-        super.init(style: .Default, reuseIdentifier: nil)
-        selectionStyle = .None
+        super.init(style: .default, reuseIdentifier: nil)
+        selectionStyle = .none
         label.text = mind.name
 
-        icon.setBackgroundImage(UIImage(named: mind.type == 0 ? "outline_mind" : "outline_article"), forState: .Normal)
+        icon.setBackgroundImage(UIImage(named: mind.type == 0 ? "outline_mind" : "outline_article"), for: UIControlState())
         
         if mind.foldable {
-            icon.setImage(UIImage(named: status == .Closed ? "outline_unfold" : "outline_fold"), forState: .Normal)
+            icon.setImage(UIImage(named: status == .closed ? "outline_unfold" : "outline_fold"), for: UIControlState())
             
-            if status == .Opened {
+            if status == .opened {
                 let yLine = UIImageView(image: UIImage(named: "outline_yline"))
                 yLine.frame = CGRect(x: xDiff * CGFloat(mind.level) + iconS / 2, y: yOpenLineY, width: 0.5, height: yOpenLineH)
                 contentView.addSubview(yLine)

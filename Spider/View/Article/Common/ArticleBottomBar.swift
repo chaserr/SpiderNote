@@ -12,34 +12,34 @@ class ArticleBottomBar: UIView {
     var backHandler: (() -> Void)?
     var unchiveHandler: (() -> Void)?
     
-    private lazy var backButton: UIButton = {
+    fileprivate lazy var backButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.imageEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
-        button.setImage(UIImage(named: "article_editor_back"), forState: .Normal)
+        button.setImage(UIImage(named: "article_editor_back"), for: UIControlState())
         
-        button.addTarget(self, action: #selector(backButtonClicked), forControlEvents: .TouchUpInside)
+        button.addTarget(self, action: #selector(backButtonClicked), for: .touchUpInside)
         return button
     }()
     
-    private lazy var unchiveButton: UIButton = {
+    fileprivate lazy var unchiveButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.imageEdgeInsets = UIEdgeInsets(top: 10, left: 7.5, bottom: 10, right: 7.5)
-        button.setImage(UIImage(named: "article_editor_unchive"), forState: .Normal)
+        button.setImage(UIImage(named: "article_editor_unchive"), for: UIControlState())
         
-        button.addTarget(self, action: #selector(unchiveButtonClicked), forControlEvents: .TouchUpInside)
+        button.addTarget(self, action: #selector(unchiveButtonClicked), for: .touchUpInside)
         return button
     }()
     
     init() {
         super.init(frame: CGRect(x: 0, y: kScreenHeight - 44, w: kScreenWidth, h: 44))
-        backgroundColor = UIColor.whiteColor()
+        backgroundColor = UIColor.white
         
         makeUI()
     }
     
-    private func makeUI() {
+    fileprivate func makeUI() {
         addSubview(backButton)
         addSubview(unchiveButton)
         
@@ -64,10 +64,10 @@ class ArticleBottomBar: UIView {
         unchiveHandler?()
     }
     
-    override func drawRect(rect: CGRect) {
+    override func draw(_ rect: CGRect) {
         let path = UIBezierPath()
-        path.moveToPoint(CGPoint(x: 0, y: 1))
-        path.addLineToPoint(CGPoint(x: frame.width, y: 1))
+        path.move(to: CGPoint(x: 0, y: 1))
+        path.addLine(to: CGPoint(x: frame.width, y: 1))
         path.lineWidth = 1.0
         SpiderConfig.Color.Line.setStroke()
         path.stroke()

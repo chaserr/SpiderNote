@@ -10,7 +10,7 @@ import UIKit
 
 class PicSectionView: UIView {
 
-    typealias TapPicAction = (type:ClickViewType) -> Void
+    typealias TapPicAction = (_ type:ClickViewType) -> Void
     var tapPicAction:TapPicAction!
     
     var seperatorView: UIView!
@@ -25,7 +25,7 @@ class PicSectionView: UIView {
         seperatorView                 = UIView()
         seperatorView.backgroundColor = RGBCOLORV(0xeaeaea)
         imageView                     = UIImageView()
-        imageView.contentMode = UIViewContentMode.ScaleAspectFill
+        imageView.contentMode = UIViewContentMode.scaleAspectFill
         imageView.clipsToBounds = true
         tagBackview                   = UIImageView()
         tagBackview.backgroundColor   = RGBCOLORVA(0x000000, alphaValue: 0.5)
@@ -40,33 +40,33 @@ class PicSectionView: UIView {
         tagBackview.addSubview(imageTagView)
         addUIConstraints()
         addTapGesture { (UITapGestureRecognizer) in
-            self.tapPicAction(type:ClickViewType.Pic)
+            self.tapPicAction(ClickViewType.pic)
         }
 
     }
 
     func addUIConstraints() -> Void {
-        seperatorView.snp_makeConstraints { (make) in
+        seperatorView.snp.makeConstraints { (make) in
             make.left.top.right.equalToSuperview().offset(0)
             make.height.equalTo(1)
         }
-        imageView.snp_makeConstraints { (make) in
+        imageView.snp.makeConstraints { (make) in
             make.left.equalTo(15)
             make.center.equalToSuperview()
-            make.top.equalTo(seperatorView.snp_bottom).offset(10)
+            make.top.equalTo(seperatorView.snp.bottom).offset(10)
         }
-        tagBackview.snp_makeConstraints { (make) in
+        tagBackview.snp.makeConstraints { (make) in
             make.left.right.bottom.equalToSuperview()
             make.height.equalTo(40)
         }
-        imageTagView.snp_makeConstraints { (make) in
+        imageTagView.snp.makeConstraints { (make) in
             make.left.equalToSuperview().offset(15)
             make.top.equalToSuperview().offset(8)
             make.center.equalToSuperview()
         }
     }
 
-    func tapPicView(type:TapPicAction) -> Void {
+    func tapPicView(_ type:@escaping TapPicAction) -> Void {
         tapPicAction = type
     }
     required init?(coder aDecoder: NSCoder) {

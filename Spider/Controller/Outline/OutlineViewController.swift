@@ -18,22 +18,22 @@ enum OutlineState: String {
 
 class OutlineViewController: UIViewController {
     
-    private var layout = OutlineLayout()
-    private var layoutPool = [String: OutlineLayout]()
+    fileprivate var layout = OutlineLayout()
+    fileprivate var layoutPool = [String: OutlineLayout]()
     
-    private var tableView = OutlineTableView()
+    fileprivate var tableView = OutlineTableView()
     
-    private var state = OutlineState.MoveSection
-    private var toMoveItems = [String]()
-    private var toMoveItemIDs = [String]()
-    private var addToMind: MindObject?
+    fileprivate var state = OutlineState.MoveSection
+    fileprivate var toMoveItems = [String]()
+    fileprivate var toMoveItemIDs = [String]()
+    fileprivate var addToMind: MindObject?
     
-    private var currentID = ""
+    fileprivate var currentID = ""
     
-    private var doubleTap: UITapGestureRecognizer!
-    private var tap: UITapGestureRecognizer!
+    fileprivate var doubleTap: UITapGestureRecognizer!
+    fileprivate var tap: UITapGestureRecognizer!
     
-    private lazy var editBar: OutlineEditBar = {
+    fileprivate lazy var editBar: OutlineEditBar = {
         let bar = OutlineEditBar(state: self.state)
         bar.addHandler = { [weak self] (text, type) in
             delay(0.3, work: {
@@ -45,15 +45,15 @@ class OutlineViewController: UIViewController {
             self?.moveItems()
         }
         
-        bar.hidden = true
+        bar.isHidden = true
         return bar
     }()
     
-    private lazy var topBar: OutlineTopBar = {
+    fileprivate lazy var topBar: OutlineTopBar = {
         let bar = OutlineTopBar(jump: self.state == .JustJump, projectID: self.layout.projectID)
         
         bar.backHandler = { [weak self] in
-            self?.dismissViewControllerAnimated(true, completion: nil)
+            self?.dismiss(animated: true, completion: nil)
         }
         
         bar.changeHandler = { [weak self] in
@@ -63,7 +63,7 @@ class OutlineViewController: UIViewController {
         return bar
     }()
     
-    private lazy var projectListView: OutlineProjectListView = {
+    fileprivate lazy var projectListView: OutlineProjectListView = {
         let view = OutlineProjectListView(currentID: self.layout.projectID)
         view.selectHandler = { [weak self] project in
             self?.changeTo(project)
@@ -71,7 +71,7 @@ class OutlineViewController: UIViewController {
         return view
     }()
     
-    private lazy var headerView: OutlineHeaderView = {
+    fileprivate lazy var headerView: OutlineHeaderView = {
         let view = OutlineHeaderView(state: self.state)
         view.putInHandler = { [weak self] in
             self?.moveItems(true)
@@ -103,11 +103,11 @@ class OutlineViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
  
-        if let project = SpiderConfig.sharedInstance.project where project.deleteFlag == 0 {
+        if let project = SpiderConfig.sharedInstance.project, project.deleteFlag == 0 {
             currentID = project.id
             layout = OutlineLayout(mainNote: project)
         } else {
-            headerView.hidden = true
+            headerView.isHidden = true
         }
 
         switch state {
@@ -123,7 +123,7 @@ class OutlineViewController: UIViewController {
             
             tableView.tableHeaderView = headerView
             guard let id = toMoveItems.first,
-                mind = REALM.realm.objectForPrimaryKey(MindObject.self, key: id) else { return }
+                let mind = REALM.realm.object(ofType: MindObject.self, forPrimaryKey: id as AnyObject) else { return }
             
             toMoveItemIDs = toMoveItems
             toMoveItemIDs.insertAsFirst(mind.ownerID)
@@ -134,8 +134,8 @@ class OutlineViewController: UIViewController {
             toMoveItemIDs = toMoveItems
             
             if let id = toMoveItems.first,
-                section = REALM.realm.objectForPrimaryKey(SectionObject.self, key: id),
-                ownerID = section.ownerID {
+                let section = REALM.realm.object(ofType: SectionObject.self, forPrimaryKey: id as AnyObject),
+                let ownerID = section.ownerID {
                 
                 toMoveItemIDs.append(ownerID)
             }
@@ -154,16 +154,16 @@ class OutlineViewController: UIViewController {
         }
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        UIApplication.sharedApplication().setStatusBarStyle(.Default, animated: false)
+        UIApplication.shared.setStatusBarStyle(.default, animated: false)
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        UIApplication.sharedApplication().setStatusBarStyle(.LightContent, animated: false)
+        UIApplication.shared.setStatusBarStyle(.lightContent, animated: false)
     }
 
     override func didReceiveMemoryWarning() {
@@ -171,34 +171,34 @@ class OutlineViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    func didDoubleTap(ges: UITapGestureRecognizer) {
+    func didDoubleTap(_ ges: UITapGestureRecognizer) {
         
-        let location = ges.locationInView(tableView)
+        let location = ges.location(in: tableView)
         
-        guard let indexPath = tableView.indexPathForRowAtPoint(location) else { return }
+        guard let indexPath = tableView.indexPathForRow(at: location) else { return }
         
         let mind = layout.minds[indexPath.item]
         
         if mind.type == 0 { // mind
             
-            dismissViewControllerAnimated(false, completion: {
-                SPIDERSTRUCT.sourceMindType = SourceMindControType.ComeFromSelf
+            dismiss(animated: false, completion: {
+                SPIDERSTRUCT.sourceMindType = SourceMindControType.comeFromSelf
                 let mindVC = MindViewController(mind: mind)
-                mindVC.view.backgroundColor = UIColor.whiteColor()
+                mindVC.view.backgroundColor = UIColor.white
                 AppNavigator.pushViewController(mindVC, animated: false)
             })
             
         } else {
             
             SpiderConfig.ArticleList.article = mind
-            dismissViewControllerAnimated(false, completion: {
-                SPIDERSTRUCT.sourceMindType = SourceMindControType.ComeFromSelf
+            dismiss(animated: false, completion: {
+                SPIDERSTRUCT.sourceMindType = SourceMindControType.comeFromSelf
                 AppNavigator.pushViewController(ArticleListViewController(), animated: true)
             })
         }
     }
     
-    private func addNewMind(text: String, type: MindType, atTop: Bool = false) {
+    fileprivate func addNewMind(_ text: String, type: MindType, atTop: Bool = false) {
 
         if atTop {
             
@@ -212,7 +212,7 @@ class OutlineViewController: UIViewController {
             }
             
             tableView.beginUpdates()
-            tableView.insertRowsAtIndexPaths([NSIndexPath(forRow: 0, inSection: 0)], withRowAnimation: .Fade)
+            tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
             tableView.endUpdates()
             
         } else {
@@ -222,34 +222,34 @@ class OutlineViewController: UIViewController {
                 let mind = layout.minds[editIndex]
                 let addMind = MindObject(name: text, type: type.rawValue)
                 
-                if layout.statusOf(editIndex) == .Closed {
+                if layout.statusOf(editIndex) == .closed {
                     openMind(mind, index: editIndex)
                 }
                 
                 SpiderRealm.addMind(addMind, to: mind)
                 
-                layout.minds.insert(addMind, atIndex: editIndex + 1)
+                layout.minds.insert(addMind, at: editIndex + 1)
                 
                 tableView.beginUpdates()
-                tableView.reloadRowsAtIndexPaths([NSIndexPath(forRow: editIndex, inSection: 0)], withRowAnimation: .None)
-                tableView.insertRowsAtIndexPaths([NSIndexPath(forRow: editIndex + 1, inSection: 0)], withRowAnimation: .Fade)
+                tableView.reloadRows(at: [IndexPath(row: editIndex, section: 0)], with: .none)
+                tableView.insertRows(at: [IndexPath(row: editIndex + 1, section: 0)], with: .fade)
                 tableView.endUpdates()
             }
         }
     }
     
-    private func showProgressHud(with handler: (() -> Void)) {
-        dispatch_async(dispatch_get_main_queue()) { [weak self] in
-            let hud = MBProgressHUD.showHUDAddedTo(self?.view, animated: true)
-            hud.animationType = .Fade
+    fileprivate func showProgressHud(with handler: @escaping (() -> Void)) {
+        DispatchQueue.main.async { [weak self] in
+            let hud = MBProgressHUD.showAdded(to: (self?.view)!, animated: true)
+            hud.animationType = .fade
             hud.minSize = CGSize(width: 80, height: 80)
             hud.minShowTime = 1
             hud.color = UIColor(white: 0.8, alpha: 0.5)
             
-            hud.showAnimated(true, whileExecutingBlock: {
-                dispatch_async(dispatch_get_main_queue(), {
+            hud.show(animated: true, whileExecuting: {
+                DispatchQueue.main.async(execute: {
                     hud.customView = UIImageView(image: UIImage(named: "Checkmark"))
-                    hud.mode = .CustomView
+                    hud.mode = .customView
                     hud.labelColor = SpiderConfig.Color.DarkText
                     hud.labelText = "已移入"
                     
@@ -260,18 +260,18 @@ class OutlineViewController: UIViewController {
                 })
             }, completionBlock: { [weak self] in
                 self?.layout.recordOutlineInfo()
-                self?.dismissViewControllerAnimated(true, completion: nil)
+                self?.dismiss(animated: true, completion: nil)
             })
         }
     }
     
-    private func moveItems(toProject: Bool = false) {
+    fileprivate func moveItems(_ toProject: Bool = false) {
 
         func getMoveItemMaxDepth() -> Int {
             var maxDepth = 0
             
             for id in toMoveItems {
-                if let mind = REALM.realm.objectForPrimaryKey(MindObject.self, key: id) {
+                if let mind = REALM.realm.object(ofType: MindObject.self, forPrimaryKey: id as AnyObject) {
                     maxDepth = max(maxDepth, mind.depth)
                 }
             }
@@ -282,7 +282,7 @@ class OutlineViewController: UIViewController {
         if state == .MoveMind {
             if toProject {
                 guard let id = toMoveItems.first,
-                    mind = REALM.realm.objectForPrimaryKey(MindObject.self, key: id) else { return }
+                    let mind = REALM.realm.object(ofType: MindObject.self, forPrimaryKey: id as AnyObject) else { return }
                 
                 if mind.level == 1 && mind.noteID == layout.projectID {
                     SpiderAlert.tellYou(message: "你所选的节点已经在该项目下了哦！", inViewController: self)
@@ -313,7 +313,7 @@ class OutlineViewController: UIViewController {
         }
     }
     
-    private func changeTo(project: ProjectObject) {
+    fileprivate func changeTo(_ project: ProjectObject) {
         
         topBar.projectName = project.name
         
@@ -330,9 +330,9 @@ class OutlineViewController: UIViewController {
             
             if let editIndex = layout.editIndex {
                 moveEditBar(to: layout.minds[editIndex])
-                editBar.hidden = false
+                editBar.isHidden = false
             } else {
-                editBar.hidden = true
+                editBar.isHidden = true
             }
             
             tableView.reloadData()
@@ -342,28 +342,28 @@ class OutlineViewController: UIViewController {
 }
 
 extension OutlineViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return layout.minds.count
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let mind = layout.minds[indexPath.item]
         return OutlineViewCell(mind: mind, status: layout.statusOf(indexPath.item), choosed: isChoosed(mind))
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         let mind = layout.minds[indexPath.item]
         
         switch layout.statusOf(indexPath.item) {
             
-        case .Closed:
+        case .closed:
             if canOpen(mind) {
                 openMind(mind, index: indexPath.item)
             }
             
-        case .Opened:
+        case .opened:
             guard let range = layout.closeMind(at: indexPath.item) else { return }
             deleteRowsAtRange(range)
 
@@ -374,7 +374,7 @@ extension OutlineViewController: UITableViewDelegate, UITableViewDataSource {
         moveEditBar(to: mind)
     }
     
-    func isChoosed(mind: MindObject) -> Bool {  //TODO:- optimize time & memory
+    func isChoosed(_ mind: MindObject) -> Bool {  //TODO:- optimize time & memory
         if state == .JustJump {
             return false
         }
@@ -392,7 +392,7 @@ extension OutlineViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
      
-    func canOpen(mind: MindObject) -> Bool {
+    func canOpen(_ mind: MindObject) -> Bool {
         if state == .JustJump {
             return true
         }
@@ -411,16 +411,16 @@ extension OutlineViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func moveEditBar(to mind: MindObject) {
-        guard let index = layout.minds.indexOf(mind) where !isChoosed(mind) else { return }
+        guard let index = layout.minds.index(of: mind), !isChoosed(mind) else { return }
         
         switch state {
         case .MoveMind:
             if mind.type == 0 {
                 layout.editIndex = index
                 editBar.level = mind.level
-                editBar.state = .InNewMind
+                editBar.state = .inNewMind
                 editBar.center.y = kOutlineCellHeight * (CGFloat(index) + 1.5)
-                editBar.hidden = false
+                editBar.isHidden = false
             }
             
         case .MoveSection:
@@ -428,14 +428,14 @@ extension OutlineViewController: UITableViewDelegate, UITableViewDataSource {
             editBar.level = mind.level
             editBar.state = OutlineEditBarState(rawValue: mind.type)!
             editBar.center.y = kOutlineCellHeight * (CGFloat(index) + 1.5)
-            editBar.hidden = false
+            editBar.isHidden = false
             
         default:
             break
         }
     }
     
-    func openMind(mind: MindObject, index: Int) {
+    func openMind(_ mind: MindObject, index: Int) {
         if let toCloseRange = layout.closeOpenedMindOfLevel(at: index) {
             
             CATransaction.begin()
@@ -456,21 +456,21 @@ extension OutlineViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
     
-    func insertRowsAtRange(range: Range<Int>) {
-        let insertIndexPaths = range.map{ NSIndexPath(forRow: $0, inSection: 0) }
+    func insertRowsAtRange(_ range: CountableClosedRange<Int>) {
+        let insertIndexPaths = range.map{ IndexPath(row: $0, section: 0) }
         
         tableView.beginUpdates()
-        tableView.insertRowsAtIndexPaths(insertIndexPaths, withRowAnimation: .Bottom)
-        tableView.reloadRowsAtIndexPaths([NSIndexPath(forRow: range.startIndex - 1, inSection: 0)], withRowAnimation: .None)
+        tableView.insertRows(at: insertIndexPaths, with: .bottom)
+        tableView.reloadRows(at: [IndexPath(row: range.lowerBound - 1, section: 0)], with: .none)
         tableView.endUpdates()
     }
     
-    func deleteRowsAtRange(range: Range<Int>) {
-        let deleteIndexPaths = range.map{ NSIndexPath(forRow: $0, inSection: 0) }
+    func deleteRowsAtRange(_ range: CountableClosedRange<Int>) {
+        let deleteIndexPaths = range.map{ IndexPath(row: $0, section: 0) }
         
         tableView.beginUpdates()
-        tableView.reloadRowsAtIndexPaths([NSIndexPath(forRow: range.startIndex - 1, inSection: 0)], withRowAnimation: .None)
-        tableView.deleteRowsAtIndexPaths(deleteIndexPaths, withRowAnimation: .None)
+        tableView.reloadRows(at: [IndexPath(row: range.lowerBound - 1, section: 0)], with: .none)
+        tableView.deleteRows(at: deleteIndexPaths, with: .none)
         tableView.endUpdates()
     }
 }

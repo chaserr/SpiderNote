@@ -15,9 +15,9 @@ private let picCellID   = "ArticelUndocBoxPicCell"
 private let audioCellID = "ArticelUndocBoxAudioCell"
 
 protocol ArticleUndocBoxDelegate: class {
-    func didBeginToDragSeciton(section: SectionObject, layout: UndocBoxLayout, ges: UILongPressGestureRecognizer)
-    func didChange(ges: UILongPressGestureRecognizer)
-    func didEndDrag(location: CGPoint)
+    func didBeginToDragSeciton(_ section: SectionObject, layout: UndocBoxLayout, ges: UILongPressGestureRecognizer)
+    func didChange(_ ges: UILongPressGestureRecognizer)
+    func didEndDrag(_ location: CGPoint)
     func didQuitUndocBox()
 }
 
@@ -25,11 +25,11 @@ class ArticleUndocBoxView: UIView {
     
     weak var articleDelegate: ArticleUndocBoxDelegate?
     
-    private var layoutPool = UndocBoxLayoutPool()
-    private var unDocItems = [[SectionObject]]()
-    private var catchedView: UIImageView!
+    fileprivate var layoutPool = UndocBoxLayoutPool()
+    fileprivate var unDocItems = [[SectionObject]]()
+    fileprivate var catchedView: UIImageView!
 
-    private var collectionView: UICollectionView = {
+    fileprivate var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         
         layout.itemSize = CGSize(width: boxWidth / 2, height: boxWidth / 2)
@@ -43,32 +43,32 @@ class ArticleUndocBoxView: UIView {
         
         let rect = CGRect(x: kScreenWidth - boxWidth, y: 40, width: boxWidth, height: kScreenHeight - kStatusBarHeight - 40)
         let view = UICollectionView(frame: rect, collectionViewLayout: layout)
-        view.backgroundColor = UIColor.whiteColor()
+        view.backgroundColor = UIColor.white
         view.showsVerticalScrollIndicator = false
         return view
     }()
     
-    private var toolBar: UIView = {
+    fileprivate var toolBar: UIView = {
         let view = UIView(frame: CGRect(x: kScreenWidth - boxWidth, y: 0, width: boxWidth, height: 40))
-        view.backgroundColor = UIColor.whiteColor()
+        view.backgroundColor = UIColor.white
         return view
     }()
     
-    private var titleLabel: UILabel = {
+    fileprivate var titleLabel: UILabel = {
         let label = UILabel(frame: CGRect(x: boxWidth / 4, y: 0, width: boxWidth / 2, height: 40))
         label.text = "拖动碎片放入"
-        label.font = UIFont.systemFontOfSize(15)
-        label.textColor = UIColor.blackColor()
-        label.textAlignment = .Center
-        label.backgroundColor = UIColor.whiteColor()
+        label.font = UIFont.systemFont(ofSize: 15)
+        label.textColor = UIColor.black
+        label.textAlignment = .center
+        label.backgroundColor = UIColor.white
         return label
     }()
     
-    private lazy var backButton: UIButton = {
+    fileprivate lazy var backButton: UIButton = {
         let button = UIButton(frame: CGRect(x: 10, y: 0, width: 40, height: 40))
         button.imageEdgeInsets = UIEdgeInsetsMake(11, 8, 11, 10)
-        button.setImage(UIImage(named: "article_unbox_back"), forState: .Normal)
-        button.addTarget(self, action: #selector(removeFromSuperview), forControlEvents: .TouchUpInside)
+        button.setImage(UIImage(named: "article_unbox_back"), for: UIControlState())
+        button.addTarget(self, action: #selector(removeFromSuperview), for: .touchUpInside)
         return button
     }()
     
@@ -81,10 +81,10 @@ class ArticleUndocBoxView: UIView {
         
         collectionView.dataSource = self
         collectionView.delegate = self
-        collectionView.registerClass(UndocTextCell.self, forCellWithReuseIdentifier: textCellID)
-        collectionView.registerClass(UndocPicCell.self, forCellWithReuseIdentifier: picCellID)
-        collectionView.registerClass(UndocAudioCell.self, forCellWithReuseIdentifier: audioCellID)
-        collectionView.registerClass(UndocHeaderView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headID)
+        collectionView.register(UndocTextCell.self, forCellWithReuseIdentifier: textCellID)
+        collectionView.register(UndocPicCell.self, forCellWithReuseIdentifier: picCellID)
+        collectionView.register(UndocAudioCell.self, forCellWithReuseIdentifier: audioCellID)
+        collectionView.register(UndocHeaderView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headID)
         
         toolBar.addSubview(titleLabel)
         toolBar.addSubview(backButton)
@@ -95,14 +95,14 @@ class ArticleUndocBoxView: UIView {
         collectionView.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(didLongPress)))
     }
     
-    func didLongPress(ges: UILongPressGestureRecognizer) {
-        let location = ges.locationInView(self.superview!)
+    func didLongPress(_ ges: UILongPressGestureRecognizer) {
+        let location = ges.location(in: self.superview!)
         
         switch ges.state {
             
-        case .Began:
+        case .began:
             
-            guard let indexPath = collectionView.indexPathForItemAtPoint(ges.locationInView(collectionView)) else { return }
+            guard let indexPath = collectionView.indexPathForItem(at: ges.location(in: collectionView)) else { return }
             
             let section = unDocItems[indexPath.section][indexPath.item]
             let layout = layoutPool.cellLayoutOfSection(section)
@@ -111,11 +111,11 @@ class ArticleUndocBoxView: UIView {
             
             backgroundColor = UIColor(white: 1, alpha: 0)
 
-            UIView.animateWithDuration(0.3, animations: {
+            UIView.animate(withDuration: 0.3, animations: {
                 self.frame.origin.x = kScreenWidth
             })
             
-        case .Changed:
+        case .changed:
             
             articleDelegate?.didChange(ges)
             
@@ -125,9 +125,9 @@ class ArticleUndocBoxView: UIView {
         }
     }
     
-    func didTap(ges: UITapGestureRecognizer) {
+    func didTap(_ ges: UITapGestureRecognizer) {
         
-        let location = ges.locationInView(self)
+        let location = ges.location(in: self)
         let rect = CGRect(x: 0, y: 0, width: kScreenWidth - boxWidth, height: kScreenHeight)
         
         if rect.contains(location) {
@@ -135,28 +135,28 @@ class ArticleUndocBoxView: UIView {
         }
     }
     
-    func moveTo(view: UIView) {
+    func moveTo(_ view: UIView) {
         view.addSubview(self)
-        hidden = false
+        isHidden = false
         
         unDocItems = SpiderRealm.groupUndocItems()
         collectionView.reloadData()
         
-        UIView.animateWithDuration(0.3) {
+        UIView.animate(withDuration: 0.3, animations: {
             self.backgroundColor = UIColor(white: 0, alpha: 0.6)
             self.frame.origin.x = 0
-        }
+        }) 
     }
     
     override func removeFromSuperview() {
         backgroundColor = UIColor(white: 1, alpha: 0)
         articleDelegate?.didQuitUndocBox()
         
-        UIView.animateWithDuration(0.3, animations: {
+        UIView.animate(withDuration: 0.3, animations: {
             self.frame.origin.x = kScreenWidth
-        }) { done in
+        }, completion: { done in
             super.removeFromSuperview()
-        }
+        }) 
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -166,31 +166,31 @@ class ArticleUndocBoxView: UIView {
 
 extension ArticleUndocBoxView: UICollectionViewDataSource, UICollectionViewDelegate {
     
-    func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
         return unDocItems.count
     }
     
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return unDocItems[section].count
     }
     
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let type = SectionType(rawValue: unDocItems[indexPath.section][indexPath.item].type) else { return UICollectionViewCell() }
         
         switch type {
             
-        case .Text:
-            return collectionView.dequeueReusableCellWithReuseIdentifier(textCellID, forIndexPath: indexPath) as! UndocTextCell
+        case .text:
+            return collectionView.dequeueReusableCell(withReuseIdentifier: textCellID, for: indexPath) as! UndocTextCell
             
-        case .Pic:
-            return collectionView.dequeueReusableCellWithReuseIdentifier(picCellID, forIndexPath: indexPath) as! UndocPicCell
+        case .pic:
+            return collectionView.dequeueReusableCell(withReuseIdentifier: picCellID, for: indexPath) as! UndocPicCell
             
-        case .Audio:
-            return collectionView.dequeueReusableCellWithReuseIdentifier(audioCellID, forIndexPath: indexPath) as! UndocAudioCell
+        case .audio:
+            return collectionView.dequeueReusableCell(withReuseIdentifier: audioCellID, for: indexPath) as! UndocAudioCell
         }
     }
     
-    func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         let undocItem = unDocItems[indexPath.section][indexPath.item]
         let layout  = layoutPool.cellLayoutOfSection(undocItem)
         
@@ -198,22 +198,22 @@ extension ArticleUndocBoxView: UICollectionViewDataSource, UICollectionViewDeleg
         
         switch type {
             
-        case .Text:
+        case .text:
             guard let cell = cell as? UndocTextCell else { return }
             cell.configureWithInfo(layout)
             
-        case .Pic:
+        case .pic:
             guard let cell = cell as? UndocPicCell else { return }
             cell.configureWithInfo(layout)
             
-        case .Audio:
+        case .audio:
             guard let cell = cell as? UndocAudioCell else { return }
             cell.configureWithInfo(layout)
         }
     }
     
-    func collectionView(collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView {
-        let header = collectionView.dequeueReusableSupplementaryViewOfKind(UICollectionElementKindSectionHeader, withReuseIdentifier: headID, forIndexPath: indexPath) as! UndocHeaderView
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headID, for: indexPath) as! UndocHeaderView
         
         if let time = unDocItems[indexPath.section].first?.updateAt {
             header.configureWith(time)

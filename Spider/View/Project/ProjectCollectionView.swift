@@ -23,11 +23,11 @@ class ProjectCollectionView: UICollectionView {
         layout.minimumInteritemSpacing = offset
         layout.sectionInset = UIEdgeInsetsMake(5, 5, 5, 5)
         
-        super.init(frame: CGRectZero, collectionViewLayout: layout)
+        super.init(frame: CGRect.zero, collectionViewLayout: layout)
         
         backgroundColor = SpiderConfig.Color.Line
         showsVerticalScrollIndicator = false
-        keyboardDismissMode = .OnDrag
+        keyboardDismissMode = .onDrag
         translatesAutoresizingMaskIntoConstraints = false
     }
     

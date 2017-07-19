@@ -8,6 +8,30 @@
 
 import UIKit
 import RealmSwift
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
+
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l > r
+  default:
+    return rhs < lhs
+  }
+}
+
 
 //let STRUCTMANAGER = StructLevelView.instance()
 
@@ -42,7 +66,7 @@ class StructLevelView: UIView, UIScrollViewDelegate {
         self.addSubview(structIcon)
         structLevelContentView                                = UIScrollView()
         structLevelContentView.delegate                       = self
-        structLevelContentView.contentSize                    = CGSizeMake(0, 0)
+        structLevelContentView.contentSize                    = CGSize(width: 0, height: 0)
         self.addSubview(structLevelContentView)
         structLevelContentView.showsHorizontalScrollIndicator = false
         structLevelContentView.showsVerticalScrollIndicator   = false
@@ -61,12 +85,12 @@ class StructLevelView: UIView, UIScrollViewDelegate {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func createLevelBtn(titleArr:Array<String>, currentObj:Object?) -> Void {
+    func createLevelBtn(_ titleArr:Array<String>, currentObj:Object?) -> Void {
         self.titleArray = titleArr
         
         if titleArr.count != 1 {
             
-            let levelCount = (currentObj as! MindObject).structInfo.componentsSeparatedByString(" > ")
+            let levelCount = (currentObj as! MindObject).structInfo.components(separatedBy: " > ")
             var superMind:MindObject?            = ((currentObj as! MindObject).ownerMind.first)// 父节点
             var superProject:ProjectObject?      = ((currentObj as! MindObject).ownerProject.first)
             let currentMind = (currentObj as! MindObject)
@@ -87,7 +111,7 @@ class StructLevelView: UIView, UIScrollViewDelegate {
                 }
             }
             // 数组倒序插入
-            currentMindArray = Array(tmpArr.reverse())
+            currentMindArray = Array(tmpArr.reversed())
         }else{
 
             currentMindArray.append(currentObj!)
@@ -96,10 +120,10 @@ class StructLevelView: UIView, UIScrollViewDelegate {
         
         for i in 0..<titleArr.count {
             // 计算文字宽度
-            let titleSize = (titleArr[i] as String).boundingRectWithSize(CGSizeMake(kScreenWidth / 2 - 38, 40), options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: [NSFontAttributeName:SYSTEMFONT(14)], context: nil)
-            let button = StructLevelItem(type: UIButtonType.Custom)
-            button.setTitle(titleArr[i], forState: UIControlState.Normal)
-            button.frame = CGRectMake(currentRowWidth, 0, min(titleSize.width + 20, kScreenWidth / 2), 40)
+            let titleSize = (titleArr[i] as String).boundingRect(with: CGSize(width: kScreenWidth / 2 - 38, height: 40), options: NSStringDrawingOptions.usesLineFragmentOrigin, attributes: [NSFontAttributeName:SYSTEMFONT(14)], context: nil)
+            let button = StructLevelItem(type: UIButtonType.custom)
+            button.setTitle(titleArr[i], for: UIControlState())
+            button.frame = CGRect(x: currentRowWidth, y: 0, width: min(titleSize.width + 20, kScreenWidth / 2), height: 40)
             structLevelContentView.addSubview(button)
             if i <= currentMindArray.count - 1 {
                 button.currenMind = currentMindArray[i] // 给每一个item绑定一个model
@@ -109,31 +133,31 @@ class StructLevelView: UIView, UIScrollViewDelegate {
             if titleArr.count == 1 {
 //                structIcon.hidden = true // 一级节点隐藏大纲
                 // 默认最后一个结点高亮
-                button.selected = true
+                button.isSelected = true
                 selectBtn = button
-                let buttonFront              = StructLevelItem.init(frame: CGRectMake(button.x + button.w, 0, (normalTriangleImage.size.width), (normalTriangleImage.size.height)))
-                buttonFront.setImage(normalTriangleImage, forState: UIControlState.Normal)
-                buttonFront.setImage(hightLightTriangleImage, forState: UIControlState.Selected)
+                let buttonFront              = StructLevelItem.init(frame: CGRect(x: button.x + button.w, y: 0, width: (normalTriangleImage.size.width), height: (normalTriangleImage.size.height)))
+                buttonFront.setImage(normalTriangleImage, for: UIControlState())
+                buttonFront.setImage(hightLightTriangleImage, for: UIControlState.selected)
                 buttonFront.adjustsImageWhenHighlighted = true
                 structLevelContentView.addSubview(buttonFront)
-                buttonFront.selected         = button.selected
+                buttonFront.isSelected         = button.isSelected
                 containMindArr.append(buttonFront)
                 
             }
             else if i == titleArr.count - 1 {
                 // 默认最后一个结点高亮
-                button.selected = true
+                button.isSelected = true
                 selectBtn = button
                 if currentRowWidth + button.w > kScreenWidth - 38 - 10 { // 如果当前currentRowWidth+butto.w超出了屏幕宽度，那么最后一个不再拼接
                     currentRowWidth = button.x + button.w
                 }else{
                     // 如果最后一个没有超过屏幕，拼接矩形,
-                    let buttonFront              = StructLevelItem.init(frame: CGRectMake(button.x - 0.1 + button.w, 0, (normalTriangleImage.size.width), (normalTriangleImage.size.height)))
-                    buttonFront.setImage(hightLightTriangleImage, forState: UIControlState.Normal)
-                    buttonFront.setImage(hightLightTriangleImage, forState: UIControlState.Selected)
+                    let buttonFront              = StructLevelItem.init(frame: CGRect(x: button.x - 0.1 + button.w, y: 0, width: (normalTriangleImage.size.width), height: (normalTriangleImage.size.height)))
+                    buttonFront.setImage(hightLightTriangleImage, for: UIControlState())
+                    buttonFront.setImage(hightLightTriangleImage, for: UIControlState.selected)
                     buttonFront.adjustsImageWhenHighlighted = true
                     structLevelContentView.addSubview(buttonFront)
-                    buttonFront.selected         = button.selected
+                    buttonFront.isSelected         = button.isSelected
                     currentRowWidth              = buttonFront.x + buttonFront.w
                     
                     containMindArr.append(buttonFront)
@@ -144,23 +168,23 @@ class StructLevelView: UIView, UIScrollViewDelegate {
             else{ // 既不是第一个也不是最后一个\
                 if i == titleArr.count - 2 { // 如果是倒第二个,需要拼接
                     
-                    let buttonFront      = StructLevelItem.init(frame: CGRectMake(button.x - 0.1 + button.w, 0, (normalRectangleImage.size.width), (normalRectangleImage.size.height)))
-                    buttonFront.setImage(normalRectangleImage, forState: UIControlState.Normal)
-                    buttonFront.setImage(hightLightRectangleImage, forState: UIControlState.Selected)
+                    let buttonFront      = StructLevelItem.init(frame: CGRect(x: button.x - 0.1 + button.w, y: 0, width: (normalRectangleImage.size.width), height: (normalRectangleImage.size.height)))
+                    buttonFront.setImage(normalRectangleImage, for: UIControlState())
+                    buttonFront.setImage(hightLightRectangleImage, for: UIControlState.selected)
                     buttonFront.adjustsImageWhenHighlighted = true
                     structLevelContentView.addSubview(buttonFront)
-                    buttonFront.selected = button.selected
+                    buttonFront.isSelected = button.isSelected
                     currentRowWidth      = buttonFront.x + buttonFront.w
                     
                     containMindArr.append(buttonFront)
                 }else{
                 
                     
-                    let buttonFront      = StructLevelItem.init(frame: CGRectMake(button.x - 0.1 + button.w, 0, (unSelectLinkRectangleImage.size.width), (unSelectLinkRectangleImage.size.height)))
-                    buttonFront.setImage(unSelectLinkRectangleImage, forState: UIControlState.Normal)
+                    let buttonFront      = StructLevelItem.init(frame: CGRect(x: button.x - 0.1 + button.w, y: 0, width: (unSelectLinkRectangleImage.size.width), height: (unSelectLinkRectangleImage.size.height)))
+                    buttonFront.setImage(unSelectLinkRectangleImage, for: UIControlState())
                     structLevelContentView.addSubview(buttonFront)
                     buttonFront.adjustsImageWhenHighlighted = true
-                    buttonFront.selected = button.selected
+                    buttonFront.isSelected = button.isSelected
                     currentRowWidth      = buttonFront.x + buttonFront.w
                     
                     containMindArr.append(buttonFront)
@@ -173,22 +197,22 @@ class StructLevelView: UIView, UIScrollViewDelegate {
         }
         
         // 更新contentSize
-        structLevelContentView.contentSize = CGSizeMake(currentRowWidth, 40)
+        structLevelContentView.contentSize = CGSize(width: currentRowWidth, height: 40)
 
     }
     
-    func buttonSetting(button:StructLevelItem) -> Void {
+    func buttonSetting(_ button:StructLevelItem) -> Void {
         button.titleLabel?.numberOfLines             = 1
         button.adjustsImageWhenHighlighted           = false
-        button.setTitleColor(RGBCOLORV(0xA0A0A0), forState: UIControlState.Normal)
+        button.setTitleColor(RGBCOLORV(0xA0A0A0), for: UIControlState())
         button.titleLabel?.font                      = SYSTEMFONT(14)
-        button.setTitleColor(RGBCOLORV(0x5fb85f), forState: UIControlState.Selected)
-        button.setBackgroundColor(RGBCOLORV(0xffffff), forState: UIControlState.Selected)
-        button.setBackgroundColor(RGBCOLORV(0xFAFAFA), forState: UIControlState.Normal)
-        button.addTarget(self, action: #selector(btnAction), forControlEvents: UIControlEvents.TouchUpInside)
+        button.setTitleColor(RGBCOLORV(0x5fb85f), for: UIControlState.selected)
+        button.setBackgroundColor(RGBCOLORV(0xffffff), forState: UIControlState.selected)
+        button.setBackgroundColor(RGBCOLORV(0xFAFAFA), forState: UIControlState())
+        button.addTarget(self, action: #selector(btnAction), for: UIControlEvents.touchUpInside)
     }
     
-    func btnAction(sender:StructLevelItem) -> Void {
+    func btnAction(_ sender:StructLevelItem) -> Void {
         
         if titleArray.count == 1 || SPIDERSTRUCT.selectLevelItem == sender || selectBtn == sender { // 点击自身只触发事件。
             selectBtn = sender
@@ -200,8 +224,8 @@ class StructLevelView: UIView, UIScrollViewDelegate {
             return
         }else{
         
-            selectBtn.selected = !selectBtn.selected
-            sender.selected = !sender.selected
+            selectBtn.isSelected = !selectBtn.isSelected
+            sender.isSelected = !sender.isSelected
         }
         // 更新UI
         updateUI(sender)
@@ -217,37 +241,37 @@ class StructLevelView: UIView, UIScrollViewDelegate {
     
     }
     
-    func updateUI(sender:StructLevelItem) -> Void {
+    func updateUI(_ sender:StructLevelItem) -> Void {
         
-        let preSelectBtnIdx = containMindArr.indexOf(selectBtn)
-        let currSelectBtnIdx = containMindArr.indexOf(sender)
+        let preSelectBtnIdx = containMindArr.index(of: selectBtn)
+        let currSelectBtnIdx = containMindArr.index(of: sender)
         if titleArray.count == 1 {
             
             let frontBtn:UIButton = containMindArr[currSelectBtnIdx! + 1]
-            frontBtn.setImage(hightLightTriangleImage, forState: UIControlState.Selected)
-            frontBtn.selected = sender.selected
+            frontBtn.setImage(hightLightTriangleImage, for: UIControlState.selected)
+            frontBtn.isSelected = sender.isSelected
             
         }
         // 选中第一个，那么只修改其前面button的图片
         else if currSelectBtnIdx == 0 {
             
             let frontBtn:UIButton = containMindArr[currSelectBtnIdx! + 1]
-            frontBtn.setImage(hightLightRectangleImage, forState: UIControlState.Selected)
-            frontBtn.selected = sender.selected
+            frontBtn.setImage(hightLightRectangleImage, for: UIControlState.selected)
+            frontBtn.isSelected = sender.isSelected
             // 把之前选中的去掉高亮
             // 判断之前选中和现在选中是否相邻
             if abs(preSelectBtnIdx! - currSelectBtnIdx!) == 2 {
                 if preSelectBtnIdx == containMindArr.count - 2 { // 判断之前选中的是最后一个，并且是否有拼接（超过屏幕的不拼接）
                     let frontBtn:UIButton = containMindArr[preSelectBtnIdx! + 1]
-                    frontBtn.selected = sender.selected
-                    frontBtn.setImage(normalTriangleImage, forState: UIControlState.Selected)
+                    frontBtn.isSelected = sender.isSelected
+                    frontBtn.setImage(normalTriangleImage, for: UIControlState.selected)
                 }else if preSelectBtnIdx == containMindArr.count - 1 {
                     // 最后一个无拼接， 不作操作
                 }else{
                     
                     let frontBtn:UIButton = containMindArr[preSelectBtnIdx! + 1]
-                    frontBtn.selected = sender.selected
-                    frontBtn.setImage(unSelectLinkRectangleImage, forState: UIControlState.Selected)
+                    frontBtn.isSelected = sender.isSelected
+                    frontBtn.setImage(unSelectLinkRectangleImage, for: UIControlState.selected)
                     
                 }
                 
@@ -256,17 +280,17 @@ class StructLevelView: UIView, UIScrollViewDelegate {
                 
                 if preSelectBtnIdx == containMindArr.count - 2 { // 判断之前选中的是最后一个，并且是否有拼接（超过屏幕的不拼接）
                     let frontBtn:UIButton = containMindArr[preSelectBtnIdx! + 1]
-                    frontBtn.selected = sender.selected
-                    frontBtn.setImage(normalTriangleImage, forState: UIControlState.Selected)
+                    frontBtn.isSelected = sender.isSelected
+                    frontBtn.setImage(normalTriangleImage, for: UIControlState.selected)
                     
                     let behind:UIButton = containMindArr[preSelectBtnIdx! - 1]
-                    behind.selected = sender.selected
-                    behind.setImage(unSelectLinkRectangleImage, forState: UIControlState.Selected)
+                    behind.isSelected = sender.isSelected
+                    behind.setImage(unSelectLinkRectangleImage, for: UIControlState.selected)
                     
                 }else if preSelectBtnIdx == containMindArr.count - 1 {
                     let behind:UIButton = containMindArr[preSelectBtnIdx! - 1]
-                    behind.selected = sender.selected
-                    behind.setImage(unSelectLinkRectangleImage, forState: UIControlState.Selected)
+                    behind.isSelected = sender.isSelected
+                    behind.setImage(unSelectLinkRectangleImage, for: UIControlState.selected)
                 }
             }
             
@@ -276,46 +300,46 @@ class StructLevelView: UIView, UIScrollViewDelegate {
             
             if currSelectBtnIdx == containMindArr.count - 2 { // 判断当前选中的是最后一个，并且是否有拼接（超过屏幕的不拼接）
                 let frontBtn:UIButton = containMindArr[currSelectBtnIdx! + 1]
-                frontBtn.selected = sender.selected
-                frontBtn.setImage(hightLightTriangleImage, forState: UIControlState.Selected)
+                frontBtn.isSelected = sender.isSelected
+                frontBtn.setImage(hightLightTriangleImage, for: UIControlState.selected)
                 
                 let behindBtn:UIButton = containMindArr[currSelectBtnIdx! - 1]
-                behindBtn.selected = sender.selected
-                behindBtn.setImage(normalRectangleImage, forState: UIControlState.Selected)
+                behindBtn.isSelected = sender.isSelected
+                behindBtn.setImage(normalRectangleImage, for: UIControlState.selected)
             }else if currSelectBtnIdx == containMindArr.count - 1 {
                 let behindBtn:UIButton = containMindArr[currSelectBtnIdx! - 1]
-                behindBtn.selected = sender.selected
-                behindBtn.setImage(normalRectangleImage, forState: UIControlState.Selected)
+                behindBtn.isSelected = sender.isSelected
+                behindBtn.setImage(normalRectangleImage, for: UIControlState.selected)
             }
             
             // 判断之前选中和现在选中是否相邻
             if abs(preSelectBtnIdx! - currSelectBtnIdx!) == 2 {
                 if preSelectBtnIdx == 0 { // 判断之前选中的是否是第一个
                     let frontBtn:UIButton = containMindArr[preSelectBtnIdx! + 1]
-                    frontBtn.selected = sender.selected
-                    frontBtn.setImage(normalRectangleImage, forState: UIControlState.Selected)
+                    frontBtn.isSelected = sender.isSelected
+                    frontBtn.setImage(normalRectangleImage, for: UIControlState.selected)
                 }else{
                     
                     let behind:UIButton = containMindArr[preSelectBtnIdx! - 1]
-                    behind.selected = sender.selected
-                    behind.setImage(unSelectLinkRectangleImage, forState: UIControlState.Selected)
+                    behind.isSelected = sender.isSelected
+                    behind.setImage(unSelectLinkRectangleImage, for: UIControlState.selected)
                 }
             }
             else{
                 
                 if preSelectBtnIdx == 0 { // 判断之前选中的是否是第一个
                     let frontBtn:UIButton = containMindArr[preSelectBtnIdx! + 1]
-                    frontBtn.selected = sender.selected
-                    frontBtn.setImage(unSelectLinkRectangleImage, forState: UIControlState.Selected)
+                    frontBtn.isSelected = sender.isSelected
+                    frontBtn.setImage(unSelectLinkRectangleImage, for: UIControlState.selected)
                 }else{
                     
                     let frontBtn:UIButton = containMindArr[preSelectBtnIdx! + 1]
-                    frontBtn.selected = sender.selected
-                    frontBtn.setImage(unSelectLinkRectangleImage, forState: UIControlState.Selected)
+                    frontBtn.isSelected = sender.isSelected
+                    frontBtn.setImage(unSelectLinkRectangleImage, for: UIControlState.selected)
                     
                     let behind:UIButton = containMindArr[preSelectBtnIdx! - 1]
-                    behind.selected = sender.selected
-                    behind.setImage(unSelectLinkRectangleImage, forState: UIControlState.Selected)
+                    behind.isSelected = sender.isSelected
+                    behind.setImage(unSelectLinkRectangleImage, for: UIControlState.selected)
                 }
             }
             
@@ -324,25 +348,25 @@ class StructLevelView: UIView, UIScrollViewDelegate {
         else {
             
             let frontBtn:UIButton = containMindArr[currSelectBtnIdx! + 1]
-            frontBtn.selected = sender.selected
-            frontBtn.setImage(hightLightRectangleImage, forState: UIControlState.Selected)
+            frontBtn.isSelected = sender.isSelected
+            frontBtn.setImage(hightLightRectangleImage, for: UIControlState.selected)
             
             let behindBtn:UIButton = containMindArr[currSelectBtnIdx! - 1]
-            behindBtn.selected = sender.selected
-            behindBtn.setImage(normalRectangleImage, forState: UIControlState.Selected)
+            behindBtn.isSelected = sender.isSelected
+            behindBtn.setImage(normalRectangleImage, for: UIControlState.selected)
             
             
             // 判断之前选中和现在选中是否相邻
             if abs(preSelectBtnIdx! - currSelectBtnIdx!) == 2 {
                 if preSelectBtnIdx == 0 { // 判断之前选中的是否是第一个
                     let frontBtn:UIButton = containMindArr[preSelectBtnIdx! + 1]
-                    frontBtn.selected = sender.selected
-                    frontBtn.setImage(normalRectangleImage, forState: UIControlState.Selected)
+                    frontBtn.isSelected = sender.isSelected
+                    frontBtn.setImage(normalRectangleImage, for: UIControlState.selected)
                 }else if preSelectBtnIdx == containMindArr.count - 2 || preSelectBtnIdx == containMindArr.count - 1 { // 判断之前选中的是否是最后一个
                     if preSelectBtnIdx == containMindArr.count - 2 {
                         let frontBtn:UIButton = containMindArr[preSelectBtnIdx! + 1]
-                        frontBtn.selected = sender.selected
-                        frontBtn.setImage(normalTriangleImage, forState: UIControlState.Selected)
+                        frontBtn.isSelected = sender.isSelected
+                        frontBtn.setImage(normalTriangleImage, for: UIControlState.selected)
                     }else{
                         
                     }
@@ -351,12 +375,12 @@ class StructLevelView: UIView, UIScrollViewDelegate {
                     if preSelectBtnIdx > currSelectBtnIdx {
                         // 往后点
                         let frontBtn:UIButton = containMindArr[preSelectBtnIdx! + 1]
-                        frontBtn.selected = sender.selected
-                        frontBtn.setImage(unSelectLinkRectangleImage, forState: UIControlState.Selected)
+                        frontBtn.isSelected = sender.isSelected
+                        frontBtn.setImage(unSelectLinkRectangleImage, for: UIControlState.selected)
                     }else{
                         let behind:UIButton = containMindArr[preSelectBtnIdx! - 1]
-                        behind.selected = sender.selected
-                        behind.setImage(unSelectLinkRectangleImage, forState: UIControlState.Selected)
+                        behind.isSelected = sender.isSelected
+                        behind.setImage(unSelectLinkRectangleImage, for: UIControlState.selected)
                         
                     }
                 }
@@ -365,32 +389,32 @@ class StructLevelView: UIView, UIScrollViewDelegate {
                 
                 if preSelectBtnIdx == 0 { // 判断之前选中的是否是第一个
                     let frontBtn:UIButton = containMindArr[preSelectBtnIdx! + 1]
-                    frontBtn.selected = sender.selected
-                    frontBtn.setImage(unSelectLinkRectangleImage, forState: UIControlState.Selected)
+                    frontBtn.isSelected = sender.isSelected
+                    frontBtn.setImage(unSelectLinkRectangleImage, for: UIControlState.selected)
                 }else if preSelectBtnIdx == containMindArr.count - 2 || preSelectBtnIdx == containMindArr.count - 1 { // 判断之前选中的是否是最后一个
                     if preSelectBtnIdx == containMindArr.count - 2 {
                         let frontBtn:UIButton = containMindArr[preSelectBtnIdx! + 1]
-                        frontBtn.selected = sender.selected
-                        frontBtn.setImage(normalTriangleImage, forState: UIControlState.Selected)
+                        frontBtn.isSelected = sender.isSelected
+                        frontBtn.setImage(normalTriangleImage, for: UIControlState.selected)
                         
                         let behind:UIButton = containMindArr[preSelectBtnIdx! - 1]
-                        behind.selected = sender.selected
-                        behind.setImage(unSelectLinkRectangleImage, forState: UIControlState.Selected)
+                        behind.isSelected = sender.isSelected
+                        behind.setImage(unSelectLinkRectangleImage, for: UIControlState.selected)
                     }else{
                         
                         let behind:UIButton = containMindArr[preSelectBtnIdx! - 1]
-                        behind.selected = sender.selected
-                        behind.setImage(unSelectLinkRectangleImage, forState: UIControlState.Selected)
+                        behind.isSelected = sender.isSelected
+                        behind.setImage(unSelectLinkRectangleImage, for: UIControlState.selected)
                         
                     }
                 }else{
                     
                     let frontBtn:UIButton = containMindArr[preSelectBtnIdx! + 1]
-                    frontBtn.selected = sender.selected
-                    frontBtn.setImage(unSelectLinkRectangleImage, forState: UIControlState.Selected)
+                    frontBtn.isSelected = sender.isSelected
+                    frontBtn.setImage(unSelectLinkRectangleImage, for: UIControlState.selected)
                     let behind:UIButton = containMindArr[preSelectBtnIdx! - 1]
-                    behind.selected = sender.selected
-                    behind.setImage(unSelectLinkRectangleImage, forState: UIControlState.Selected)
+                    behind.isSelected = sender.isSelected
+                    behind.setImage(unSelectLinkRectangleImage, for: UIControlState.selected)
                 }
             }
             

@@ -30,13 +30,13 @@ private enum UndocBoxMoreType: String, CustomStringConvertible {
 
 class UndocBoxMoreView: UIImageView, UITableViewDataSource, UITableViewDelegate {
     
-    private var dataSource: [UndocBoxMoreType] = [.Text, .Pic, .Audio, . Batch]
+    fileprivate var dataSource: [UndocBoxMoreType] = [.Text, .Pic, .Audio, . Batch]
     
-    private var tableView: UITableView = {
+    fileprivate var tableView: UITableView = {
         let tableV             = UITableView()
         tableV.rowHeight       = 45
         tableV.bounces         = false
-        tableV.backgroundColor = UIColor.clearColor()
+        tableV.backgroundColor = UIColor.clear
         tableV.separatorColor  = UIColor.color(withHex: 0x666666)
         tableV.separatorInset  = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15)
         return tableV
@@ -44,7 +44,7 @@ class UndocBoxMoreView: UIImageView, UITableViewDataSource, UITableViewDelegate 
     
     init() {
         super.init(frame: CGRect(x: kScreenWidth - 120 - 3, y: 20 + 22 + 6, width: 120, height: 190))
-        userInteractionEnabled = true
+        isUserInteractionEnabled = true
         image = UIImage(named: "undoc_more_bg")
         
         tableView.dataSource = self
@@ -59,16 +59,16 @@ class UndocBoxMoreView: UIImageView, UITableViewDataSource, UITableViewDelegate 
         }
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return dataSource.count
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         return UndocBoxMoreCell(type: dataSource[indexPath.item])
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let undocVC = APP_NAVIGATOR.topVC as? UndocBoxViewController else { return }
         
         switch dataSource[indexPath.item] {
@@ -82,14 +82,14 @@ class UndocBoxMoreView: UIImageView, UITableViewDataSource, UITableViewDelegate 
             let picker = TZImagePickerController(maxCount: 4, animated: false, completion: { photos in
                 
                 let vc = PicDetailViewController(photos: photos)
-                undocVC.presentViewController(vc, animated: true, completion: nil)
+                undocVC.present(vc, animated: true, completion: nil)
             })
             
-            undocVC.presentViewController(picker, animated: true, completion: nil)
+            undocVC.present(picker, animated: true, completion: nil)
             
         case .Audio:
             
-            undocVC.presentViewController(AudioSectionViewController(), animated: true, completion: nil)
+            undocVC.present(AudioSectionViewController(), animated: true, completion: nil)
             
         case .Batch:
             
@@ -99,13 +99,13 @@ class UndocBoxMoreView: UIImageView, UITableViewDataSource, UITableViewDelegate 
         removeFromSuperview()
     }
     
-    override func hitTest(point: CGPoint, withEvent event: UIEvent?) -> UIView? {
+    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         
         if !bounds.contains(point) {
             removeFromSuperview()
         }
         
-        return super.hitTest(point, withEvent: event)
+        return super.hitTest(point, with: event)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -115,26 +115,26 @@ class UndocBoxMoreView: UIImageView, UITableViewDataSource, UITableViewDelegate 
 
 private class UndocBoxMoreCell: UITableViewCell {
     
-    private var label: UILabel = {
+    fileprivate var label: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFontOfSize(15)
+        label.font = UIFont.systemFont(ofSize: 15)
         label.textColor = SpiderConfig.Color.LightText
-        label.textAlignment = .Center
+        label.textAlignment = .center
         return label
     }()
     
-    private var logo: UIImageView = {
+    fileprivate var logo: UIImageView = {
         return UIImageView()
     }()
     
     init(type: UndocBoxMoreType) {
-        super.init(style: .Default, reuseIdentifier: "")
+        super.init(style: .default, reuseIdentifier: "")
         
-        backgroundColor = UIColor.clearColor()
-        selectionStyle = .None
+        backgroundColor = UIColor.clear
+        selectionStyle = .none
         
         label.text = type.description
-        logo.contentMode = .ScaleAspectFit
+        logo.contentMode = .scaleAspectFit
         logo.image = UIImage(named: type.rawValue)
         
         contentView.addSubview(label)

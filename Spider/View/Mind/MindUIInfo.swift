@@ -47,7 +47,7 @@ public struct MindUIInfo {
         self.type = MindType(rawValue: mind.type)!
         self.choosed = false
         
-        let rect = mind.name.boundingRectWithSize(CGSize(width: kMindTextLabelWidth, height: CGFloat(FLT_MAX)), options: [.UsesLineFragmentOrigin, .UsesFontLeading], attributes: [NSFontAttributeName: SpiderConfig.Font.Text], context: nil)
+        let rect = mind.name.boundingRect(with: CGSize(width: kMindTextLabelWidth, height: CGFloat(FLT_MAX)), options: [.usesLineFragmentOrigin, .usesFontLeading], attributes: [NSFontAttributeName: SpiderConfig.Font.Text], context: nil)
         
         self.labelHeight = rect.height
         self.cellHeight = isFirst ? 95 + kMindVerticalSpacing : 95

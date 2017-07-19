@@ -40,10 +40,10 @@ class UserSpaceViewController: BaseTableViewController, IBActionSheetDelegate, T
         tableView.backgroundColor = RGBCOLORV(0xfafafa)
         tableView.tableFooterView = UIView()
         
-        footerBtn = UIButton.init(type: UIButtonType.Custom)
-        footerBtn.setTitle("退出账号", forState: UIControlState.Normal)
-        footerBtn.setBackgroundColor(RGBCOLORV(0x79c542), forState: UIControlState.Normal)
-        footerBtn.addTarget(self, action: #selector(logoutAction), forControlEvents: UIControlEvents.TouchUpInside)
+        footerBtn = UIButton.init(type: UIButtonType.custom)
+        footerBtn.setTitle("退出账号", for: UIControlState())
+        footerBtn.setBackgroundColor(RGBCOLORV(0x79c542), forState: UIControlState())
+        footerBtn.addTarget(self, action: #selector(logoutAction), for: UIControlEvents.touchUpInside)
         view.addSubview(footerBtn)
         
         // 添加约束
@@ -69,10 +69,10 @@ class UserSpaceViewController: BaseTableViewController, IBActionSheetDelegate, T
     
     
     //MARK: IBActionSheetDelegate
-    func actionSheet(actionSheet: IBActionSheet!, clickedButtonAtIndex buttonIndex: Int) {
+    func actionSheet(_ actionSheet: IBActionSheet!, clickedButtonAt buttonIndex: Int) {
         if buttonIndex == 0 {
             LOGINMANAGER.logout({
-                NSNotificationCenter.defaultCenter().postNotificationName(kNotificationLoginStateChanged, object: nil)
+                NotificationCenter.default.post(name: Notification.Name(rawValue: kNotificationLoginStateChanged), object: nil)
                 AppNavigator.openLoginController()
             })
             
@@ -81,7 +81,7 @@ class UserSpaceViewController: BaseTableViewController, IBActionSheetDelegate, T
             // 清除账号
             Defaults.remove(OldAccount)
             LOGINMANAGER.logout({
-                NSNotificationCenter.defaultCenter().postNotificationName(kNotificationLoginStateChanged, object: nil)
+                NotificationCenter.default.post(name: Notification.Name(rawValue: kNotificationLoginStateChanged), object: nil)
                 AppNavigator.openOtherAccountLoginController()
             })
         }
@@ -102,7 +102,7 @@ extension UserSpaceViewController{
 
     func logoutAction() -> Void {
         
-        self.actionSheet.showInView(APP_DELEGATE.window)
+        self.actionSheet.show(in: APP_DELEGATE.window)
         
     }
 }
@@ -110,27 +110,27 @@ extension UserSpaceViewController{
 // MARK: tableviewDelegate
 extension UserSpaceViewController{
 
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    func numberOfSectionsInTableView(_ tableView: UITableView) -> Int {
         let sectionNum = self.cellTitle.count
         return sectionNum
     }
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let cellArr = self.cellTitle[section]
         return cellArr.count
     }
     
-    override func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 15
     }
     
-    func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let sectionHeader = UIView.init(frame: CGRectMake(0, 0, kScreenWidth, 15))
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let sectionHeader = UIView.init(frame: CGRect(x: 0, y: 0, width: kScreenWidth, height: 15))
         sectionHeader.backgroundColor = RGBCOLORV(0xfafafa)
         return sectionHeader
     }
     
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForRowAtIndexPath indexPath: IndexPath) -> CGFloat {
         switch (indexPath.section, indexPath.row) {
         case (0, 0):
             return 82
@@ -140,11 +140,11 @@ extension UserSpaceViewController{
         }
     }
     
-    func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: IndexPath) -> CGFloat {
         return 55
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         switch (indexPath.section, indexPath.row) {
         case (0, _), (1,_):
@@ -160,7 +160,7 @@ extension UserSpaceViewController{
             // 最大200M , 已经用了20M
             
             
-            createGradient(cell.cellStoreProgress, frame: CGRectMake(0, 0, 20 * progressWidth/200, 10))
+            createGradient(cell.cellStoreProgress, frame: CGRect(x: 0, y: 0, width: 20 * progressWidth/200, height: 10))
             
             return cell
 
@@ -171,9 +171,9 @@ extension UserSpaceViewController{
         }
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAtIndexPath indexPath: IndexPath) {
         
-        let cell = tableView.cellForRowAtIndexPath(indexPath) as! LeftMenuUserSpaceCell
+        let cell = tableView.cellForRow(at: indexPath) as! LeftMenuUserSpaceCell
         
         
         switch (indexPath.section, indexPath.row) {
@@ -192,7 +192,7 @@ extension UserSpaceViewController{
             modifyNickname.selectGender = {
             
                 (cellDetail:String) -> Void in
-                cell.cellDetail.setTitle(cellDetail, forState: UIControlState.Normal)
+                cell.cellDetail.setTitle(cellDetail, for: UIControlState())
             }
             AppNavigator.pushViewController(modifyNickname, animated: true)
         case (1,0):
@@ -207,14 +207,14 @@ extension UserSpaceViewController{
     
     
     // 添加渐变层
-    func createGradient(view:UIView, frame:CGRect) -> Void {
+    func createGradient(_ view:UIView, frame:CGRect) -> Void {
         progressLayer = CALayer()
         progressLayer.frame = frame
         view.layer.addSublayer(progressLayer)
-        progressLayer.backgroundColor = RGBCOLORV(0x79c542).CGColor
+        progressLayer.backgroundColor = RGBCOLORV(0x79c542).cgColor
     }
     
-    func selectPhoto(cell: LeftMenuUserSpaceCell) -> Void {
+    func selectPhoto(_ cell: LeftMenuUserSpaceCell) -> Void {
         let imagePickerController:TZImagePickerController = TZImagePickerController.init(maxImagesCount: 1, delegate:nil)
         imagePickerController.pickerDelegate = self
         imagePickerController.didFinishPickingPhotosHandle = { [weak self] (photos, assets, isOriginal) in
@@ -222,7 +222,7 @@ extension UserSpaceViewController{
             let image = photos[0]
             image.resize(cell.cellDetail.size.width)
             
-            cell.cellDetail.setImage(image, forState: UIControlState.Normal)
+            cell.cellDetail.setImage(image, for: UIControlState())
             let currentUsr = UserObject.fetchUserObj((APP_UTILITY.currentUser?.userID)!)
             
             currentUsr!.updateUserObj({
@@ -238,20 +238,20 @@ extension UserSpaceViewController{
 extension UserSpaceViewController{
 
     override func viewDidLayoutSubviews() {
-        if tableView.respondsToSelector(Selector("setSeparatorInset:")) {
-            tableView.separatorInset = UIEdgeInsetsZero
+        if tableView.responds(to: Selector("setSeparatorInset:")) {
+            tableView.separatorInset = UIEdgeInsets.zero
         }
-        if tableView.respondsToSelector(Selector("setLayoutMargins:")) {
-            tableView.layoutMargins = UIEdgeInsetsZero
+        if tableView.responds(to: Selector("setLayoutMargins:")) {
+            tableView.layoutMargins = UIEdgeInsets.zero
         }
     }
     
-     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
-        if cell.respondsToSelector(Selector("setSeparatorInset:")) {
-            cell.separatorInset = UIEdgeInsetsZero
+     func tableView(_ tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: IndexPath) {
+        if cell.responds(to: Selector("setSeparatorInset:")) {
+            cell.separatorInset = UIEdgeInsets.zero
         }
-        if cell.respondsToSelector(Selector("setLayoutMargins:")) {
-            cell.layoutMargins = UIEdgeInsetsZero
+        if cell.responds(to: Selector("setLayoutMargins:")) {
+            cell.layoutMargins = UIEdgeInsets.zero
         }
     }
     
@@ -260,7 +260,7 @@ extension UserSpaceViewController{
 // MARK: 让tableview的section不悬停
 extension UserSpaceViewController{
     
-    func scrollViewDidScroll(scrollView: UIScrollView) {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let sectionHeaderHeight:CGFloat = 15
         if scrollView.contentOffset.y <= sectionHeaderHeight && scrollView.contentOffset.y >= 0 {
             scrollView.contentInset = UIEdgeInsetsMake(-scrollView.contentOffset.y, 0, 0, 0)

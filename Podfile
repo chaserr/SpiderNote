@@ -9,11 +9,11 @@ target 'Spider' do
 
 pod 'FDFullscreenPopGesture'
 
-pod 'RealmSwift', '~> 1.1.0'
-pod 'Alamofire', '~> 3.5.0'
-pod 'SnapKit', '~> 0.22.0'
-pod 'ObjectMapper', '~> 1.4.0'
-pod 'CryptoSwift', '~> 0.5.2'
+pod 'RealmSwift'
+pod 'Alamofire'
+pod 'SnapKit'
+pod 'ObjectMapper'
+pod 'CryptoSwift'
 pod 'SwiftyJSON'
 pod 'MBProgressHUD'
 pod 'Reachability'

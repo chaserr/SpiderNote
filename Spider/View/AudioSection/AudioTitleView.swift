@@ -16,7 +16,7 @@ class AudioTitleView: UIView {
         }
     }
     
-    private var titleLabel: UILabel = {
+    fileprivate var titleLabel: UILabel = {
         let label = UILabel(frame: CGRect(x: 15, y: kStatusBarHeight - 3, width: kScreenWidth - 30, height: kAudioTitleHeight - kStatusBarHeight))
         label.font = SpiderConfig.Font.Title
         label.textColor = SpiderConfig.Color.DarkText
@@ -26,7 +26,7 @@ class AudioTitleView: UIView {
     init() {
         super.init(frame: CGRect(x: 0, y: 0, width: kScreenWidth, height: kAudioTitleHeight))
         
-        backgroundColor = UIColor.whiteColor()
+        backgroundColor = UIColor.white
         
         addSubview(titleLabel)
     }
@@ -35,10 +35,10 @@ class AudioTitleView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func drawRect(rect: CGRect) {
+    override func draw(_ rect: CGRect) {
         let path = UIBezierPath()
-        path.moveToPoint(CGPoint(x: 0, y: frame.height - 1))
-        path.addLineToPoint(CGPoint(x: frame.width, y: frame.height - 1))
+        path.move(to: CGPoint(x: 0, y: frame.height - 1))
+        path.addLine(to: CGPoint(x: frame.width, y: frame.height - 1))
 
         path.lineWidth = 1.0
         SpiderConfig.Color.Line.setStroke()

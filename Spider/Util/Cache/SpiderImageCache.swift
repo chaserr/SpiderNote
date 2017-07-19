@@ -13,47 +13,45 @@ final class SpiderImageCache {
     
     static let sharedInstance = SpiderImageCache()
     
-    let cacheImageQueue = dispatch_queue_create("ImageCacheQueue", DISPATCH_QUEUE_SERIAL)
+    let cacheImageQueue = DispatchQueue(label: "ImageCacheQueue", attributes: [])
     
-    func imageWith(info: PicInfo, completion: (key: String, image: UIImage?) -> Void) {
+    func imageWith(_ info: PicInfo, completion: @escaping (_ key: String, _ image: UIImage?) -> Void) {
         
         let imageKey = info.id
         
         let options: KingfisherOptionsInfo = [
-            .CallbackDispatchQueue(cacheImageQueue),
-            .ScaleFactor(UIScreen.mainScreen().scale),
+            .callbackDispatchQueue(cacheImageQueue),
+            .scaleFactor(UIScreen.main.scale),
         ]
-        
-        Kingfisher.ImageCache.defaultCache.retrieveImageForKey(imageKey, options: options) { (image, cacheType) in
+        ImageCache.default.retrieveImage(forKey: imageKey, options: options) { (image, cacheType) in
             
             if let image = image {
                 
-                dispatch_async(dispatch_get_main_queue(), { 
-                    completion(key: imageKey, image: image)
+                DispatchQueue.main.async(execute: { 
+                    completion(imageKey, image)
                 })
                 
-            } else {
+            }
+            else {
                 
                 guard let imageURL = info.url else {
                     return
                 }
-                
-                ImageDownloader.defaultDownloader.downloadImageWithURL(imageURL, options: options, progressBlock: { (receivedSize, totalSize) in
+                ImageDownloader.default.downloadImage(with: imageURL, retrieveImageTask: nil, options: options, progressBlock: { (receivedSize, totalSize) in
                 }, completionHandler: { (image, error, imageURL, originalData) in
                     
                     if let image = image {
-                        
-                        Kingfisher.ImageCache.defaultCache.storeImage(image, originalData: originalData, forKey: imageKey, toDisk: true, completionHandler: {
+                        ImageCache.default.store(image, original: originalData, forKey: imageKey, processorIdentifier: imageKey, cacheSerializer: image as! CacheSerializer, toDisk: true, completionHandler: {
                             
-                            dispatch_async(dispatch_get_main_queue(), { 
-                                completion(key: imageKey, image: image)
+                            DispatchQueue.main.async(execute: { 
+                                completion(imageKey, image)
                             })
                         })
                         
                     } else {
                         
-                        dispatch_async(dispatch_get_main_queue(), {
-                            completion(key: imageKey, image: nil)
+                        DispatchQueue.main.async(execute: {
+                            completion(imageKey, nil)
                         })
                     }
                 })

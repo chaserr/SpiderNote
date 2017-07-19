@@ -12,23 +12,23 @@ class AddSectionView: UIView {
     
     var addSectionHandler: (() -> Void)?
     
-    private lazy var addMediaView: AddMediaView = {
+    fileprivate lazy var addMediaView: AddMediaView = {
         return AddMediaView(unDoc: false)
     }()
     
-    private var addButton: UIButton = {
+    fileprivate var addButton: UIButton = {
         let button = UIButton()
         let diff = (kArticlePlusHeight - 12) / 2
         button.imageEdgeInsets = UIEdgeInsetsMake(diff, diff, diff, diff)
-        button.setImage(UIImage(named: "article_add_button"), forState: .Normal)
+        button.setImage(UIImage(named: "article_add_button"), for: UIControlState())
         return button
     }()
     
     init() {
-        super.init(frame: CGRectZero)
-        backgroundColor = UIColor.whiteColor()
+        super.init(frame: CGRect.zero)
+        backgroundColor = UIColor.white
         
-        addButton.addTarget(self, action: #selector(addButtonClicked), forControlEvents: .TouchUpInside)
+        addButton.addTarget(self, action: #selector(addButtonClicked), for: .touchUpInside)
         
         addSubview(addButton)
         addButton.snp_makeConstraints { (make) in
@@ -44,14 +44,14 @@ class AddSectionView: UIView {
         addMediaView.addTo(currentVC.view)
     }
     
-    override func drawRect(rect: CGRect) {
+    override func draw(_ rect: CGRect) {
         let path = UIBezierPath()
         let lineY = kArticlePlusHeight / 2
-        path.moveToPoint(CGPoint(x: 0, y: lineY))
-        path.addLineToPoint(CGPoint(x: (kScreenWidth - 30) / 2, y: lineY))
+        path.move(to: CGPoint(x: 0, y: lineY))
+        path.addLine(to: CGPoint(x: (kScreenWidth - 30) / 2, y: lineY))
         
-        path.moveToPoint(CGPoint(x: (kScreenWidth - 30) / 2 + 30, y: lineY))
-        path.addLineToPoint(CGPoint(x: kScreenWidth, y: lineY))
+        path.move(to: CGPoint(x: (kScreenWidth - 30) / 2 + 30, y: lineY))
+        path.addLine(to: CGPoint(x: kScreenWidth, y: lineY))
         
         path.lineWidth = 1
         SpiderConfig.Color.Line.setStroke()

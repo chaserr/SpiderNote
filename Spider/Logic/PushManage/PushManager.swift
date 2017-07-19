@@ -7,6 +7,30 @@
 //
 
 import UIKit
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
+
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l > r
+  default:
+    return rhs < lhs
+  }
+}
+
 
 
 
@@ -43,17 +67,17 @@ class PushManager: NSObject {
 extension PushManager{
 
     // 注册本地推送
-    func registerLocalPush(key:String, pushText:String, date:NSDate) -> Void {
+    func registerLocalPush(_ key:String, pushText:String, date:Date) -> Void {
         // 创建一个本地通知
         let locationNotification:UILocalNotification? = UILocalNotification()
-        let pushDate = NSDate(timeInterval: 0, sinceDate: date)
+        let pushDate = Date(timeInterval: 0, since: date)
         if locationNotification != nil {
             // 推送时间
             locationNotification!.fireDate = pushDate
             // 设置时区
-            locationNotification!.timeZone = NSTimeZone.defaultTimeZone()
+            locationNotification!.timeZone = TimeZone.current
             // 设置重复时间
-            locationNotification!.repeatInterval = NSCalendarUnit.Nanosecond
+            locationNotification!.repeatInterval = NSCalendar.Unit.nanosecond
             // 推送声音
             locationNotification!.soundName = UILocalNotificationDefaultSoundName
             // 推送内容
@@ -63,20 +87,20 @@ extension PushManager{
             // 设置userinfo,方便在之后需要撤销的时候用
             let info = ["key" : key]
             // 添加推送
-            UIApplication.sharedApplication().scheduleLocalNotification(locationNotification!)
+            UIApplication.shared.scheduleLocalNotification(locationNotification!)
         }
     }
     
     // 取消本地推送
-    func uninstallLocalPush(key:String) -> Void {
-        let localPushArr = UIApplication.sharedApplication().scheduledLocalNotifications
+    func uninstallLocalPush(_ key:String) -> Void {
+        let localPushArr = UIApplication.shared.scheduledLocalNotifications
         if localPushArr?.count > 0 {
             for localPush:UILocalNotification in localPushArr! {
                 let dict = localPush.userInfo
                 if (dict != nil) {
                     let infoKey = dict!["key"] as! String
                     if infoKey == key {
-                        UIApplication.sharedApplication().cancelLocalNotification(localPush)
+                        UIApplication.shared.cancelLocalNotification(localPush)
                        break
                     }
                     

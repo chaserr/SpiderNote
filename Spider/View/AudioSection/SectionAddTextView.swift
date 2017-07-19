@@ -10,54 +10,54 @@ import UIKit
 
 class SectionAddTextView: UIView {
     
-    var doneHandler: (String -> Void)?
+    var doneHandler: ((String) -> Void)?
     
-    private var charactersLimit = 140
+    fileprivate var charactersLimit = 140
     
-    private var text: String = ""
+    fileprivate var text: String = ""
     
-    private var contaniner: UIView = {
+    fileprivate var contaniner: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.color(withHex: 0xf0f0f0)
         return view
     }()
     
-    private var textView: UITextView = {
+    fileprivate var textView: UITextView = {
         let textView = UITextView()
-        textView.font = UIFont.systemFontOfSize(14)
-        textView.returnKeyType = .Done
+        textView.font = UIFont.systemFont(ofSize: 14)
+        textView.returnKeyType = .done
         textView.enablesReturnKeyAutomatically = true
         textView.layer.cornerRadius = 2.0
         textView.layer.borderWidth = 1.0
-        textView.layer.borderColor = UIColor.color(withHex: 0xeaeaea).CGColor
-        textView.backgroundColor = UIColor.whiteColor()
+        textView.layer.borderColor = UIColor.color(withHex: 0xeaeaea).cgColor
+        textView.backgroundColor = UIColor.white
         return textView
     }()
     
-    private var charactersRemainingLabel: UILabel = {
+    fileprivate var charactersRemainingLabel: UILabel = {
         let label = UILabel()
         label.text = "140"
-        label.font = UIFont.systemFontOfSize(10)
+        label.font = UIFont.systemFont(ofSize: 10)
         label.textColor = UIColor.color(withHex: 0xcccccc)
-        label.textAlignment = .Center
+        label.textAlignment = .center
         return label
     }()
     
-    private var doneButton: UIButton = {
+    fileprivate var doneButton: UIButton = {
         let button = UIButton()
-        button.setTitle("完成", forState: .Normal)
-        button.titleLabel?.font = UIFont.systemFontOfSize(10)
-        button.titleLabel?.textColor = UIColor.whiteColor()
+        button.setTitle("完成", for: UIControlState())
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 10)
+        button.titleLabel?.textColor = UIColor.white
         button.backgroundColor = UIColor.color(withHex: 0x363646)
         button.layer.cornerRadius = 2.0
         return button
     }()
     
-    private var cancelButton: UIButton = {
+    fileprivate var cancelButton: UIButton = {
         let button = UIButton()
-        button.setTitle("取消", forState: .Normal)
-        button.titleLabel?.font = UIFont.systemFontOfSize(10)
-        button.titleLabel?.textColor = UIColor.whiteColor()
+        button.setTitle("取消", for: UIControlState())
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 10)
+        button.titleLabel?.textColor = UIColor.white
         button.backgroundColor = UIColor.color(withHex: 0x363646)
         button.layer.cornerRadius = 2.0
         return button
@@ -75,7 +75,7 @@ class SectionAddTextView: UIView {
     
     override func removeFromSuperview() {
         super.removeFromSuperview()
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
     }
     
     func makeUI() {
@@ -128,14 +128,14 @@ class SectionAddTextView: UIView {
         } else {
             textView.text = ""
             doneButton.backgroundColor = UIColor.color(withHex: 0x363646, alpha: 0.5)
-            doneButton.enabled = false
+            doneButton.isEnabled = false
         }
         
         textView.delegate = self
         textView.becomeFirstResponder()
         
-        cancelButton.addTarget(self, action: #selector(removeFromSuperview), forControlEvents: .TouchUpInside)
-        doneButton.addTarget(self, action: #selector(doneButtonClicked), forControlEvents: .TouchUpInside)
+        cancelButton.addTarget(self, action: #selector(removeFromSuperview), for: .touchUpInside)
+        doneButton.addTarget(self, action: #selector(doneButtonClicked), for: .touchUpInside)
     }
     
     func doneButtonClicked() {
@@ -144,15 +144,15 @@ class SectionAddTextView: UIView {
     }
     
     func registerForKeyboardNotification() {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(keyboardWillShow), name: UIKeyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
     }
     
-    func keyboardWillShow(notification: NSNotification) {
+    func keyboardWillShow(_ notification: Notification) {
         let info = notification.userInfo!
-        let kbFrame = info[UIKeyboardFrameEndUserInfoKey]!.CGRectValue()
+        let kbFrame = info[UIKeyboardFrameEndUserInfoKey]!.CGRectValue
         
-        UIView.animateWithDuration(1.3, animations: {
-            self.contaniner.transform = CGAffineTransformMakeTranslation(0, -kbFrame.height)
+        UIView.animate(withDuration: 1.3, animations: {
+            self.contaniner.transform = CGAffineTransform(translationX: 0, y: -kbFrame.height)
         })
     }
     
@@ -162,20 +162,20 @@ class SectionAddTextView: UIView {
 }
 
 extension SectionAddTextView: UITextViewDelegate {
-    func textViewDidChange(textView: UITextView) {
+    func textViewDidChange(_ textView: UITextView) {
         let remainCount = charactersLimit - textView.text.characters.count
         if remainCount < 0 || remainCount == charactersLimit {
             doneButton.backgroundColor = UIColor.color(withHex: 0x363646, alpha: 0.5)
-            doneButton.enabled = false
+            doneButton.isEnabled = false
         } else {
-            doneButton.enabled = true
+            doneButton.isEnabled = true
             doneButton.backgroundColor = UIColor.color(withHex: 0x363646)
         }
         
         charactersRemainingLabel.text = "\(remainCount)"
     }
     
-    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if text == "\n" {
             if textView.text.characters.count <= charactersLimit {
                 doneButtonClicked()

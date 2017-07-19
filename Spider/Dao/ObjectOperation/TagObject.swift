@@ -10,15 +10,15 @@ import Foundation
 import RealmSwift
 
 public enum TagType: Int {
-    case Text  = 0
-    case Pic   = 1
-    case Audio = 2
+    case text  = 0
+    case pic   = 1
+    case audio = 2
 }
 
 public enum TagDirection: Int {
-    case Right = 0
-    case Left  = 1
-    case None  = 2
+    case right = 0
+    case left  = 1
+    case none  = 2
 }
 
 class TagObject: Object {
@@ -27,7 +27,7 @@ class TagObject: Object {
     dynamic var id: String = ""
     
     /** 标记类型 */
-    dynamic var type: Int = TagType.Text.rawValue
+    dynamic var type: Int = TagType.text.rawValue
     
     /** 若 type 为 Text, 则为文字内容
         若 type 为 Audio/Pic，则为 sourceID */
@@ -38,7 +38,7 @@ class TagObject: Object {
     dynamic var timePoint: String = ""
     
     /** 方向 0 -> Left, 1 -> Right */
-    dynamic var direction: Int = TagDirection.Right.rawValue
+    dynamic var direction: Int = TagDirection.right.rawValue
     
     /** 位置信息 */
     dynamic var location: String = ""
@@ -53,21 +53,21 @@ class TagObject: Object {
     convenience init(tagInfo: PicTagInfo) {
         self.init()
         
-        self.id        = NSUUID().UUIDString
+        self.id        = UUID().uuidString
         self.type      = tagInfo.type.rawValue
         self.location  = tagInfo.perXY.toString()
         self.direction = tagInfo.direction.rawValue
         
         switch tagInfo.type {
             
-        case .Text:
+        case .text:
             self.content   = tagInfo.content!
             
-        case .Audio:
+        case .audio:
             self.duration  = tagInfo.audioInfo!.duration
             self.content   = tagInfo.audioInfo!.id
 
-        case .Pic:
+        case .pic:
             self.content   = tagInfo.id
         }
     }
@@ -75,16 +75,16 @@ class TagObject: Object {
     convenience init(tagInfo: AudioTagInfo) {
         self.init()
         
-        self.id       = NSUUID().UUIDString
+        self.id       = UUID().uuidString
         self.type     = tagInfo.type.rawValue
         self.location = tagInfo.time
         
         switch tagInfo.type {
             
-        case .Text:
+        case .text:
             self.content = tagInfo.content!
             
-        case .Pic:
+        case .pic:
             self.content = tagInfo.id
         }
     }
@@ -92,7 +92,7 @@ class TagObject: Object {
     convenience init(tag: TagObject) {
         self.init()
         
-        self.id = NSUUID().UUIDString
+        self.id = UUID().uuidString
         self.type = tag.type
         self.location = tag.location
         self.direction = tag.direction
@@ -110,6 +110,6 @@ extension TagObject {
     }
     
     var indexInAudioTags: Int? {
-        return audioOwner.first?.tags.indexOf(self)
+        return audioOwner.first?.tags.index(of: self)
     }
 }

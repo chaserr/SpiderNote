@@ -10,16 +10,16 @@ import Foundation
 import RealmSwift
 
 enum PicTagType: Int {
-    case Text  = 0
-    case Pic   = 1
-    case Audio = 2
+    case text  = 0
+    case pic   = 1
+    case audio = 2
 }
 
 enum PicState: Int {
-    case New      = 0
-    case Normal   = 1
-    case Deleted  = 2
-    case Modified = 3
+    case new      = 0
+    case normal   = 1
+    case deleted  = 2
+    case modified = 3
 }
 
 struct PicTagInfo {
@@ -28,8 +28,8 @@ struct PicTagInfo {
     var type: TagType
     var perXY: CGPoint
     
-    var state = PicState.Normal
-    var direction = TagDirection.Right
+    var state = PicState.normal
+    var direction = TagDirection.right
     
     var content:   String?    = nil
     var audioInfo: AudioInfo? = nil
@@ -44,13 +44,13 @@ struct PicTagInfo {
         
         switch type {
             
-        case .Pic:
+        case .pic:
             picInfo = PicInfo(tagObject: object)
             
-        case .Text:
+        case .text:
             content = object.content
             
-        case .Audio:
+        case .audio:
             audioInfo = AudioInfo(object: object)
         }
     }
@@ -60,19 +60,19 @@ struct PicTagInfo {
         self.id        = id
         self.type      = type
         self.perXY     = perXY
-        self.state     = .New
+        self.state     = .new
         
         switch type {
             
-        case .Text:
+        case .text:
             self.content = content
             
-        case .Pic:
+        case .pic:
             self.picInfo = picInfo
             guard let image = picInfo?.image else { return }
             image.saveToDisk(withid: id)
             
-        case .Audio:
+        case .audio:
             self.audioInfo = audioInfo
         }
     }
@@ -81,7 +81,7 @@ struct PicTagInfo {
 public struct PicSectionInfo {
     
     var tags  = [String: PicTagInfo]()
-    var state = PicState.Normal
+    var state = PicState.normal
     var picInfo: PicInfo
 
     init(object: PicSectionObject) {
@@ -95,10 +95,10 @@ public struct PicSectionInfo {
     
     init(photo: UIImage) {
         
-        let id = NSUUID().UUIDString
+        let id = UUID().uuidString
         photo.saveToDisk(withid: id)
         
-        self.state = PicState.New
+        self.state = PicState.new
         self.picInfo = PicInfo(id: id, image: photo)
     }
 }

@@ -12,15 +12,15 @@ class PicTopToolBarCell: UICollectionViewCell {
     var imageView: UIImageView!
     var couldDelete = false
     
-    private var deleteIcon: UIImageView!
+    fileprivate var deleteIcon: UIImageView!
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        userInteractionEnabled = true
+        isUserInteractionEnabled = true
         imageView = UIImageView(frame: bounds)
-        imageView.userInteractionEnabled = true
-        imageView.contentMode = .ScaleAspectFill
+        imageView.isUserInteractionEnabled = true
+        imageView.contentMode = .scaleAspectFill
         imageView.layer.masksToBounds = true
         addSubview(imageView)
     }
@@ -28,7 +28,7 @@ class PicTopToolBarCell: UICollectionViewCell {
     func select() {
         imageView.layer.cornerRadius = 3
         imageView.layer.borderWidth = 1.5
-        imageView.layer.borderColor = UIColor.color(withHex: 0x00c786).CGColor
+        imageView.layer.borderColor = UIColor.color(withHex: 0x00c786).cgColor
         imageView.layer.masksToBounds = true
     }
     

@@ -8,13 +8,7 @@
 
 import Foundation
 
-func println(@autoclosure item: () -> Any) {
-    #if DEBUG
-        print(item())
-    #endif
-}
-
-func AODlog<T>(message:T , fileName:String = #file ,methodName:String = #function, lineNumber:Int = #line) -> Void {
+func AODlog<T>(_ message:T , fileName:String = #file ,methodName:String = #function, lineNumber:Int = #line) -> Void {
     #if DEBUG
         
         print("\((fileName as NSString).lastPathComponent)_\(methodName)[\(lineNumber)]:\(message)")

@@ -16,61 +16,61 @@ private let audioCellID = "UndocBoxAudioCell"
 
 class UndocBoxViewController: UIViewController {
     
-    private var unDocItems = [[SectionObject]]()
+    fileprivate var unDocItems = [[SectionObject]]()
     
-    private var unDocResults = SpiderRealm.getUndocItems()
+    fileprivate var unDocResults = SpiderRealm.getUndocItems()
     
-    private var notificationToken: NotificationToken?
+    fileprivate var notificationToken: NotificationToken?
     
-    private var layoutPool = UndocBoxLayoutPool()
+    fileprivate var layoutPool = UndocBoxLayoutPool()
     
-    private var toShowSection: SectionObject?
+    fileprivate var toShowSection: SectionObject?
     
-    private var showedMoreView = false
+    fileprivate var showedMoreView = false
     
-    private var moreIndexPath: NSIndexPath!
+    fileprivate var moreIndexPath: IndexPath!
     
     // edit
-    private var outlineShowed = false
-    private var hasMoved = false
-    private var beEditing = false
-    private var hasChoosedAll = false
+    fileprivate var outlineShowed = false
+    fileprivate var hasMoved = false
+    fileprivate var beEditing = false
+    fileprivate var hasChoosedAll = false
     
-    private var choosedCount = 0 {
+    fileprivate var choosedCount = 0 {
         didSet {
             bottomBar.choosedCount = choosedCount
         }
     }
     
-    private lazy var backButton: UIButton = {
+    fileprivate lazy var backButton: UIButton = {
         let button = UIButton(frame: CGRect(x: 0, y: 0, w: 40, h: 40))
         button.imageEdgeInsets = UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 14)
-        button.setImage(UIImage(named: "unchive_back_button"), forState: .Normal)
+        button.setImage(UIImage(named: "unchive_back_button"), for: UIControlState())
         
-        button.addTarget(self, action: #selector(backItemClicked), forControlEvents: .TouchUpInside)
+        button.addTarget(self, action: #selector(backItemClicked), for: .touchUpInside)
         return button
     }()
     
-    private lazy var moreButton: UIButton = {
+    fileprivate lazy var moreButton: UIButton = {
         let button = UIButton(frame: CGRect(x: 0, y: 0, w: 40, h: 40))
         button.imageEdgeInsets = UIEdgeInsets(top: 18, left: 15, bottom: 18, right: 0)
-        button.setImage(UIImage(named: "unchive_more_button"), forState: .Normal)
+        button.setImage(UIImage(named: "unchive_more_button"), for: UIControlState())
         
-        button.addTarget(self, action: #selector(moreItemClicked), forControlEvents: .TouchUpInside)
+        button.addTarget(self, action: #selector(moreItemClicked), for: .touchUpInside)
         return button
     }()
     
     var collectionView = UndocBoxCollectionView()
     
-    private lazy var moreView = UndocBoxMoreView()
+    fileprivate lazy var moreView = UndocBoxMoreView()
     
-    private lazy var cellMoreView: UndocCellMoreView = {
+    fileprivate lazy var cellMoreView: UndocCellMoreView = {
         return UndocCellMoreView(handler: { [weak self] type in
             self?.cellMoreAction(type)
         })
     }()
     
-    private lazy var bottomBar: EditMindBottomBar = {
+    fileprivate lazy var bottomBar: EditMindBottomBar = {
         let bar = EditMindBottomBar()
         bar.deleteHandler = { [weak self] in
             self?.deleteChoosedSections()
@@ -83,7 +83,7 @@ class UndocBoxViewController: UIViewController {
         return bar
     }()
     
-    private lazy var topBar: EditMindTopBar = {
+    fileprivate lazy var topBar: EditMindTopBar = {
         let bar = EditMindTopBar(title: "碎片盒")
         
         bar.doneHandler = { [weak self] in
@@ -114,10 +114,10 @@ class UndocBoxViewController: UIViewController {
             guard let collectionView = self?.collectionView, let sSelf = self else { return }
             
             switch changes {
-            case .Initial:
+            case .initial:
                 break
                 
-            case .Update(let _, let deletions, let insertions, let modifications):
+            case .update(let _, let deletions, let insertions, let modifications):
                 
                 print(deletions, insertions, modifications)
                 
@@ -130,10 +130,10 @@ class UndocBoxViewController: UIViewController {
                     sSelf.unDocItems = SpiderRealm.groupUndocItems(self!.unDocResults)
                     collectionView.reloadData()
                     
-                    collectionView.setContentOffset(CGPointZero, animated: true)
+                    collectionView.setContentOffset(CGPoint.zero, animated: true)
                 }
 
-            case .Error:
+            case .error:
                 println("error")
                 break
             }
@@ -147,10 +147,10 @@ class UndocBoxViewController: UIViewController {
         
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.registerClass(UndocTextCell.self, forCellWithReuseIdentifier: textCellID)
-        collectionView.registerClass(UndocPicCell.self, forCellWithReuseIdentifier: picCellID)
-        collectionView.registerClass(UndocAudioCell.self, forCellWithReuseIdentifier: audioCellID)
-        collectionView.registerClass(UndocHeaderView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headID)
+        collectionView.register(UndocTextCell.self, forCellWithReuseIdentifier: textCellID)
+        collectionView.register(UndocPicCell.self, forCellWithReuseIdentifier: picCellID)
+        collectionView.register(UndocAudioCell.self, forCellWithReuseIdentifier: audioCellID)
+        collectionView.register(UndocHeaderView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headID)
         
         collectionView.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(didLongPress)))
         
@@ -162,20 +162,20 @@ class UndocBoxViewController: UIViewController {
         }
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        UIApplication.sharedApplication().setStatusBarStyle(.Default, animated: false)
-        edgesForExtendedLayout = .None
+        UIApplication.shared.setStatusBarStyle(.default, animated: false)
+        edgesForExtendedLayout = UIRectEdge()
         hiddenNavBottomLine()
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         showNavBottomLine()
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
         
         if hasMoved {
@@ -185,8 +185,8 @@ class UndocBoxViewController: UIViewController {
             if beEditing {
                 deleteChoosedSections(doInRealm: false)
             } else {
-                unDocItems[moreIndexPath.section].removeAtIndex(moreIndexPath.item)
-                collectionView.deleteItemsAtIndexPaths([moreIndexPath])
+                unDocItems[moreIndexPath.section].remove(at: moreIndexPath.item)
+                collectionView.deleteItems(at: [moreIndexPath])
             }
         }
         
@@ -194,14 +194,14 @@ class UndocBoxViewController: UIViewController {
             toShowSection = nil
             
             let indexPath = SpiderRealm.indexPathOf(section, in: unDocItems)
-            collectionView.scrollToItemAtIndexPath(indexPath, atScrollPosition: .None, animated: true)
+            collectionView.scrollToItem(at: indexPath, at: UICollectionViewScrollPosition(), animated: true)
         }
     }
     
-    override func viewDidDisappear(animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         
-        if isMovingFromParentViewController() {
+        if isMovingFromParentViewController {
             notificationToken?.stop()
             println(" UndocBoxViewController: realse RealmToken ")
         }
@@ -215,43 +215,43 @@ class UndocBoxViewController: UIViewController {
     }
     
     func backItemClicked() {
-        navigationController?.popViewControllerAnimated(true)
+        navigationController?.popViewController(animated: true)
     }
     
-    func didLongPress(sender: UILongPressGestureRecognizer) {
+    func didLongPress(_ sender: UILongPressGestureRecognizer) {
         
         if !beEditing {
             
-            let location = sender.locationInView(collectionView)
-            guard let indexPath = collectionView.indexPathForItemAtPoint(location),
-                cell = collectionView.cellForItemAtIndexPath(indexPath) else { return }
+            let location = sender.location(in: collectionView)
+            guard let indexPath = collectionView.indexPathForItem(at: location),
+                let cell = collectionView.cellForItem(at: indexPath) else { return }
             
             moreIndexPath = indexPath
             cellMoreView.center = cell.center
             
-            cellMoreView.hidden = false
+            cellMoreView.isHidden = false
             
-            if !cellMoreView.isDescendantOfView(collectionView) {
+            if !cellMoreView.isDescendant(of: collectionView) {
                 collectionView.addSubview(cellMoreView)
             }
         }
     }
     
-    func cellMoreAction(type: UndocCellMoreType) {
+    func cellMoreAction(_ type: UndocCellMoreType) {
         
         switch type {
             
-        case .Delete:
+        case .delete:
             
             SpiderRealm.removeSection(unDocItems[moreIndexPath.section][moreIndexPath.item])
-            unDocItems[moreIndexPath.section].removeAtIndex(moreIndexPath.item)
-            collectionView.deleteItemsAtIndexPaths([moreIndexPath])
+            unDocItems[moreIndexPath.section].remove(at: moreIndexPath.item)
+            collectionView.deleteItems(at: [moreIndexPath])
             
-        case .More:
+        case .more:
             
             changeModel()
             
-        case .Move:
+        case .move:
             moveSections()
         }
     }
@@ -270,7 +270,7 @@ class UndocBoxViewController: UIViewController {
         if beEditing {
             
             beEditing = false
-            navigationController?.fd_fullscreenPopGestureRecognizer.enabled = true
+            navigationController?.fd_fullscreenPopGestureRecognizer.isEnabled = true
 
             choosedCount = 0
             layoutPool.chooseAllItem(false)
@@ -282,7 +282,7 @@ class UndocBoxViewController: UIViewController {
             
             beEditing = true
             collectionView.beEditing = true
-            navigationController?.fd_fullscreenPopGestureRecognizer.enabled = false
+            navigationController?.fd_fullscreenPopGestureRecognizer.isEnabled = false
             
             topBar.addToView(navigationController!.view)
             bottomBar.addToView(view)
@@ -294,11 +294,11 @@ class UndocBoxViewController: UIViewController {
     func moveSections() {
         outlineShowed = true
         
-        var moveItemIDs = beEditing ? layoutPool.chooseItemIDs() : [unDocItems[moreIndexPath.section][moreIndexPath.item].id]
-        presentViewController(OutlineViewController(state: .MoveSection, toMoveItems: moveItemIDs), animated: true, completion: nil)
+        let moveItemIDs = beEditing ? layoutPool.chooseItemIDs() : [unDocItems[moreIndexPath.section][moreIndexPath.item].id]
+        present(OutlineViewController(state: .MoveSection, toMoveItems: moveItemIDs), animated: true, completion: nil)
     }
     
-    func deleteChoosedSections(doInRealm doInRealm: Bool = true) {
+    func deleteChoosedSections(doInRealm: Bool = true) {
         if doInRealm { SpiderRealm.removeSections(with: layoutPool.deleteChoosed()) }
         unDocItems = SpiderRealm.groupUndocItems(unDocResults)
         collectionView.reloadData()
@@ -308,31 +308,31 @@ class UndocBoxViewController: UIViewController {
 }
 
 extension UndocBoxViewController: UICollectionViewDelegate, UICollectionViewDataSource {
-    func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
         return unDocItems.count
     }
     
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return unDocItems[section].count
     }
     
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let type = SectionType(rawValue: unDocItems[indexPath.section][indexPath.item].type) else { return UICollectionViewCell() }
         
         switch type {
             
-        case .Text:
-            return collectionView.dequeueReusableCellWithReuseIdentifier(textCellID, forIndexPath: indexPath) as! UndocTextCell
+        case .text:
+            return collectionView.dequeueReusableCell(withReuseIdentifier: textCellID, for: indexPath) as! UndocTextCell
         
-        case .Pic:
-            return collectionView.dequeueReusableCellWithReuseIdentifier(picCellID, forIndexPath: indexPath) as! UndocPicCell
+        case .pic:
+            return collectionView.dequeueReusableCell(withReuseIdentifier: picCellID, for: indexPath) as! UndocPicCell
             
-        case .Audio:
-            return collectionView.dequeueReusableCellWithReuseIdentifier(audioCellID, forIndexPath: indexPath) as! UndocAudioCell
+        case .audio:
+            return collectionView.dequeueReusableCell(withReuseIdentifier: audioCellID, for: indexPath) as! UndocAudioCell
         }
     }
     
-    func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         let undocItem = unDocItems[indexPath.section][indexPath.item]
         let layout  = layoutPool.cellLayoutOfSection(undocItem)
                 
@@ -340,27 +340,27 @@ extension UndocBoxViewController: UICollectionViewDelegate, UICollectionViewData
         
         switch type {
             
-        case .Text:
+        case .text:
             guard let cell = cell as? UndocTextCell else { return }
             cell.configureWithInfo(layout, editing: beEditing)
             
-        case .Pic:
+        case .pic:
             guard let cell = cell as? UndocPicCell else { return }
             cell.configureWithInfo(layout, editing: beEditing)
     
-        case .Audio:
+        case .audio:
             guard let cell = cell as? UndocAudioCell else { return }
             cell.configureWithInfo(layout, editing: beEditing)
         }
     }
     
-    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let undocItem = unDocItems[indexPath.section][indexPath.item]
         
         if beEditing {
             
             choosedCount += layoutPool.updateSelectState(undocItem) ? 1 : -1
-            collectionView.reloadItemsAtIndexPaths([indexPath])
+            collectionView.reloadItems(at: [indexPath])
             
         } else {
             
@@ -368,23 +368,23 @@ extension UndocBoxViewController: UICollectionViewDelegate, UICollectionViewData
             
             switch type {
                 
-            case .Pic:
+            case .pic:
                 let picVC = PicDetailViewController(picSection: undocItem)
                 navigationController?.pushViewController(picVC, animated: true)
                 
-            case .Audio:
-                let audioVC = AudioSectionViewController(section: undocItem)
+            case .audio:
+                let audioVC = AudioSectionViewController(coder: undocItem)
                 navigationController?.pushViewController(audioVC, animated: true)
                 
-            case .Text:
+            case .text:
                 let textView = AddUndocTextView(object: undocItem)
                 textView.moveTo(navigationController!.view)
             }
         }
     }
     
-    func collectionView(collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView {
-        let header = collectionView.dequeueReusableSupplementaryViewOfKind(UICollectionElementKindSectionHeader, withReuseIdentifier: headID, forIndexPath: indexPath) as! UndocHeaderView
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headID, for: indexPath) as! UndocHeaderView
         
         if let time = unDocItems[indexPath.section].first?.updateAt {
             header.configureWith(time, beEditing: beEditing)

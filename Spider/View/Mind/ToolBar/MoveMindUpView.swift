@@ -15,17 +15,17 @@ class MoveMindUpView: UIImageView {
         }
     }
     
-    private var unDoc = false
+    fileprivate var unDoc = false
     
-    private var icon: UIImageView = {
+    fileprivate var icon: UIImageView = {
         return UIImageView(image: UIImage(named: "mind_edit_higherup"))
     }()
     
-    private var label: UILabel = {
+    fileprivate var label: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFontOfSize(13)
+        label.font = UIFont.systemFont(ofSize: 13)
         label.textColor = UIColor.color(withHex: 0xaaaaaa)
-        label.textAlignment = .Center
+        label.textAlignment = .center
         return label
     }()
     
@@ -38,7 +38,7 @@ class MoveMindUpView: UIImageView {
         makeUI()
     }
     
-    private func makeUI() {
+    fileprivate func makeUI() {
         self.addSubview(label)
         addSubview(icon)
         
@@ -56,43 +56,43 @@ class MoveMindUpView: UIImageView {
         }
     }
     
-    func moveToView(view: UITableView) {
+    func moveToView(_ view: UITableView) {
         if unDoc {
             
             center = CGPoint(x: kScreenWidth, y: view.contentOffset.y + kScreenHeight / 2 - 60)
             view.addSubview(self)
             
-            UIView.animateWithDuration(0.3) {
+            UIView.animate(withDuration: 0.3, animations: {
                 self.center.x = kScreenWidth - 4 - 30.5
-            }
+            }) 
             
         } else {
             
             center = CGPoint(x: -32, y: view.contentOffset.y + kScreenHeight / 2 - 60)
             view.addSubview(self)
             
-            UIView.animateWithDuration(0.3) {
+            UIView.animate(withDuration: 0.3, animations: {
                 self.center.x = 30.5
-            }
+            }) 
         }
     }
     
     override func removeFromSuperview() {
         if unDoc {
             
-            UIView.animateWithDuration(0.4, animations: {
+            UIView.animate(withDuration: 0.4, animations: {
                 self.center.x = kScreenWidth
-            }) { (done) in
+            }, completion: { (done) in
                 super.removeFromSuperview()
-            }
+            }) 
             
         } else {
             
-            UIView.animateWithDuration(0.3, animations: {
+            UIView.animate(withDuration: 0.3, animations: {
                 self.center.x = -32
-            }) { (done) in
+            }, completion: { (done) in
                 super.removeFromSuperview()
-            }
+            }) 
         }
     }
     

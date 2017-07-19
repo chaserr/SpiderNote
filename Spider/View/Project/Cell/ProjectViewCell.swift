@@ -33,7 +33,7 @@ class ProjectViewCell: UICollectionViewCell {
         }
     }
     
-    private lazy var addView: UIImageView = {
+    fileprivate lazy var addView: UIImageView = {
         let imageV = UIImageView(image: UIImage(named: "add_project_button"))
         imageV.frame = CGRect(x: kProjectCellWidth * 0.375, y: kProjectCellWidth * 0.4, width: kProjectCellWidth / 4, height: kProjectCellWidth / 4)
         return imageV
@@ -42,9 +42,9 @@ class ProjectViewCell: UICollectionViewCell {
     var textLabel: UILabel = {
         let label           = UILabel(frame: CGRect(x: 10, y: 10, width: kProjectCellWidth * 0.6, height: kProjectCellWidth * 0.6))
         label.center.x      = kProjectCellWidth / 2
-        label.font          = UIFont.boldSystemFontOfSize(18)
+        label.font          = UIFont.boldSystemFont(ofSize: 18)
         label.textColor     = UIColor.color(withHex: 0x666666)
-        label.textAlignment = .Center
+        label.textAlignment = .center
         label.numberOfLines = 0
         return label
     }()
@@ -52,28 +52,28 @@ class ProjectViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        backgroundColor = UIColor.whiteColor()
+        backgroundColor = UIColor.white
         contentView.addSubview(textLabel)
     }
     
-    override func drawRect(rect: CGRect) {
+    override func draw(_ rect: CGRect) {
         if !isFirst {
             
             let path1 = UIBezierPath()
             let x = kProjectCellWidth
-            path1.moveToPoint(CGPoint(x: 0, y: x * 0.78))
-            path1.addLineToPoint(CGPoint(x: 0, y: x * 1.2))
-            path1.addLineToPoint(CGPoint(x: x * 0.6, y: x * 1.2))
-            path1.closePath()
+            path1.move(to: CGPoint(x: 0, y: x * 0.78))
+            path1.addLine(to: CGPoint(x: 0, y: x * 1.2))
+            path1.addLine(to: CGPoint(x: x * 0.6, y: x * 1.2))
+            path1.close()
             
             UIColor.color(withHex: color, alpha: 0.4).setFill()
             path1.fill()
             
             let path2 = UIBezierPath()
-            path2.moveToPoint(CGPoint(x: 0, y: x * 1.2))
-            path2.addLineToPoint(CGPoint(x: x, y: x * 1.2))
-            path2.addLineToPoint(CGPoint(x: x, y: 0.6 * x))
-            path2.closePath()
+            path2.move(to: CGPoint(x: 0, y: x * 1.2))
+            path2.addLine(to: CGPoint(x: x, y: x * 1.2))
+            path2.addLine(to: CGPoint(x: x, y: 0.6 * x))
+            path2.close()
             
             UIColor.color(withHex: color, alpha: 0.7).setFill()
             path2.fill()

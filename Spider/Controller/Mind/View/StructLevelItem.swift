@@ -14,7 +14,7 @@ class StructLevelItem: UIButton {
     var currenMind:Object!
     
     // 重写setter方法，去掉高亮
-    override var highlighted: Bool {
+    override var isHighlighted: Bool {
         get{
         
             return false
@@ -24,9 +24,9 @@ class StructLevelItem: UIButton {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        contentHorizontalAlignment = UIControlContentHorizontalAlignment.Center
+        contentHorizontalAlignment = UIControlContentHorizontalAlignment.center
         titleLabel?.numberOfLines = 1
-        titleLabel?.lineBreakMode = NSLineBreakMode.ByTruncatingMiddle
+        titleLabel?.lineBreakMode = NSLineBreakMode.byTruncatingMiddle
         
     }
     

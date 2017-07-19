@@ -25,11 +25,11 @@ class SearchArticleResultVC: BaseTableViewController, UINavigationControllerDele
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = UIColor.whiteColor()
-        tableView.frame = CGRectMake(0, 0, kScreenWidth, 0)
-        tableView.separatorStyle = UITableViewCellSeparatorStyle.None
-        tableView.backgroundColor = UIColor.whiteColor()
-        tableView.keyboardDismissMode = UIScrollViewKeyboardDismissMode.OnDrag
+        view.backgroundColor = UIColor.white
+        tableView.frame = CGRect(x: 0, y: 0, width: kScreenWidth, height: 0)
+        tableView.separatorStyle = UITableViewCellSeparatorStyle.none
+        tableView.backgroundColor = UIColor.white
+        tableView.keyboardDismissMode = UIScrollViewKeyboardDismissMode.onDrag
         tableView.showsVerticalScrollIndicator = true
         tableView.tableFooterView = footerView
         
@@ -47,7 +47,7 @@ class SearchArticleResultVC: BaseTableViewController, UINavigationControllerDele
     }
     
     // MARK:控制器生命周期
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
 //        if containsParameter != ""
@@ -56,36 +56,36 @@ class SearchArticleResultVC: BaseTableViewController, UINavigationControllerDele
 //        }
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
     }
     
-    override func viewDidDisappear(animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
     }
     
     func showSearchController() -> Void {
         
         // 获取搜索历史记录
-        let histories = Defaults.objectForKey(kArticleSearchHistory)
+        let histories = Defaults.object(forKey: kArticleSearchHistory)
         if histories != nil {
-            searchHistories.addObjectsFromArray(histories as! [AnyObject])
+            searchHistories.addObjects(from: histories as! [AnyObject])
             
         }
         self.reloadViewLayouts()
-        (self.parentViewController as!SearchMainViewController).searchBar.becomeFirstResponder()
+        (self.parent as!SearchMainViewController).searchBar.becomeFirstResponder()
         
     }
     
     func reloadViewLayouts() -> Void {
         if showQuestion {
             // 用户点击搜索，搜索出问题时，现实问题列表
-            view.frame = CGRectMake(view.x, view.y, view.w, UIScreen.mainScreen().bounds.height - 64)
-            tableView.frame = CGRectMake(0, tableView.y, tableView.w, view.h - 40)
+            view.frame = CGRect(x: view.x, y: view.y, width: view.w, height: UIScreen.main.bounds.height - 64)
+            tableView.frame = CGRect(x: 0, y: tableView.y, width: tableView.w, height: view.h - 40)
             
         }
         else{
@@ -104,7 +104,7 @@ class SearchArticleResultVC: BaseTableViewController, UINavigationControllerDele
                 
                 tableviewH = historySearchViewH
             }
-            tableView.frame = CGRectMake(0, tableView.y, kScreenWidth, tableviewH)
+            tableView.frame = CGRect(x: 0, y: tableView.y, width: kScreenWidth, height: tableviewH)
             
         }
         
@@ -119,13 +119,13 @@ class SearchArticleResultVC: BaseTableViewController, UINavigationControllerDele
     // MARK: 懒加载
     lazy var titleLabel:UILabel = {
         
-        let titlel  = UILabel.init(frame: CGRectMake(12, 0, 200, 30))
+        let titlel  = UILabel.init(frame: CGRect(x: 12, y: 0, width: 200, height: 30))
         //        titleL.textColor = RGBCOLOR(0, g: 104, b: 248)
         titlel.font = SYSTEMFONT(14)
         return titlel
     }()
     lazy var footerView:UIView = {
-        let view             = UIView.init(frame: CGRectMake(0, 0, kScreenWidth, 1))
+        let view             = UIView.init(frame: CGRect(x: 0, y: 0, width: kScreenWidth, height: 1))
         view.backgroundColor = RGBCOLORV(0xeaeaea)
         return view
     }()
@@ -135,7 +135,7 @@ class SearchArticleResultVC: BaseTableViewController, UINavigationControllerDele
 // MARK: - Table view data source
 extension SearchArticleResultVC{
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if showQuestion {
             return questionDataSource!.count
         }else{
@@ -144,7 +144,7 @@ extension SearchArticleResultVC{
         }
     }
     
-    func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         if !showQuestion && searchHistories.count > 0 {
             return (kHeightForFooterInSection)
         }else{
@@ -153,7 +153,7 @@ extension SearchArticleResultVC{
         }
     }
     
-    override func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if showQuestion {
             return 30
         }else{
@@ -162,7 +162,7 @@ extension SearchArticleResultVC{
         }
     }
     
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForRowAtIndexPath indexPath: IndexPath) -> CGFloat {
         
         if showQuestion {
             let articleModel = questionDataSource![indexPath.row] as! ArticleModel
@@ -175,17 +175,17 @@ extension SearchArticleResultVC{
     }
     
     
-    func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         
         var headerView:UIView?
         
         if showQuestion {
-            headerView = UIView.init(frame: CGRectMake(0, 0, UIScreen.mainScreen().bounds.w, 30))
-            headerView!.backgroundColor = UIColor.whiteColor()
+            headerView = UIView.init(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.w, height: 30))
+            headerView!.backgroundColor = UIColor.white
             headerView!.addSubview(titleLabel)
             let headString = "与\(self.containsParameter)有关的搜索结果:\(questionDataSource!.count)条记录"
-            titleLabel.attributedText = headString.colorSubString(containsParameter, color: UIColor.redColor())
-            let cureLine:UIView = UIView.init(frame: CGRectMake(0, titleLabel.y + titleLabel.h, UIScreen.mainScreen().bounds.width - 12, 0.5))
+            titleLabel.attributedText = headString.colorSubString(containsParameter, color: UIColor.red)
+            let cureLine:UIView = UIView.init(frame: CGRect(x: 0, y: titleLabel.y + titleLabel.h, width: UIScreen.main.bounds.width - 12, height: 0.5))
             cureLine.backgroundColor = RGBCOLOR(224, g: 224, b: 224)
             headerView!.addSubview(cureLine)
         }
@@ -194,20 +194,20 @@ extension SearchArticleResultVC{
         
     }
 
-    func tableView(tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         if !showQuestion && searchHistories.count > 0 {
-            let footerView = UIView.init(frame: CGRectMake(0, 0, UIScreen.mainScreen().bounds.size.width, kHeightForFooterInSection))
-            footerView.backgroundColor = UIColor.whiteColor()
-            let btn:UIButton = UIButton.init(frame: CGRectMake(0, 10, kScreenWidth, 30))
+            let footerView = UIView.init(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.size.width, height: kHeightForFooterInSection))
+            footerView.backgroundColor = UIColor.white
+            let btn:UIButton = UIButton.init(frame: CGRect(x: 0, y: 10, width: kScreenWidth, height: 30))
             footerView.addSubview(btn)
             footerView.addBorderBottom(size: 0.5, color: RGBCOLORV(0xBCBAC1))
-            btn.setBackgroundColor(UIColor.whiteColor(), forState: UIControlState.Normal)
+            btn.setBackgroundColor(UIColor.white, forState: UIControlState())
             btn.adjustsImageWhenHighlighted = false
-            btn.setTitleColor(RGBCOLORV(0xaaaaaa), forState: UIControlState.Normal)
+            btn.setTitleColor(RGBCOLORV(0xaaaaaa), for: UIControlState())
             btn.layer.cornerRadius = 4
-            btn.setTitle("清空搜索历史", forState: UIControlState.Normal)
+            btn.setTitle("清空搜索历史", for: UIControlState())
             btn.titleLabel?.font = UIFont.init(name: "Superclarendon-Light", size: 16)
-            btn.addTarget(self, action: #selector(clearHistoriesButtonClicked), forControlEvents: UIControlEvents.TouchUpInside)
+            btn.addTarget(self, action: #selector(clearHistoriesButtonClicked), for: UIControlEvents.touchUpInside)
             return footerView
         }
         return nil
@@ -218,13 +218,13 @@ extension SearchArticleResultVC{
 //        return 250
 //    }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if showQuestion {
             let cellID = SearchArticleCell.className + "Mind"
             
-            var cell: SearchArticleCell? = tableView.dequeueReusableCellWithIdentifier(cellID) as? SearchArticleCell
+            var cell: SearchArticleCell? = tableView.dequeueReusableCell(withIdentifier: cellID) as? SearchArticleCell
             if cell == nil {
-                cell = SearchArticleCell.init(style: UITableViewCellStyle.Default, reuseIdentifier: cellID)
+                cell = SearchArticleCell.init(style: UITableViewCellStyle.default, reuseIdentifier: cellID)
             }else{
             
 //                while cell?.contentView.subviews.last != nil {
@@ -236,7 +236,7 @@ extension SearchArticleResultVC{
             // Cell点击回调
             cell!.TappedAction({ (type, textSec, picSec, videoSec) in
                 switch type {
-                case.Title:
+                case.title:
                     // 当前cell对应的articleMind
                     if self.searchtype == .Project {
                         
@@ -251,14 +251,14 @@ extension SearchArticleResultVC{
                         AppNavigator.pushViewController(searchResultVC, animated: true)
                     }
                     
-                case.Text:
+                case.text:
                     alert(textSec?.text, message: nil, parentVC: self)
-                case.Pic:
+                case.pic:
                     let sectionInfo = picSec?.owner.first
                     let tagInfo = picSec!.tags.filter(NSPredicate(format: "type == 0 AND content CONTAINS[c] %@", self.containsParameter)).toArray().first
                     let picDetailVC = PicDetailViewController.init(picSection: sectionInfo, photos: nil, toShowTag: tagInfo)
                     self.navigationController?.pushViewController(picDetailVC, animated: true)
-                case.Video:
+                case.video:
 
                     let tagInfo = videoSec!.audio!.tags.filter(NSPredicate(format: "type == 0 AND content CONTAINS[c] %@", self.containsParameter)).toArray().first
                     let audioDetailVC = AudioSectionViewController(section: videoSec, toShowTag: tagInfo)
@@ -277,21 +277,21 @@ extension SearchArticleResultVC{
         }
         else{
             let searchHistoryTableViewCell = "searchHistoryTableViewCell";
-            var cell = tableView.dequeueReusableCellWithIdentifier(searchHistoryTableViewCell)
+            var cell = tableView.dequeueReusableCell(withIdentifier: searchHistoryTableViewCell)
             if cell == nil {
                 
-                cell                             = UITableViewCell.init(style: UITableViewCellStyle.Default, reuseIdentifier: "searchHistoryTableViewCell");
-                cell?.contentView.addSubLayerWithFrame(CGRectMake(0, 44 - 0.5, UIScreen.mainScreen().bounds.w, 0.5), color: RGBCOLOR(200, g: 199, b: 204).CGColor)
-                cell?.textLabel?.backgroundColor = UIColor.whiteColor()
+                cell                             = UITableViewCell.init(style: UITableViewCellStyle.default, reuseIdentifier: "searchHistoryTableViewCell");
+                cell?.contentView.addSubLayerWithFrame(CGRect(x: 0, y: 44 - 0.5, width: UIScreen.main.bounds.w, height: 0.5), color: RGBCOLOR(200, g: 199, b: 204).cgColor)
+                cell?.textLabel?.backgroundColor = UIColor.white
             }
             
             cell?.imageView?.image = UIImage.init(named: "SearchHistory")
             cell!.textLabel!.text  = self.searchHistories[indexPath.row] as? String;
             cell!.textLabel!.font  = SYSTEMFONT(14)
-            let rightBtn           = UIButton.init(type: UIButtonType.Custom)
-            rightBtn.frame         = CGRectMake(kScreenWidth - 44, 0, 44, 44)
-            rightBtn.addTarget(self, action: #selector(rightBtnDidClick), forControlEvents: UIControlEvents.TouchUpInside)
-            rightBtn.setImage(UIImage.init(named: "search_history_delete_icon"), forState: UIControlState.Normal)
+            let rightBtn           = UIButton.init(type: UIButtonType.custom)
+            rightBtn.frame         = CGRect(x: kScreenWidth - 44, y: 0, width: 44, height: 44)
+            rightBtn.addTarget(self, action: #selector(rightBtnDidClick), for: UIControlEvents.touchUpInside)
+            rightBtn.setImage(UIImage.init(named: "search_history_delete_icon"), for: UIControlState())
             rightBtn.tag           = indexPath.row
             cell?.contentView.addSubview(rightBtn)
             return cell!
@@ -300,13 +300,13 @@ extension SearchArticleResultVC{
         }
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAtIndexPath indexPath: IndexPath) {
         if showQuestion {
             // 点击问题跳转到问题详情
         
         }else{
             
-            (self.parentViewController as!SearchMainViewController).searchBar.text = searchHistories[indexPath.row] as? String
+            (self.parent as!SearchMainViewController).searchBar.text = searchHistories[indexPath.row] as? String
             self.containsParameter = searchHistories[indexPath.row] as? String
             getQuestionList(nil)
         }
@@ -315,9 +315,9 @@ extension SearchArticleResultVC{
     /**
      * 删除某个历史搜索关键词
      */
-    func rightBtnDidClick(sender:UIButton) -> Void {
+    func rightBtnDidClick(_ sender:UIButton) -> Void {
         
-        searchHistories.removeObject(searchHistories[sender.tag])
+        searchHistories.remove(searchHistories[sender.tag])
         Defaults[kArticleSearchHistory] = searchHistories
         Defaults.synchronize()
         reloadViewLayouts()
@@ -326,7 +326,7 @@ extension SearchArticleResultVC{
     /**
      *  清除搜索记录
      */
-    func clearHistoriesButtonClicked(sender:UIButton) -> Void {
+    func clearHistoriesButtonClicked(_ sender:UIButton) -> Void {
         searchHistories.removeAllObjects()
         Defaults[kArticleSearchHistory] = searchHistories
         Defaults.synchronize()
@@ -334,7 +334,7 @@ extension SearchArticleResultVC{
     }
 
     // 开始查询
-    func getQuestionList(startID:NSNumber?) -> Void {
+    func getQuestionList(_ startID:NSNumber?) -> Void {
 //        UIApplication.sharedApplication().keyWindow?.endEditing(true)
         questionDataSource?.removeAll()
         resultArticleArr.removeAll()
@@ -424,7 +424,7 @@ extension SearchArticleResultVC{
                     }
             }
 
-            if sectionArr.count != 0 || picSecObjArr.count != 0 || vedioSecObjArr.count != 0 || articleObj.name.containsString("\(containsParameter)"){ // 段落包含 || 段落不包含标题包含也要显示
+            if sectionArr.count != 0 || picSecObjArr.count != 0 || vedioSecObjArr.count != 0 || articleObj.name.contains("\(containsParameter)"){ // 段落包含 || 段落不包含标题包含也要显示
                 articleModel.title = articleObj.name
                 articleModel.updateTime = articleObj.updateAtTime
                 articleModel.textSectionArr = sectionArr
@@ -435,9 +435,9 @@ extension SearchArticleResultVC{
                     resultArticleArr.append(articleObj)
                 }else{
                 
-                    let currentCount = SPIDERSTRUCT.currentMindPath!.componentsSeparatedByString(" > ")
-                    let queryCount = articleObj.structInfo.componentsSeparatedByString(" > ")
-                    if articleObj.structInfo.containsString(SPIDERSTRUCT.currentMindPath!) && queryCount.count > currentCount.count { // 在当前结点搜索
+                    let currentCount = SPIDERSTRUCT.currentMindPath!.components(separatedBy: " > ")
+                    let queryCount = articleObj.structInfo.components(separatedBy: " > ")
+                    if articleObj.structInfo.contains(SPIDERSTRUCT.currentMindPath!) && queryCount.count > currentCount.count { // 在当前结点搜索
                         articleSearchArray.append(articleModel)
                         resultArticleArr.append(articleObj)
                     }
@@ -451,7 +451,7 @@ extension SearchArticleResultVC{
         reloadViewLayouts()
     }
     
-    func searchSection(article:MindObject) -> Void {
+    func searchSection(_ article:MindObject) -> Void {
         
     }
 

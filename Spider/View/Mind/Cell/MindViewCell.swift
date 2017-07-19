@@ -24,11 +24,11 @@ final class MindViewCell: UITableViewCell {
     var unfoldHandler: (() -> Void)?
     var editHandler: (() -> Void)?
     
-    private var isFirst = false
-    private var info: MindUIInfo!
-    private var folding = true
+    fileprivate var isFirst = false
+    fileprivate var info: MindUIInfo!
+    fileprivate var folding = true
     
-    private lazy var contentLabel: UILabel = {
+    fileprivate lazy var contentLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = SpiderConfig.Font.Text
@@ -37,58 +37,58 @@ final class MindViewCell: UITableViewCell {
         return label
     }()
     
-    private lazy var iconView: UIImageView = {
+    fileprivate lazy var iconView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = UIImage(named: self.info.type == .Mind ? "mind_submind_icon" : "mind_article_icon")
+        imageView.image = UIImage(named: self.info.type == .mind ? "mind_submind_icon" : "mind_article_icon")
         return imageView
     }()
     
-    private lazy var sepatator: MindSeparatorView = {
+    fileprivate lazy var sepatator: MindSeparatorView = {
         let view = MindSeparatorView(foldable: self.info.foldable)
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
-    private lazy var editButton: UIButton = {
+    fileprivate lazy var editButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setBackgroundImage(UIImage(named: self.info.type == .Mind ? "mind_edit_mind" : "mind_edit_article"), forState: .Normal)
+        button.setBackgroundImage(UIImage(named: self.info.type == .mind ? "mind_edit_mind" : "mind_edit_article"), for: UIControlState())
         return button
     }()
     
-    private lazy var container: UIView = {
+    fileprivate lazy var container: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = UIColor.whiteColor()
+        view.backgroundColor = UIColor.white
         return view
     }()
     
-    private lazy var chooseView: UIView = {
+    fileprivate lazy var chooseView: UIView = {
         let view = UIView(frame: CGRect(x: kScreenWidth - 28, y: 0, w: 18, h: 18))
         view.layer.borderWidth = 1.0
-        view.layer.borderColor = UIColor.color(withHex: 0xf8f8f8).CGColor
+        view.layer.borderColor = UIColor.color(withHex: 0xf8f8f8).cgColor
         return view
     }()
     
-    private lazy var chooseIndicator: UIView = {
+    fileprivate lazy var chooseIndicator: UIView = {
         let view = UIView(frame: CGRect(x: 4, y: 4, w: 10, h: 10))
         view.backgroundColor = unChooseColor
         return view
     }()
     
     init(info: MindUIInfo, isFirst: Bool = false, editing: Bool = false) {
-        super.init(style: .Default, reuseIdentifier: info.type == .Mind ? mindReuseID : articleReuseID)
+        super.init(style: .default, reuseIdentifier: info.type == .mind ? mindReuseID : articleReuseID)
         self.isFirst = isFirst
         self.info = info
         
         contentLabel.text = info.name
-        selectionStyle = .None
+        selectionStyle = .none
         
         if editing {
             
             makeEditUI()
-            editButton.addTarget(self, action: #selector(editButtonClicked), forControlEvents: .TouchUpInside)
+            editButton.addTarget(self, action: #selector(editButtonClicked), for: .touchUpInside)
             
         } else {
             
@@ -126,7 +126,7 @@ final class MindViewCell: UITableViewCell {
     }
     
     func unHighlight() {
-        container.backgroundColor = UIColor.whiteColor()
+        container.backgroundColor = UIColor.white
     }
     
     func editButtonClicked() {
@@ -134,7 +134,7 @@ final class MindViewCell: UITableViewCell {
     }
 
     func makeUI() {
-        backgroundColor = UIColor.whiteColor()
+        backgroundColor = UIColor.white
         
         addSubview(iconView)
         addSubview(contentLabel)

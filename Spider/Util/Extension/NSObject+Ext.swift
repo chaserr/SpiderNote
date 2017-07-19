@@ -11,19 +11,29 @@ import UIKit
 public extension NSObject{
 
     public class var nameOfClass: String {
-        return NSStringFromClass(self).componentsSeparatedByString(".").last!
+        return NSStringFromClass(self).components(separatedBy: ".").last!
     }
     
     public var nameOfClass: String {
-        return NSStringFromClass(self.dynamicType).componentsSeparatedByString(".").last!
+        return NSStringFromClass(type(of: self)).components(separatedBy: ".").last!
     }
     
     // 同上面效果类似
     public var className: String {
-        return self.dynamicType.className
+        return type(of: self).className
     }
     
     public static var className: String {
-        return String(self)
+        return String(describing: self)
+    }
+    
+    /// 类名
+    public var m_className: String {
+        return type(of: self).m_className
+    }
+    
+    /// 类名
+    public static var m_className: String {
+        return String(describing: self)
     }
 }

@@ -16,53 +16,53 @@ class EditMindBottomBar: UIView {
     var choosedCount = Int(0) {
         willSet {
             choosedCountLabel.text = "已选中\(newValue)个目标"
-            deleteButton.enabled = newValue != 0
-            moveButton.enabled = newValue != 0
+            deleteButton.isEnabled = newValue != 0
+            moveButton.isEnabled = newValue != 0
         }
     }
     
-    private lazy var choosedCountLabel: UILabel = {
+    fileprivate lazy var choosedCountLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = UIColor.color(withHex: 0xB8B8B8)
-        label.font = UIFont.systemFontOfSize(16)
+        label.font = UIFont.systemFont(ofSize: 16)
         label.text = "已选中0个目标"
         return label
     }()
     
-    private lazy var deleteLabel: UILabel = {
+    fileprivate lazy var deleteLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = UIColor.color(withHex: 0x868686)
-        label.font = UIFont.systemFontOfSize(12)
+        label.font = UIFont.systemFont(ofSize: 12)
         label.text = "删除"
-        label.textAlignment = .Center
+        label.textAlignment = .center
         return label
     }()
     
-    private lazy var moveLabel: UILabel = {
+    fileprivate lazy var moveLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = UIColor.color(withHex: 0x868686)
-        label.font = UIFont.systemFontOfSize(12)
+        label.font = UIFont.systemFont(ofSize: 12)
         label.text = "移动至"
-        label.textAlignment = .Center
+        label.textAlignment = .center
         return label
     }()
     
-    private lazy var deleteButton: UIButton = {
+    fileprivate lazy var deleteButton: UIButton = {
         let button = UIButton()
-        button.enabled = false
+        button.isEnabled = false
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setBackgroundImage(UIImage(named: "mind_edit_delete"), forState: .Normal)
+        button.setBackgroundImage(UIImage(named: "mind_edit_delete"), for: UIControlState())
         return button
     }()
     
-    private lazy var moveButton: UIButton = {
+    fileprivate lazy var moveButton: UIButton = {
         let button = UIButton()
-        button.enabled = false
+        button.isEnabled = false
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setBackgroundImage(UIImage(named: "mind_edit_move"), forState: .Normal)
+        button.setBackgroundImage(UIImage(named: "mind_edit_move"), for: UIControlState())
         return button
     }()
 
@@ -75,7 +75,7 @@ class EditMindBottomBar: UIView {
         addActions()
     }
     
-    func addToView(view: UIView) {
+    func addToView(_ view: UIView) {
         frame.origin = CGPoint(x: 0, y: view.frame.height)
         view.addSubview(self)
         
@@ -92,9 +92,9 @@ class EditMindBottomBar: UIView {
 //        }
     }
     
-    private func addActions() {
-        deleteButton.addTarget(self, action: #selector(deleteButtonClicked), forControlEvents: .TouchUpInside)
-        moveButton.addTarget(self, action: #selector(moveButtonClicked), forControlEvents: .TouchUpInside)
+    fileprivate func addActions() {
+        deleteButton.addTarget(self, action: #selector(deleteButtonClicked), for: .touchUpInside)
+        moveButton.addTarget(self, action: #selector(moveButtonClicked), for: .touchUpInside)
     }
     
     func moveButtonClicked() {
@@ -108,7 +108,7 @@ class EditMindBottomBar: UIView {
         }, cancelAction: { })
     }
     
-    private func makeUI() {
+    fileprivate func makeUI() {
         addSubview(choosedCountLabel)
         addSubview(deleteLabel)
         addSubview(deleteButton)
@@ -144,15 +144,15 @@ class EditMindBottomBar: UIView {
         }
     }
     
-    override func drawRect(rect: CGRect) {
-        super.drawRect(rect)
+    override func draw(_ rect: CGRect) {
+        super.draw(rect)
 
         let path = UIBezierPath()
-        path.moveToPoint(CGPoint(x: kScreenWidth - 136, y: 0))
-        path.addLineToPoint(CGPoint(x: kScreenWidth - 136, y: 60))
+        path.move(to: CGPoint(x: kScreenWidth - 136, y: 0))
+        path.addLine(to: CGPoint(x: kScreenWidth - 136, y: 60))
         
-        path.moveToPoint(CGPoint(x: kScreenWidth - 68, y: 0))
-        path.addLineToPoint(CGPoint(x: kScreenWidth - 68, y: 60))
+        path.move(to: CGPoint(x: kScreenWidth - 68, y: 0))
+        path.addLine(to: CGPoint(x: kScreenWidth - 68, y: 60))
         
         path.lineWidth = 1
         UIColor.color(withHex: 0x505050).setStroke()

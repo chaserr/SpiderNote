@@ -17,9 +17,9 @@ import UIKit
 extension String {
     /// EZSE: Init string with a base64 encoded string
     init ? (base64: String) {
-        let pad = String(count: base64.length % 4, repeatedValue: Character("="))
+        let pad = String(repeating: "=", count: base64.length % 4)
         let base64Padded = base64 + pad
-        if let decodedData = NSData(base64EncodedString: base64Padded, options: NSDataBase64DecodingOptions(rawValue: 0)), decodedString = NSString(data: decodedData, encoding: NSUTF8StringEncoding) {
+        if let decodedData = Data(base64Encoded: base64Padded, options: NSData.Base64DecodingOptions(rawValue: 0)), let decodedString = NSString(data: decodedData, encoding: String.Encoding.utf8.rawValue) {
             self.init(decodedString)
             return
         }
@@ -29,22 +29,22 @@ extension String {
     /// EZSE: base64 encoded of string
     var base64: String {
         get {
-            let plainData = (self as NSString).dataUsingEncoding(NSUTF8StringEncoding)
-            let base64String = plainData!.base64EncodedStringWithOptions(NSDataBase64EncodingOptions(rawValue: 0))
+            let plainData = (self as NSString).data(using: String.Encoding.utf8.rawValue)
+            let base64String = plainData!.base64EncodedString(options: NSData.Base64EncodingOptions(rawValue: 0))
             return base64String
         }
     }
 
     /// EZSE: Cut string from integerIndex to the end
     public subscript(integerIndex: Int) -> Character {
-        let index = startIndex.advancedBy(integerIndex)
+        let index = characters.index(startIndex, offsetBy: integerIndex)
         return self[index]
     }
 
     /// EZSE: Cut string from range
     public subscript(integerRange: Range<Int>) -> String {
-        let start = startIndex.advancedBy(integerRange.startIndex)
-        let end = startIndex.advancedBy(integerRange.endIndex)
+        let start = characters.index(startIndex, offsetBy: integerRange.lowerBound)
+        let end = characters.index(startIndex, offsetBy: integerRange.upperBound)
         let range = start..<end
         return self[range]
     }
@@ -55,8 +55,8 @@ extension String {
     }
 
     /// EZSE: Counts number of instances of the input inside String
-    public func count(substring: String) -> Int {
-        return componentsSeparatedByString(substring).count - 1
+    public func count(_ substring: String) -> Int {
+        return components(separatedBy: substring).count - 1
     }
     
     /// EZSE: Capitalizes first character of String
@@ -65,14 +65,14 @@ extension String {
         guard characters.count > 0 else { return self }
         var result = self
         
-        result.replaceRange(startIndex...startIndex, with: String(self[startIndex]).capitalizedString)
+        result.replaceSubrange(startIndex...startIndex, with: String(self[startIndex]).capitalized)
         return result
     }
 
     /// EZSE: Counts whitespace & new lines
     public func isOnlyEmptySpacesAndNewLineCharacters() -> Bool {
-        let characterSet = NSCharacterSet.whitespaceAndNewlineCharacterSet()
-        let newText = self.stringByTrimmingCharactersInSet(characterSet)
+        let characterSet = CharacterSet.whitespacesAndNewlines
+        let newText = self.trimmingCharacters(in: characterSet)
         return newText.isEmpty
     }
 
@@ -83,89 +83,90 @@ extension String {
 
     /// EZSE: Trims white space and new line characters, returns a new string
     public func trimmed() -> String {
-        return self.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+        return self.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
     }
 
     /// EZSE: Position of begining character of substing
-    public func positionOfSubstring(subString: String, caseInsensitive: Bool = false, fromEnd: Bool = false) -> Int {
+    public func positionOfSubstring(_ subString: String, caseInsensitive: Bool = false, fromEnd: Bool = false) -> Int {
         if subString.isEmpty {
             return -1
         }
-        var searchOption = fromEnd ? NSStringCompareOptions.AnchoredSearch : NSStringCompareOptions.BackwardsSearch
+        var searchOption = fromEnd ? NSString.CompareOptions.anchored : NSString.CompareOptions.backwards
         if caseInsensitive {
-            searchOption.insert(NSStringCompareOptions.CaseInsensitiveSearch)
+            searchOption.insert(NSString.CompareOptions.caseInsensitive)
         }
-        if let range = self.rangeOfString(subString, options: searchOption) where !range.isEmpty {
-            return self.startIndex.distanceTo(range.startIndex)
+        if let range = self.range(of: subString, options: searchOption), !range.isEmpty {
+            return self.characters.distance(from: self.startIndex, to: range.lowerBound)
         }
         return -1
     }
 
     /// EZSE: split string using a spearator string, returns an array of string
-    public func split(separator: String) -> [String] {
-        return self.componentsSeparatedByString(separator).filter {
+    public func split(_ separator: String) -> [String] {
+        return self.components(separatedBy: separator).filter {
             !$0.trimmed().isEmpty
         }
     }
 
     /// EZSE: split string with delimiters, returns an array of string
-    public func split(characters: NSCharacterSet) -> [String] {
-        return self.componentsSeparatedByCharactersInSet(characters).filter {
+    public func split(_ characters: CharacterSet) -> [String] {
+        return self.components(separatedBy: characters).filter {
             !$0.trimmed().isEmpty
         }
     }
 
     /// EZSE : Returns count of words in string
     public var countofWords: Int {
-        let regex = try? NSRegularExpression(pattern: "\\w+", options: NSRegularExpressionOptions())
-        return regex?.numberOfMatchesInString(self, options: NSMatchingOptions(), range: NSRange(location: 0, length: self.length)) ?? 0
+        let regex = try? NSRegularExpression(pattern: "\\w+", options: NSRegularExpression.Options())
+        return regex?.numberOfMatches(in: self, options: NSRegularExpression.MatchingOptions(), range: NSRange(location: 0, length: self.length)) ?? 0
     }
 
     /// EZSE : Returns count of paragraphs in string
     public var countofParagraphs: Int {
-        let regex = try? NSRegularExpression(pattern: "\\n", options: NSRegularExpressionOptions())
-        let str = self.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
-        return (regex?.numberOfMatchesInString(str, options: NSMatchingOptions(), range: NSRange(location:0, length: str.length)) ?? -1) + 1
+        let regex = try? NSRegularExpression(pattern: "\\n", options: NSRegularExpression.Options())
+        let str = self.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+        return (regex?.numberOfMatches(in: str, options: NSRegularExpression.MatchingOptions(), range: NSRange(location:0, length: str.length)) ?? -1) + 1
     }
 
-    internal func rangeFromNSRange(nsRange: NSRange) -> Range<String.Index>? {
-        let from16 = utf16.startIndex.advancedBy(nsRange.location, limit: utf16.endIndex)
-        let to16 = from16.advancedBy(nsRange.length, limit: utf16.endIndex)
+    internal func rangeFromNSRange(_ nsRange: NSRange) -> Range<String.Index>? {
+        let from16 = utf16.startIndex.advanced(by: nsRange.location)
+        let to16 = from16.advanced(by: nsRange.length)
+        
         if let from = String.Index(from16, within: self),
-            to = String.Index(to16, within: self) {
+            let to = String.Index(to16, within: self) {
             return from ..< to
         }
         return nil
     }
 
     /// EZSE: Find matches of regular expression in string
-    public func matchesForRegexInText(regex: String!) -> [String] {
+    public func matchesForRegexInText(_ regex: String!) -> [String] {
         let regex = try? NSRegularExpression(pattern: regex, options: [])
-        let results = regex?.matchesInString(self, options: [], range: NSRange(location: 0, length: self.length)) ?? []
-        return results.map { self.substringWithRange(self.rangeFromNSRange($0.range)!) }
+        let results = regex?.matches(in: self, options: [], range: NSRange(location: 0, length: self.length)) ?? []
+        return results.map { self.substring(with: self.rangeFromNSRange($0.range)!) }
     }
 
     /// EZSE: Checks if String contains Email
     public var isEmail: Bool {
-        let dataDetector = try? NSDataDetector(types: NSTextCheckingType.Link.rawValue)
-        let firstMatch = dataDetector?.firstMatchInString(self, options: NSMatchingOptions.ReportCompletion, range: NSRange(location: 0, length: length))
-        return (firstMatch?.range.location != NSNotFound && firstMatch?.URL?.scheme == "mailto")
+        let dataDetector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
+        let firstMatch = dataDetector?.firstMatch(in: self, options: NSRegularExpression.MatchingOptions.reportCompletion, range: NSRange(location: 0, length: length))
+        return (firstMatch?.range.location != NSNotFound && firstMatch?.url?.scheme == "mailto")
     }
 
     /// EZSE: Returns if String is a number
     public func isNumber() -> Bool {
-        if let _ = NSNumberFormatter().numberFromString(self) {
+        if let _ = NumberFormatter().number(from: self) {
             return true
         }
         return false
     }
 
     /// EZSE: Extracts URLS from String
-    public var extractURLs: [NSURL] {
-        var urls: [NSURL] = []
+    public var extractURLs: [URL] {
+        var urls: [URL] = []
         let detector: NSDataDetector?
         do {
-            detector = try NSDataDetector(types: NSTextCheckingType.Link.rawValue)
+            detector = try NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
         } catch _ as NSError {
             detector = nil
         }
@@ -173,9 +174,9 @@ extension String {
         let text = self
 
         if let detector = detector {
-            detector.enumerateMatchesInString(text, options: [], range: NSRange(location: 0, length: text.characters.count), usingBlock: {
-                (result: NSTextCheckingResult?, flags: NSMatchingFlags, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
-                if let result = result, url = result.URL {
+            detector.enumerateMatches(in: text, options: [], range: NSRange(location: 0, length: text.characters.count), using: {
+                (result: NSTextCheckingResult?, flags: NSRegularExpression.MatchingFlags, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
+                if let result = result, let url = result.url {
                     urls.append(url)
                 }
             })
@@ -185,19 +186,19 @@ extension String {
     }
 
     /// EZSE: Checking if String contains input
-    public func contains(find: String) -> Bool {
-        return self.rangeOfString(find) != nil
+    public func contains(_ find: String) -> Bool {
+        return self.range(of: find) != nil
     }
 
     /// EZSE: Checking if String contains input with comparing options
-    public func contains(find: String, compareOption: NSStringCompareOptions) -> Bool {
-        return self.rangeOfString(find, options: compareOption) != nil
+    public func contains(_ find: String, compareOption: NSString.CompareOptions) -> Bool {
+        return self.range(of: find, options: compareOption) != nil
     }
 
     /// EZSE: Converts String to Int
     public func toInt() -> Int? {
-        if let num = NSNumberFormatter().numberFromString(self) {
-            return num.integerValue
+        if let num = NumberFormatter().number(from: self) {
+            return num.intValue
         } else {
             return nil
         }
@@ -205,7 +206,7 @@ extension String {
 
     /// EZSE: Converts String to Double
     public func toDouble() -> Double? {
-        if let num = NSNumberFormatter().numberFromString(self) {
+        if let num = NumberFormatter().number(from: self) {
             return num.doubleValue
         } else {
             return nil
@@ -214,25 +215,16 @@ extension String {
 
     /// EZSE: Converts String to Float
     public func toFloat() -> Float? {
-        if let num = NSNumberFormatter().numberFromString(self) {
+        if let num = NumberFormatter().number(from: self) {
             return num.floatValue
         } else {
             return nil
         }
     }
 
-    /// EZSE: Converts String to Bool
-    public func toBool() -> Bool? {
-        let trimmed = self.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()).lowercaseString
-        if trimmed == "true" || trimmed == "false" {
-            return (trimmed as NSString).boolValue
-        }
-        return nil
-    }
-
     ///EZSE: Returns the first index of the occurency of the character in String
-    public func getIndexOf(char: Character) -> Int? {
-        for (index, c) in characters.enumerate() {
+    public func getIndexOf(_ char: Character) -> Int? {
+        for (index, c) in characters.enumerated() {
             if c == char {
                 return index
             }
@@ -247,7 +239,7 @@ extension String {
     
     ///EZSE: Returns bold NSAttributedString
     public func bold() -> NSAttributedString {
-        let boldString = NSMutableAttributedString(string: self, attributes: [NSFontAttributeName: UIFont.boldSystemFontOfSize(UIFont.systemFontSize())])
+        let boldString = NSMutableAttributedString(string: self, attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: UIFont.systemFontSize)])
         return boldString
     }
     
@@ -255,7 +247,7 @@ extension String {
 
     ///EZSE: Returns underlined NSAttributedString
     public func underline() -> NSAttributedString {
-        let underlineString = NSAttributedString(string: self, attributes: [NSUnderlineStyleAttributeName: NSUnderlineStyle.StyleSingle.rawValue])
+        let underlineString = NSAttributedString(string: self, attributes: [NSUnderlineStyleAttributeName: NSUnderlineStyle.styleSingle.rawValue])
         return underlineString
     }
     
@@ -263,7 +255,7 @@ extension String {
 
     ///EZSE: Returns italic NSAttributedString
     public func italic() -> NSAttributedString {
-        let italicString = NSMutableAttributedString(string: self, attributes: [NSFontAttributeName: UIFont.italicSystemFontOfSize(UIFont.systemFontSize())])
+        let italicString = NSMutableAttributedString(string: self, attributes: [NSFontAttributeName: UIFont.italicSystemFont(ofSize: UIFont.systemFontSize)])
         return italicString
     }
     
@@ -272,7 +264,7 @@ extension String {
     #if os(iOS)
 
     ///EZSE: Returns hight of rendered string
-    func height(width: CGFloat, font: UIFont, lineBreakMode: NSLineBreakMode?) -> CGFloat {
+    func height(_ width: CGFloat, font: UIFont, lineBreakMode: NSLineBreakMode?) -> CGFloat {
         var attrib: [String: AnyObject] = [NSFontAttributeName: font]
         if lineBreakMode != nil {
             let paragraphStyle = NSMutableParagraphStyle()
@@ -280,23 +272,23 @@ extension String {
             attrib.updateValue(paragraphStyle, forKey: NSParagraphStyleAttributeName)
         }
         let size = CGSize(width: width, height: CGFloat(DBL_MAX))
-        return ceil((self as NSString).boundingRectWithSize(size, options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes:attrib, context: nil).height)
+        return ceil((self as NSString).boundingRect(with: size, options: NSStringDrawingOptions.usesLineFragmentOrigin, attributes:attrib, context: nil).height)
     }
     
     #endif
 
     ///EZSE: Returns NSAttributedString
-    public func color(color: UIColor) -> NSAttributedString {
+    public func color(_ color: UIColor) -> NSAttributedString {
         let colorString = NSMutableAttributedString(string: self, attributes: [NSForegroundColorAttributeName: color])
         return colorString
     }
 
     ///EZSE: Returns NSAttributedString
-    public func colorSubString(subString: String, color: UIColor) -> NSMutableAttributedString {
+    public func colorSubString(_ subString: String, color: UIColor) -> NSMutableAttributedString {
         var start = 0
         var ranges: [NSRange] = []
         while true {
-            let range = (self as NSString).rangeOfString(subString, options: NSStringCompareOptions.LiteralSearch, range: NSRange(location: start, length: (self as NSString).length - start))
+            let range = (self as NSString).range(of: subString, options: NSString.CompareOptions.literal, range: NSRange(location: start, length: (self as NSString).length - start))
             if range.location == NSNotFound {
                 break
             } else {
@@ -314,7 +306,7 @@ extension String {
     /// EZSE: Checks if String contains Emoji
     public func includesEmoji() -> Bool {
         for i in 0...length {
-            let c: unichar = (self as NSString).characterAtIndex(i)
+            let c: unichar = (self as NSString).character(at: i)
             if (0xD800 <= c && c <= 0xDBFF) || (0xDC00 <= c && c <= 0xDFFF) {
                 return true
             }
@@ -324,19 +316,19 @@ extension String {
 }
 
 /// EZSE: Pattern matching of strings via defined functions
-public func ~=<T> (pattern: (T -> Bool), value: T) -> Bool {
+public func ~=<T> (pattern: ((T) -> Bool), value: T) -> Bool {
     return pattern(value)
 }
 
 /// EZSE: Can be used in switch-case
-public func hasPrefix(prefix: String) -> (value: String) -> Bool {
+public func hasPrefix(_ prefix: String) -> (_ value: String) -> Bool {
     return { (value: String) -> Bool in
         value.hasPrefix(prefix)
     }
 }
 
 /// EZSE: Can be used in switch-case
-public func hasSuffix(suffix: String) -> (value: String) -> Bool {
+public func hasSuffix(_ suffix: String) -> (_ value: String) -> Bool {
     return { (value: String) -> Bool in
         value.hasSuffix(suffix)
     }

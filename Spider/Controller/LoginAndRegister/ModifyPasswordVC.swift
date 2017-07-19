@@ -19,25 +19,25 @@ class ModifyPasswordVC: UIViewController {
         navigationItem.title = "修改密码"
     }
     
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         dismissKeyboard()
     }
 
-    @IBAction func hiddenPwdAction(sender: UIButton) {
-        sender.selected = !sender.selected
-        let newPasswordTFRect:CGRect = newPasswordTF.convertRect(newPasswordTF.bounds, toView: view)
+    @IBAction func hiddenPwdAction(_ sender: UIButton) {
+        sender.isSelected = !sender.isSelected
+        let newPasswordTFRect:CGRect = newPasswordTF.convert(newPasswordTF.bounds, to: view)
 //        let confirmPasswordTFRect:CGRect = confirmPasswordTF.convertRect(confirmPasswordTF.bounds, toView: view)
-        let rect:CGRect = sender.convertRect(sender.bounds, toView: view)
+        let rect:CGRect = sender.convert(sender.bounds, to: view)
         if rect.y == newPasswordTFRect.y {
-            newPasswordTF.secureTextEntry = !sender.selected
+            newPasswordTF.isSecureTextEntry = !sender.isSelected
 
         }else{
         
-            confirmPasswordTF.secureTextEntry = !sender.selected
+            confirmPasswordTF.isSecureTextEntry = !sender.isSelected
 
         }
     }
-    @IBAction func modifyPwdBtn(sender: UIButton) {
+    @IBAction func modifyPwdBtn(_ sender: UIButton) {
         alert("", message: "修改成功，跳回登录界面", parentVC: self)
     }
     

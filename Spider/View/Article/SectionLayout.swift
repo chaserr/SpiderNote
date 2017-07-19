@@ -9,7 +9,7 @@
 import Foundation
 
 public struct SectionLayout {
-    var type                       = SectionType.Text
+    var type                       = SectionType.text
     var height                     = CGFloat(0)
     var selected                   = false
 
@@ -19,7 +19,7 @@ public struct SectionLayout {
     var pics: [PicInfo]?           = nil
 
     var audioDuration: String?     = nil
-    var playedTime: NSTimeInterval = 0.0
+    var playedTime: TimeInterval = 0.0
     
     init(section: SectionObject) {
         text          = section.text
@@ -29,16 +29,16 @@ public struct SectionLayout {
         
         switch type {
             
-        case .Pic:
+        case .pic:
             pics = section.pics.map({ PicInfo(object: $0) })
             height = 250 + kArticleVerticlSpace * 2
             
-        case .Audio:
+        case .audio:
             audioDuration = section.audio?.duration
             height = kArticleAudioHeight + kArticleAudioCellVS * 2
                         
-        case .Text:
-            let rect = section.text!.boundingRectWithSize(CGSize(width: kScreenWidth - 16 * 2, height: CGFloat(FLT_MAX)), options: [.UsesFontLeading, .UsesLineFragmentOrigin], attributes: [NSFontAttributeName: SpiderConfig.Font.Text], context: nil)
+        case .text:
+            let rect = section.text!.boundingRect(with: CGSize(width: kScreenWidth - 16 * 2, height: CGFloat(FLT_MAX)), options: [.usesFontLeading, .usesLineFragmentOrigin], attributes: [NSFontAttributeName: SpiderConfig.Font.Text], context: nil)
             
             height = ceil(rect.height) + kArticleVerticlSpace * 2
         }
@@ -50,7 +50,7 @@ public struct LayoutPool {
     var choosedAll = false
     var sectionLayoutHash = [String: SectionLayout]()
     
-    mutating func cellLayoutOfSection(section: SectionObject) -> SectionLayout {
+    mutating func cellLayoutOfSection(_ section: SectionObject) -> SectionLayout {
         let key = section.id
         
         if let layout = sectionLayoutHash[key] {
@@ -65,7 +65,7 @@ public struct LayoutPool {
         }
     }
     
-    mutating func updateCellLayout(layout: SectionLayout, forSection section: SectionObject) {
+    mutating func updateCellLayout(_ layout: SectionLayout, forSection section: SectionObject) {
         let key = section.id
         
         if !key.isEmpty {
@@ -73,12 +73,12 @@ public struct LayoutPool {
         }
     }
     
-    mutating func heightOfSection(section: SectionObject) -> CGFloat {
+    mutating func heightOfSection(_ section: SectionObject) -> CGFloat {
         let layout = cellLayoutOfSection(section)
         return layout.height
     }
     
-    mutating func chooseAllItem(selected: Bool) {
+    mutating func chooseAllItem(_ selected: Bool) {
         choosedAll = selected
         
         for (id, _) in sectionLayoutHash {
@@ -86,7 +86,7 @@ public struct LayoutPool {
         }
     }
     
-    mutating func updateSelectState(section: SectionObject) -> Bool {
+    mutating func updateSelectState(_ section: SectionObject) -> Bool {
         guard let layout = sectionLayoutHash[section.id] else { return false}
         
         sectionLayoutHash[section.id]!.selected = !layout.selected
@@ -100,7 +100,7 @@ public struct LayoutPool {
         for (id, layout) in sectionLayoutHash {
             if layout.selected {
                 ids.append(id)
-                sectionLayoutHash.removeValueForKey(id)
+                sectionLayoutHash.removeValue(forKey: id)
             }
         }
         
@@ -119,7 +119,7 @@ public struct LayoutPool {
         return ids
     }
     
-    mutating func updatePlayedTimeOfSection(section: SectionObject) -> SectionLayout {
+    mutating func updatePlayedTimeOfSection(_ section: SectionObject) -> SectionLayout {
         let layout = cellLayoutOfSection(section)
         
         if section.id == SpiderPlayer.sharedManager.playingID {

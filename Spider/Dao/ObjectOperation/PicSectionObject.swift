@@ -29,7 +29,7 @@ class PicSectionObject: Object {
     convenience init(url: String) {
         self.init()
         
-        self.id  = NSUUID().UUIDString
+        self.id  = UUID().uuidString
         self.url = url
     }
     
@@ -40,9 +40,9 @@ class PicSectionObject: Object {
     }
 }
 
-public class PicInfo {
+open class PicInfo {
     var id: String
-    var url: NSURL?
+    var url: URL?
     var image: UIImage?
     
     init(object: PicSectionObject) {
@@ -57,7 +57,7 @@ public class PicInfo {
         self.image = nil
     }
     
-    init(id: String = "", image: UIImage, url: NSURL? = nil) {
+    init(id: String = "", image: UIImage, url: URL? = nil) {
         self.id    = id
         self.url   = url
         self.image = image

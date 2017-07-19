@@ -9,52 +9,52 @@
 import UIKit
 
 private let textColor = UIColor.color(withHex: 0x555555)
-private let themeColor = UIColor.whiteColor()
+private let themeColor = UIColor.white
 
 class EditProjectAlertView: UIView {
     
     var deleteHanlder: (() -> Void)!
-    var editHandler: (String -> Void)!
+    var editHandler: ((String) -> Void)!
     
     var projectName: String!
     
-    private var titleLabel: UILabel = {
+    fileprivate var titleLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFontOfSize(17)
+        label.font = UIFont.systemFont(ofSize: 17)
         label.textColor = textColor
-        label.textAlignment = .Center
+        label.textAlignment = .center
         label.backgroundColor = themeColor
         return label
     }()
     
-    private var editButton: UIButton = {
+    fileprivate var editButton: UIButton = {
         let button = UIButton()
-        button.setTitle("编辑名称", forState: .Normal)
-        button.setTitleColor(textColor, forState: .Normal)
-        button.titleLabel?.font = UIFont.systemFontOfSize(15)
+        button.setTitle("编辑名称", for: UIControlState())
+        button.setTitleColor(textColor, for: UIControlState())
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 15)
         button.backgroundColor = themeColor
         return button
     }()
     
-    private var deleteButton: UIButton = {
+    fileprivate var deleteButton: UIButton = {
         let button = UIButton()
-        button.setTitle("删除项目", forState: .Normal)
-        button.setTitleColor(textColor, forState: .Normal)
-        button.titleLabel?.font = UIFont.systemFontOfSize(15)
+        button.setTitle("删除项目", for: UIControlState())
+        button.setTitleColor(textColor, for: UIControlState())
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 15)
         button.backgroundColor = themeColor
         return button
     }()
     
-    private var shareButton: UIButton = {
+    fileprivate var shareButton: UIButton = {
         let button = UIButton()
-        button.setTitle("分享项目", forState: .Normal)
-        button.setTitleColor(textColor, forState: .Normal)
-        button.titleLabel?.font = UIFont.systemFontOfSize(15)
+        button.setTitle("分享项目", for: UIControlState())
+        button.setTitleColor(textColor, for: UIControlState())
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 15)
         button.backgroundColor = themeColor
         return button
     }()
     
-    private var alertContainer: UIView = {
+    fileprivate var alertContainer: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 2.0
         view.layer.masksToBounds = true
@@ -84,8 +84,8 @@ class EditProjectAlertView: UIView {
         let tap = UITapGestureRecognizer(target: self, action: #selector(didTap))
         addGestureRecognizer(tap)
         
-        editButton.addTarget(self, action: #selector(eidtButtonClicked), forControlEvents: .TouchUpInside)
-        deleteButton.addTarget(self, action: #selector(deleteButtonClicked), forControlEvents: .TouchUpInside)
+        editButton.addTarget(self, action: #selector(eidtButtonClicked), for: .touchUpInside)
+        deleteButton.addTarget(self, action: #selector(deleteButtonClicked), for: .touchUpInside)
     }
     
     func eidtButtonClicked() {

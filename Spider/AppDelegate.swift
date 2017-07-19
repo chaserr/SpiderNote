@@ -26,22 +26,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
     
-    func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
 
-        println(FileUtil.getFileUtil().getDocmentPath())
+        AODlog(FileUtil.getFileUtil().getDocmentPath())
         /** 不自动清理缓存 */
-        Kingfisher.ImageCache.defaultCache.maxCachePeriodInSecond = NSTimeInterval.infinity
+        ImageCache.default.maxCachePeriodInSecond = TimeInterval.infinity
 
         setAudioSession()
         
         // shareSDK第三方分享设置
 //        setShareSetting()
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(manageRealmDB), name: kNotificationLoginStateChanged, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(manageRealmDB), name: NSNotification.Name(rawValue: kNotificationLoginStateChanged), object: nil)
 
         // initLialize
-        window = UIWindow(frame: UIScreen.mainScreen().bounds)
-        window?.backgroundColor = UIColor.whiteColor()
+        window = UIWindow(frame: UIScreen.main.bounds)
+        window?.backgroundColor = UIColor.white
         window?.makeKeyAndVisible()
         
         // Override point for customization after application launch.
@@ -65,20 +65,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         do {
 
             let audioSession = AVAudioSession.sharedInstance()
-            try audioSession.setCategory(AVAudioSessionCategoryPlayAndRecord, withOptions: [.DefaultToSpeaker])
+            try audioSession.setCategory(AVAudioSessionCategoryPlayAndRecord, with: [.defaultToSpeaker])
 
         } catch {
             debugPrint(error)
         }
     }
     
-    func launchApp(launchOptions: [NSObject: AnyObject]?) -> Void {
+    func launchApp(_ launchOptions: [AnyHashable: Any]?) -> Void {
         
         startApp(launchOptions)
         
     }
     
-    func startApp(launchOptions: [NSObject: AnyObject]?) -> Void {
+    func startApp(_ launchOptions: [AnyHashable: Any]?) -> Void {
         
         // 初始化登录管理
         LoginManager.getInstance()
@@ -180,16 +180,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     deinit{
     
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
 
-    func applicationWillResignActive(application: UIApplication) {
+    func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
     }
 
-    func applicationDidEnterBackground(application: UIApplication) {
-        NSNotificationCenter.defaultCenter().postNotificationName(KNotifcationApplicationDidEnterBackground, object: nil)
+    func applicationDidEnterBackground(_ application: UIApplication) {
+        NotificationCenter.default.post(name: Foundation.Notification.Name(rawValue: KNotifcationApplicationDidEnterBackground), object: nil)
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
         
@@ -199,28 +199,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        self.endBackgroundUpdateTask()
     }
 
-    func applicationWillEnterForeground(application: UIApplication) {
-        NSNotificationCenter.defaultCenter().postNotificationName(KNotifcationApplicationWillEnterForeground, object: nil)
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        NotificationCenter.default.post(name: Foundation.Notification.Name(rawValue: KNotifcationApplicationWillEnterForeground), object: nil)
         // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
     }
 
-    func applicationDidBecomeActive(application: UIApplication) {
+    func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     }
 
-    func applicationWillTerminate(application: UIApplication) {
+    func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
     
     // 后台任务
     func beingBackgroundUpdateTask() -> Void {
-        self.backgroundUpdateTask = UIApplication.sharedApplication().beginBackgroundTaskWithExpirationHandler({ 
+        self.backgroundUpdateTask = UIApplication.shared.beginBackgroundTask(expirationHandler: { 
             self.endBackgroundUpdateTask()
         })
     }
     
     func endBackgroundUpdateTask() -> Void {
-        UIApplication.sharedApplication().endBackgroundTask(self.backgroundUpdateTask!)
+        UIApplication.shared.endBackgroundTask(self.backgroundUpdateTask!)
         self.backgroundUpdateTask = UIBackgroundTaskInvalid
     }
 

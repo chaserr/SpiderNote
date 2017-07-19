@@ -12,7 +12,7 @@ class ATScreenSize {
     static let sharedInstance = ATScreenSize()
     
     let size: CGSize = {
-        var ss = UIScreen.mainScreen().bounds.size
+        var ss = UIScreen.main.bounds.size
         if ss.height < ss.width {
             let tmp = ss.width
             ss.width = ss.height
@@ -21,7 +21,7 @@ class ATScreenSize {
         return ss
     }()
     
-    private init() {}
+    fileprivate init() {}
 }
 
 

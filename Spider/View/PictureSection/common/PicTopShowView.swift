@@ -23,10 +23,10 @@ class PicTopShowView: UIView {
     
     lazy var indexLabel: UILabel = {
         let label = UILabel()
-        label.textColor = UIColor.whiteColor()
-        label.font = UIFont.systemFontOfSize(18)
+        label.textColor = UIColor.white
+        label.font = UIFont.systemFont(ofSize: 18)
         label.frame.size = CGSize(width: 60, height: 30)
-        label.textAlignment = .Center
+        label.textAlignment = .center
         label.center = CGPoint(x: kScreenWidth / 2, y: (kPicThumbH + kStatusBarH) / 2)
         self.addSubview(label)
         return label
@@ -41,15 +41,15 @@ class PicTopShowView: UIView {
         
         do {
             let backButton = UIButton(frame: CGRect(x: kPicBackRO, y: kPicBackOy, width: kPicBackS, height: kPicBackS))
-            backButton.setBackgroundImage(UIImage(named: "pic_back_button"), forState: .Normal)
-            backButton.addTarget(self, action: #selector(backButtonClicked), forControlEvents: .TouchUpInside)
+            backButton.setBackgroundImage(UIImage(named: "pic_back_button"), for: UIControlState())
+            backButton.addTarget(self, action: #selector(backButtonClicked), for: .touchUpInside)
             addSubview(backButton)
         }
         
         do {
             let editorButton = UIButton(frame: CGRect(x: kScreenWidth - kPicBackRO - kPicBackS, y: kPicBackOy, width: kPicBackS, height: kPicBackS))
-            editorButton.setBackgroundImage(UIImage(named: "pic_edit_button"), forState: .Normal)
-            editorButton.addTarget(self, action: #selector(editorButtonClicked), forControlEvents: .TouchUpInside)
+            editorButton.setBackgroundImage(UIImage(named: "pic_edit_button"), for: UIControlState())
+            editorButton.addTarget(self, action: #selector(editorButtonClicked), for: .touchUpInside)
             addSubview(editorButton)
         }
     }

@@ -7,6 +7,30 @@
 //
 
 import UIKit
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
+
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func <= <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l <= r
+  default:
+    return !(rhs < lhs)
+  }
+}
+
 
 class RegisterVC: UIViewController, UITextFieldDelegate {
 
@@ -22,19 +46,19 @@ class RegisterVC: UIViewController, UITextFieldDelegate {
 
         if comeFormLeftMenu {
             
-            visitorLoginBtn.hidden = true
+            visitorLoginBtn.isHidden = true
             customLizeNavigationBarBackBtn()
         }
         
         navigationItem.title = "注册"
-        hiddenPasswordBtn.selected = false
+        hiddenPasswordBtn.isSelected = false
         
-        visitorLoginBtn.addTarget(self, action: #selector(visitorLogin), forControlEvents: UIControlEvents.TouchUpInside)
+        visitorLoginBtn.addTarget(self, action: #selector(visitorLogin), for: UIControlEvents.touchUpInside)
         
         
     }
 
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         dismissKeyboard()
     }
     
@@ -42,7 +66,7 @@ class RegisterVC: UIViewController, UITextFieldDelegate {
     override func backAction() {
         let vc = (navigationController!.viewControllers[0])
         
-        if self.isKindOfClass(vc.dynamicType) {
+        if self.isKind(of: type(of: vc)) {
             dismissVC(completion: nil)
         }else{
             
@@ -50,7 +74,7 @@ class RegisterVC: UIViewController, UITextFieldDelegate {
         }
     }
     
-    func visitorLogin(sender: UIButton) -> Void {
+    func visitorLogin(_ sender: UIButton) -> Void {
         
         LOGINMANAGER.visitorLogin { 
             let mainViewController = ProjectCollectionViewController()
@@ -59,16 +83,16 @@ class RegisterVC: UIViewController, UITextFieldDelegate {
         
     }
     
-    @IBAction func hiddenPassword(sender: UIButton) {
+    @IBAction func hiddenPassword(_ sender: UIButton) {
         
-        sender.selected = !sender.selected
-        passwordTF.secureTextEntry = !sender.selected
+        sender.isSelected = !sender.isSelected
+        passwordTF.isSecureTextEntry = !sender.isSelected
         let passwordTxt = passwordTF.text
         passwordTF.text = ""
         passwordTF.text = passwordTxt
     }
     
-    @IBAction func sendActiveEmail(sender: AnyObject) {
+    @IBAction func sendActiveEmail(_ sender: AnyObject) {
         
         if !CommonUtils.isValidateEMail(accountTF.text!){
             AOHUDVIEW.showTips("邮箱格式不正确")
@@ -81,7 +105,7 @@ class RegisterVC: UIViewController, UITextFieldDelegate {
             
             LOGINMANAGER.startRegister(accountTF.text!, password: passwordTF.text!, success: {[weak self] in
                 
-                self!.performSegueWithIdentifier("getRegisterVertifyCode", sender: sender)
+                self!.performSegue(withIdentifier: "getRegisterVertifyCode", sender: sender)
                 
                 }, failure: {
                     AOHUDVIEW.showTips("发送验证码失败,请检查网络后再试")
@@ -91,7 +115,7 @@ class RegisterVC: UIViewController, UITextFieldDelegate {
         
     }
     
-    @IBAction func loginAction(sender: UIButton?) {
+    @IBAction func loginAction(_ sender: UIButton?) {
         
         if comeFormLeftMenu {
             popVC()
@@ -117,11 +141,11 @@ class RegisterVC: UIViewController, UITextFieldDelegate {
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         if segue.identifier! == "getRegisterVertifyCode" {
 
-            let regiVertifyVC:RegisterVerifyCodeVC = segue.destinationViewController as! RegisterVerifyCodeVC
+            let regiVertifyVC:RegisterVerifyCodeVC = segue.destination as! RegisterVerifyCodeVC
             regiVertifyVC.accountDic = ["account": self.accountTF.text!, "password": self.passwordTF.text!]
             regiVertifyVC.getVertifyCode()
         }

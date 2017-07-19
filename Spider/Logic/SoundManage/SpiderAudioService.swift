@@ -10,15 +10,15 @@ import Foundation
 
 final class SpiderAudioService: NSObject {
     static let sharedManager = SpiderAudioService()
-    let queue = dispatch_queue_create("SpiderAudioService", DISPATCH_QUEUE_SERIAL)
+    let queue = DispatchQueue(label: "SpiderAudioService", attributes: [])
     
-    var audioFileURL: NSURL?
+    var audioFileURL: URL?
     
     var audioRecorder: AVAudioRecorder?
     
     var audioPlayer: AVAudioPlayer?
     
-    var audioPlayCurrentTime: NSTimeInterval {
+    var audioPlayCurrentTime: TimeInterval {
         if let audioPlayer = audioPlayer {
             return audioPlayer.currentTime
         } else {
@@ -28,7 +28,7 @@ final class SpiderAudioService: NSObject {
     
     var recording: Bool {
         if let audioRecorder = audioRecorder {
-            if audioRecorder.recording {
+            if audioRecorder.isRecording {
                 return true
             } else {
                 return false
@@ -38,7 +38,7 @@ final class SpiderAudioService: NSObject {
         }
     }
     
-    var currentTime: NSTimeInterval {
+    var currentTime: TimeInterval {
         if let audioRecorder = audioRecorder {
             return audioRecorder.currentTime
         } else {
@@ -46,22 +46,22 @@ final class SpiderAudioService: NSObject {
         }
     }
     
-    func beginRecordWithFileURL(fileURL: NSURL, audioRecorderDelegate: AVAudioRecorderDelegate) {
+    func beginRecordWithFileURL(_ fileURL: URL, audioRecorderDelegate: AVAudioRecorderDelegate) {
         
         do {
             try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryRecord)
         } catch let error {
-            println("beginRecordWithFileURL setCategory failed: \(error)")
+            AODlog("beginRecordWithFileURL setCategory failed: \(error)")
         }
         
         do {
-            proposeToAccess(.Microphone, agreed: {
+            proposeToAccess(.microphone, agreed: {
                 
                 self.prepareAudioRecorderWithFileURL(fileURL, delegate: audioRecorderDelegate)
                 
                 if let audioRecorder = self.audioRecorder {
                     
-                    if (audioRecorder.recording) {
+                    if (audioRecorder.isRecording) {
                         audioRecorder.stop()
                     } else {
                         audioRecorder.record()
@@ -79,19 +79,18 @@ final class SpiderAudioService: NSObject {
     }
     
     func beginRecord(withDelegate delegate: AVAudioRecorderDelegate) -> String? {
-        guard let url = NSURL(string: APP_UTILITY.voiceFilePath()) else { return nil }
-        let id = NSUUID().UUIDString
+        guard let url = URL(string: APP_UTILITY.voiceFilePath()) else { return nil }
+        let id = UUID().uuidString
         
-        let audioURL = url.URLByAppendingPathComponent("\(id).\(FileExtension.M4A.rawValue)")
-        
-        beginRecordWithFileURL(audioURL!, audioRecorderDelegate: delegate)
+        let audioURL = url.appendingPathComponent("\(id).\(FileExtension.M4A.rawValue)")
+        beginRecordWithFileURL(audioURL, audioRecorderDelegate: delegate)
         
         return id
     }
     
     func pauseRecord() {
         if let audioRecorder = audioRecorder {
-            if audioRecorder.recording {
+            if audioRecorder.isRecording {
                 audioRecorder.pause()
             }
         }
@@ -99,7 +98,7 @@ final class SpiderAudioService: NSObject {
     
     func resumeRecord() {
         if let audioRecorder = audioRecorder {
-            if !audioRecorder.recording {
+            if !audioRecorder.isRecording {
                 audioRecorder.record()
             }
         }
@@ -120,20 +119,20 @@ final class SpiderAudioService: NSObject {
         }
     }
     
-    func prepareAudioRecorderWithFileURL(fileURL: NSURL, delegate: AVAudioRecorderDelegate) {
+    func prepareAudioRecorderWithFileURL(_ fileURL: URL, delegate: AVAudioRecorderDelegate) {
         audioFileURL = fileURL
         
         let settings: [String: AnyObject] = [
-            AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
-            AVEncoderAudioQualityKey : AVAudioQuality.Max.rawValue,
-            AVEncoderBitRateKey : 64000,
-            AVNumberOfChannelsKey: 2,
-            AVSampleRateKey : 44100.0
+            AVFormatIDKey: Int(kAudioFormatMPEG4AAC) as AnyObject,
+            AVEncoderAudioQualityKey : AVAudioQuality.max.rawValue as AnyObject,
+            AVEncoderBitRateKey : 64000 as AnyObject,
+            AVNumberOfChannelsKey: 2 as AnyObject,
+            AVSampleRateKey : 44100.0 as AnyObject
         ]
         
         do {
             
-            let audioRecorder = try AVAudioRecorder(URL: fileURL, settings: settings)
+            let audioRecorder = try AVAudioRecorder(url: fileURL, settings: settings)
             audioRecorder.delegate = delegate
             audioRecorder.prepareToRecord() // creates/overwrites the file at soundFileURL
             
@@ -142,7 +141,7 @@ final class SpiderAudioService: NSObject {
             
         } catch let error {
             self.audioRecorder = nil
-            println("create AVAudioRecorder error: \(error)")
+            AODlog("create AVAudioRecorder error: \(error)")
         }
     }
 }

@@ -14,7 +14,7 @@ class MindSeparatorView: UIView {
     var foldable = false {
         willSet {
             if newValue {
-                if !foldButton.isDescendantOfView(self) {
+                if !foldButton.isDescendant(of: self) {
                     addSubview(foldButton)
                 }
             } else {
@@ -23,12 +23,12 @@ class MindSeparatorView: UIView {
         }
     }
     
-    private var folding = false
+    fileprivate var folding = false
     
-    private lazy var foldButton: UIButton = {
+    fileprivate lazy var foldButton: UIButton = {
         let button = UIButton(frame: CGRect(x: (kScreenWidth - kMindFoldButtonSize)/2, y: (kMindSeparatorHeight - kMindFoldButtonSize)/2, width: kMindFoldButtonSize, height: kMindFoldButtonSize))
-        button.setBackgroundImage(UIImage(named: "mind_unfold_button"), forState: .Normal)
-        button.addTarget(self, action: #selector(fold), forControlEvents: .TouchUpInside)
+        button.setBackgroundImage(UIImage(named: "mind_unfold_button"), for: UIControlState())
+        button.addTarget(self, action: #selector(fold), for: .touchUpInside)
         button.adjustsImageWhenHighlighted = false
         return button
     }()
@@ -37,17 +37,17 @@ class MindSeparatorView: UIView {
         foldButtonHandler()
         if folding {
             folding = false
-            foldButton.transform = CGAffineTransformIdentity
+            foldButton.transform = CGAffineTransform.identity
         } else {
             folding = true
-            foldButton.transform = CGAffineTransformMakeRotation(CGFloat(M_PI))
+            foldButton.transform = CGAffineTransform(rotationAngle: CGFloat(M_PI))
         }
     }
     
     init(foldable: Bool) {
-        super.init(frame: CGRectZero)
-        backgroundColor = UIColor.whiteColor()
-        userInteractionEnabled = true
+        super.init(frame: CGRect.zero)
+        backgroundColor = UIColor.white
+        isUserInteractionEnabled = true
         self.foldable = foldable
         
         if foldable {
@@ -55,12 +55,12 @@ class MindSeparatorView: UIView {
         }
     }
 
-    override func drawRect(rect: CGRect) {
-        super.drawRect(rect)
+    override func draw(_ rect: CGRect) {
+        super.draw(rect)
         
         let path = UIBezierPath()
-        path.moveToPoint(CGPoint(x: 0, y: kMindSeparatorHeight / 2))
-        path.addLineToPoint(CGPoint(x: kScreenWidth, y: kMindSeparatorHeight / 2))
+        path.move(to: CGPoint(x: 0, y: kMindSeparatorHeight / 2))
+        path.addLine(to: CGPoint(x: kScreenWidth, y: kMindSeparatorHeight / 2))
         
         UIColor.color(withHex: 0xf2f2f2).setStroke()
         path.lineWidth = CGFloat(1.0)

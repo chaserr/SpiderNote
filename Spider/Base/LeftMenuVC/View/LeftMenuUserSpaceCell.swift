@@ -33,36 +33,36 @@ class LeftMenuUserSpaceCell: UITableViewCell {
         // Initialization code
     }
 
-    override func setSelected(selected: Bool, animated: Bool) {
+    override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state
     }
     
     
-    class func cellWithTableView(tableview:UITableView) -> UITableViewCell {
+    class func cellWithTableView(_ tableview:UITableView) -> UITableViewCell {
         
         let cellID = className
-        var cell = tableview.dequeueReusableCellWithIdentifier(cellID)
+        var cell = tableview.dequeueReusableCell(withIdentifier: cellID)
         if cell == nil {
-            cell = NSBundle.mainBundle().loadNibNamed(className, owner: nil, options: nil)!.first as! LeftMenuUserSpaceCell
+            cell = Bundle.main.loadNibNamed(className, owner: nil, options: nil)!.first as! LeftMenuUserSpaceCell
         }
         return cell!
     }
     
-    class func flowCellWithTableView(tableview:UITableView) -> UITableViewCell {
+    class func flowCellWithTableView(_ tableview:UITableView) -> UITableViewCell {
         
         let cellID = "flow" + className
-        var cell = tableview.dequeueReusableCellWithIdentifier(cellID)
+        var cell = tableview.dequeueReusableCell(withIdentifier: cellID)
         if cell == nil {
-            cell = NSBundle.mainBundle().loadNibNamed(className, owner: nil, options: nil)!.last as! LeftMenuUserSpaceCell
+            cell = Bundle.main.loadNibNamed(className, owner: nil, options: nil)!.last as! LeftMenuUserSpaceCell
 
         }
         return cell!
     }
     
     
-    func setDefaultValue(indexPath:NSIndexPath, titleArray:Array<AnyObject>) -> Void {
+    func setDefaultValue(_ indexPath:IndexPath, titleArray:Array<AnyObject>) -> Void {
         
         let userObj = UserObject.fetchUserObj((APP_UTILITY.currentUser?.userID)!)
         
@@ -70,21 +70,21 @@ class LeftMenuUserSpaceCell: UITableViewCell {
         switch (indexPath.section, indexPath.row) {
         case (0,0):
             if userObj!.userPortrial != nil {
-                cellDetail.setImage(userObj!.userPortrial!, forState: UIControlState.Normal)
+                cellDetail.setImage(userObj!.userPortrial!, for: UIControlState())
 
             }else{
             
-                cellDetail.setImage(UIImage.init(named: "default_protrial_square"), forState: UIControlState.Normal)
+                cellDetail.setImage(UIImage.init(named: "default_protrial_square"), for: UIControlState())
 
             }
             cellTitle.text = sectionOTitle[indexPath.row] as? String
         case (0,1):
             
             nickNameLabel.text = userObj!.userName
-            nickNameLabel.hidden = false
+            nickNameLabel.isHidden = false
             cellTitle.text = sectionOTitle[indexPath.row] as? String
         case (0,2):
-            cellDetail.setTitle(userObj!.sex, forState: UIControlState.Normal)
+            cellDetail.setTitle(userObj!.sex, for: UIControlState())
             cellTitle.text = sectionOTitle[indexPath.row] as? String
         case (1,0):
             cellTitle.text = sectionOTitle[indexPath.row] as? String

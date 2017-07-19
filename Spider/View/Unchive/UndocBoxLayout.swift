@@ -10,7 +10,7 @@ import Foundation
 
 public struct UndocBoxLayout {
     
-    var type: SectionType = .Text
+    var type: SectionType = .text
     var timeTamp: String = ""
     var selected: Bool = false
     
@@ -25,14 +25,14 @@ public struct UndocBoxLayout {
         
         switch type {
             
-        case .Text:
+        case .text:
             self.text = section.text
             
-        case .Pic:
+        case .pic:
             guard let picObject = section.pics.first else { return }
             self.picInfo = PicInfo(object: picObject)
             
-        case .Audio:
+        case .audio:
             self.duration = section.audio?.duration
         }
     }
@@ -42,7 +42,7 @@ struct UndocBoxLayoutPool {
     var choosedAll = false
     var sectionLayoutHash = [String: UndocBoxLayout]()
     
-    mutating func cellLayoutOfSection(section: SectionObject) -> UndocBoxLayout {
+    mutating func cellLayoutOfSection(_ section: SectionObject) -> UndocBoxLayout {
         let key = section.id
         
         if var layout = sectionLayoutHash[key] {
@@ -60,7 +60,7 @@ struct UndocBoxLayoutPool {
         }
     }
     
-    mutating func updateSelectState(section: SectionObject) -> Bool {
+    mutating func updateSelectState(_ section: SectionObject) -> Bool {
         guard let layout = sectionLayoutHash[section.id] else { return false}
         
         sectionLayoutHash[section.id]!.selected = !layout.selected
@@ -68,7 +68,7 @@ struct UndocBoxLayoutPool {
         return !layout.selected
     }
     
-    mutating func chooseAllItem(selected: Bool) {
+    mutating func chooseAllItem(_ selected: Bool) {
         choosedAll = selected
         
         for (id, _) in sectionLayoutHash {
@@ -76,7 +76,7 @@ struct UndocBoxLayoutPool {
         }
     }
     
-    mutating func updateCellLayout(layout: UndocBoxLayout, forSection section: SectionObject) {
+    mutating func updateCellLayout(_ layout: UndocBoxLayout, forSection section: SectionObject) {
         
         let key = section.id
         
@@ -101,7 +101,7 @@ struct UndocBoxLayoutPool {
         for (id, layout) in sectionLayoutHash {
             if layout.selected {
                 ids.append(id)
-                sectionLayoutHash.removeValueForKey(id)
+                sectionLayoutHash.removeValue(forKey: id)
             }
         }
         

@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 class VideoSectionView: UIView {
 
-    typealias TapVideoAction = (type:ClickViewType) -> Void
+    typealias TapVideoAction = (_ type:ClickViewType) -> Void
     var tapVideoAction:TapVideoAction!
     
     var seperatorView: UIView!
@@ -47,46 +47,46 @@ class VideoSectionView: UIView {
         videoTagBackView.addSubview(videoTagView)
         addUIConstraints()
         addTapGesture { (UITapGestureRecognizer) in
-            self.tapVideoAction(type:ClickViewType.Video)
+            self.tapVideoAction(ClickViewType.video)
         }
     }
 
     func addUIConstraints() -> Void {
-        seperatorView.snp_makeConstraints { (make) in
+        seperatorView.snp.makeConstraints { (make) in
             make.left.top.right.equalToSuperview().offset(0)
             make.height.equalTo(1)
         }
-        startTime.snp_makeConstraints { (make) in
+        startTime.snp.makeConstraints { (make) in
             make.left.equalToSuperview().offset(15)
             make.top.equalTo(20)
             make.height.width.greaterThanOrEqualTo(40)
         }
-        endTime.snp_makeConstraints { (make) in
+        endTime.snp.makeConstraints { (make) in
             make.right.equalTo(-15)
             make.top.equalTo(20)
             make.height.width.greaterThanOrEqualTo(40)
         }
-        timeProgress.snp_makeConstraints { (make) in
-            make.left.equalTo(startTime.snp_right).offset(15)
-            make.right.equalTo(endTime.snp_left).offset(-15)
+        timeProgress.snp.makeConstraints { (make) in
+            make.left.equalTo(startTime.snp.right).offset(15)
+            make.right.equalTo(endTime.snp.left).offset(-15)
             make.height.equalTo(5)
             make.centerY.equalTo(startTime)
         }
-        videoTagBackView.snp_makeConstraints { (make) in
+        videoTagBackView.snp.makeConstraints { (make) in
             make.left.equalTo(15)
-            make.top.equalTo(startTime.snp_bottom).offset(5)
-            make.width.greaterThanOrEqualTo(videoTagView.snp_width).offset(20)
+            make.top.equalTo(startTime.snp.bottom).offset(5)
+            make.width.greaterThanOrEqualTo(videoTagView.snp.width).offset(20)
             make.height.greaterThanOrEqualTo(30)
 
         }
-        videoTagView.snp_makeConstraints { (make) in
+        videoTagView.snp.makeConstraints { (make) in
             make.left.equalToSuperview().offset(15)
             make.height.greaterThanOrEqualTo(20)
             make.center.equalToSuperview()
         }
     }
 
-    func tapVideoView(type:TapVideoAction) -> Void {
+    func tapVideoView(_ type:@escaping TapVideoAction) -> Void {
         tapVideoAction = type
     }
     required init?(coder aDecoder: NSCoder) {

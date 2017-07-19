@@ -7,6 +7,30 @@
 //
 
 import UIKit
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
+
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func <= <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l <= r
+  default:
+    return !(rhs < lhs)
+  }
+}
+
 
 class LoginVC: UIViewController {
 
@@ -32,7 +56,7 @@ class LoginVC: UIViewController {
     }
     
     // MARK:控制器生命周期
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         var oldAccount: String?
         
@@ -43,15 +67,15 @@ class LoginVC: UIViewController {
     }
     
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
     }
     
-    override func viewDidDisappear(animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
     }
     
@@ -61,20 +85,20 @@ class LoginVC: UIViewController {
     }
     
     
-    @IBAction func hiddenPwdAction(sender: UIButton) {
-        sender.selected = !sender.selected
-        userPasswordTF.secureTextEntry = !sender.selected
+    @IBAction func hiddenPwdAction(_ sender: UIButton) {
+        sender.isSelected = !sender.isSelected
+        userPasswordTF.isSecureTextEntry = !sender.isSelected
         let passwordTxt = userPasswordTF.text
         userPasswordTF.text = ""
         userPasswordTF.text = passwordTxt
     }
     
-    @IBAction func selectOtherPlantform(sender: UIButton) {
+    @IBAction func selectOtherPlantform(_ sender: UIButton) {
 
     }
-    @IBAction func forgetPwdAction(sender: UIButton) {
+    @IBAction func forgetPwdAction(_ sender: UIButton) {
     }
-    @IBAction func loginAction(sender: UIButton) {
+    @IBAction func loginAction(_ sender: UIButton) {
         
         if !CommonUtils.isValidateEMail(userNickname.text!){
             AOHUDVIEW.showTips("邮箱格式不正确")
@@ -94,7 +118,7 @@ class LoginVC: UIViewController {
     override func backAction() {
         let vc = (navigationController!.viewControllers[0])
         
-        if self.isKindOfClass(vc.dynamicType) {
+        if self.isKind(of: type(of: vc)) {
             dismissVC(completion: nil)
         }else{
         
@@ -106,14 +130,14 @@ class LoginVC: UIViewController {
         userPasswordTF.resignFirstResponder()
     }
     
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         hiddenKeyBoard()
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         if segue.identifier == "goOtherAccountLoginVC"{
-            let otherAccountLoginVC = segue.destinationViewController as! OtherAccountLoginVC
+            let otherAccountLoginVC = segue.destination as! OtherAccountLoginVC
             otherAccountLoginVC.comeFormLeftMenu = true
         }
         

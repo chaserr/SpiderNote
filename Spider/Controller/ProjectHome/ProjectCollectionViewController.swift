@@ -16,37 +16,37 @@ class ProjectCollectionViewController: MainViewController, UICollectionViewDeleg
     
     var projects = SpiderRealm.getProjects()
     
-    private var searchNavContr: UINavigationController!
+    fileprivate var searchNavContr: UINavigationController!
     
-    private var searchBtn: UIButton!
+    fileprivate var searchBtn: UIButton!
     
-    private var addMediaButton =  AddMediaButton()
+    fileprivate var addMediaButton =  AddMediaButton()
     
-    private var collectionView = ProjectCollectionView()
+    fileprivate var collectionView = ProjectCollectionView()
     
-    private lazy var undocButton: UIButton = {
+    fileprivate lazy var undocButton: UIButton = {
         let button = UIButton(frame: CGRect(x: 40, y: 0, width: 40, height: 40))
         button.imageEdgeInsets = UIEdgeInsets(top: 10, left: 16, bottom: 10, right: 0)
-        button.setImage(UIImage(named: "unchiveBox_button"), forState: .Normal)
+        button.setImage(UIImage(named: "unchiveBox_button"), for: UIControlState())
         
         button.addSubview(self.undocCountLabel)
-        button.addTarget(self, action: #selector(unchiveItemClicked), forControlEvents: .TouchUpInside)
+        button.addTarget(self, action: #selector(unchiveItemClicked), for: .touchUpInside)
         return button
     }()
     
-    private lazy var userButton: UIButton = {
+    fileprivate lazy var userButton: UIButton = {
         let button = UIButton(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
         button.imageEdgeInsets = UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 20)
-        button.setImage(UIImage(named: "user_project_button"), forState: .Normal)
-        button.addTarget(self, action: #selector(UIViewController.toggleLeft), forControlEvents: .TouchUpInside)
+        button.setImage(UIImage(named: "user_project_button"), for: UIControlState())
+        button.addTarget(self, action: #selector(UIViewController.toggleLeft), for: .touchUpInside)
         return button
     }()
     
-    private lazy var searchButton: UIButton = {
+    fileprivate lazy var searchButton: UIButton = {
         let button = UIButton(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
         button.imageEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
-        button.setImage(UIImage(named: "search_button"), forState: .Normal)
-        button.addTarget(self, action: #selector(searchItemClicked), forControlEvents: .TouchUpInside)
+        button.setImage(UIImage(named: "search_button"), for: UIControlState())
+        button.addTarget(self, action: #selector(searchItemClicked), for: .touchUpInside)
         return button
     }()
     
@@ -54,11 +54,11 @@ class ProjectCollectionViewController: MainViewController, UICollectionViewDeleg
     
     lazy var topV: TopHitView? = {
     
-        let topView = TopHitView(frame: CGRectMake(0, 0, kScreenWidth, kTopBarHeight))
+        let topView = TopHitView(frame: CGRect(x: 0, y: 0, width: kScreenWidth, height: kTopBarHeight))
         return topView
     }()
 
-    private lazy var rightItemView: UIView = {
+    fileprivate lazy var rightItemView: UIView = {
         let view = UIView(frame: CGRect(x: 0, y: 0, width: 80, height: 40))
         view.addSubview(self.searchButton)
         view.addSubview(self.undocButton)
@@ -77,7 +77,7 @@ class ProjectCollectionViewController: MainViewController, UICollectionViewDeleg
         
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.registerClass(ProjectViewCell.self, forCellWithReuseIdentifier: cellID)
+        collectionView.register(ProjectViewCell.self, forCellWithReuseIdentifier: cellID)
         
         view.addSubview(collectionView)
         collectionView.snp_makeConstraints { (make) in
@@ -87,13 +87,13 @@ class ProjectCollectionViewController: MainViewController, UICollectionViewDeleg
         collectionView.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(didLongPress)))
     }
 
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         collectionView.reloadData()
-        edgesForExtendedLayout = .None
+        edgesForExtendedLayout = UIRectEdge()
         automaticallyAdjustsScrollViewInsets = true
-        UIApplication.sharedApplication().setStatusBarStyle(.Default, animated: false)
+        UIApplication.shared.setStatusBarStyle(.default, animated: false)
 
         hiddenNavBottomLine()
         
@@ -133,7 +133,7 @@ class ProjectCollectionViewController: MainViewController, UICollectionViewDeleg
 //        }
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         // 更新未归档数量
@@ -154,12 +154,12 @@ class ProjectCollectionViewController: MainViewController, UICollectionViewDeleg
         SPIDERSTRUCT.sourceMindType = nil
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         addMediaButton.removeFromSuperview()
     }
     
-    override func viewDidDisappear(animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
     }
 
@@ -168,20 +168,20 @@ class ProjectCollectionViewController: MainViewController, UICollectionViewDeleg
     }
     
     // MARK: - Gesture
-    func didLongPress(sender: UILongPressGestureRecognizer) {
+    func didLongPress(_ sender: UILongPressGestureRecognizer) {
         
-        if sender.state == .Began {
+        if sender.state == .began {
             
-            let location = sender.locationInView(collectionView)
+            let location = sender.location(in: collectionView)
             
-            if let indexPath = collectionView.indexPathForItemAtPoint(location) where indexPath.item != 0 {
+            if let indexPath = collectionView.indexPathForItem(at: location), indexPath.item != 0 {
                 
                 let project = projects[indexPath.item - 1]
                 let editAlert = EditProjectAlertView(name: project.name)
                 
                 editAlert.deleteHanlder = { [weak self] in
                     SpiderRealm.remove(project)
-                    self?.collectionView.deleteItemsAtIndexPaths([indexPath])
+                    self?.collectionView.deleteItems(at: [indexPath])
 //                    self.shareViewAlert()
                 }
                 
@@ -209,7 +209,7 @@ class ProjectCollectionViewController: MainViewController, UICollectionViewDeleg
         let searchMainController = SearchMainViewController()
         searchMainController.searchType = SearchType.Project
         // 防止多次push
-        if !(navigationController!.topViewController!.isKindOfClass(SearchMainViewController)) {
+        if !(navigationController!.topViewController!.isKind(of: SearchMainViewController.self)) {
             navigationController?.pushViewController(searchMainController, animated: true)
         }
     }
@@ -218,18 +218,18 @@ class ProjectCollectionViewController: MainViewController, UICollectionViewDeleg
 // MARK: - Collection View Delegate
 extension ProjectCollectionViewController {
     
-    func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
     
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
         return projects.count + 1
     }
     
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(cellID, forIndexPath: indexPath) as! ProjectViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! ProjectViewCell
         
         if indexPath.item == 0 {
             cell.isFirst = true
@@ -244,7 +244,7 @@ extension ProjectCollectionViewController {
         return cell
     }
     
-    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         if indexPath.item == 0 {
             
@@ -253,14 +253,14 @@ extension ProjectCollectionViewController {
             alert.addProjectHandler = { [unowned self] (text: String) in
                 
                 SpiderRealm.update(text: text)
-                self.collectionView.insertItemsAtIndexPaths([NSIndexPath(forItem: indexPath.item + 1, inSection: 0)])
+                self.collectionView.insertItems(at: [IndexPath(item: indexPath.item + 1, section: 0)])
             }
             
             view.window!.addSubview(alert)
             
         } else {
             
-            SPIDERSTRUCT.sourceMindType = SourceMindControType.ComeFromHome
+            SPIDERSTRUCT.sourceMindType = SourceMindControType.comeFromHome
             
             let project = projects[indexPath.item - 1]
             SpiderConfig.sharedInstance.project = project
@@ -269,7 +269,7 @@ extension ProjectCollectionViewController {
         }
     }
     
-     func collectionView(collectionView: UICollectionView, shouldHighlightItemAtIndexPath indexPath: NSIndexPath) -> Bool {
+     func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
         return true
     }
 }

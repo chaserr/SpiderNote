@@ -10,9 +10,9 @@ import Foundation
 import RealmSwift
 
 // MARK: - Global
-public let kScreenWidth  = UIScreen.mainScreen().bounds.width //ATScreenSize.shareInstance.size.width
-public let kScreenHeight = UIScreen.mainScreen().bounds.height //ATScreenSize.shareInstance.size.height
-public let kScreenBounds = UIScreen.mainScreen().bounds
+public let kScreenWidth  = UIScreen.main.bounds.width //ATScreenSize.shareInstance.size.width
+public let kScreenHeight = UIScreen.main.bounds.height //ATScreenSize.shareInstance.size.height
+public let kScreenBounds = UIScreen.main.bounds
 
 public let kStatusBarHeight = CGFloat(20)
 
@@ -96,8 +96,8 @@ final public class SpiderConfig {
     }
     
     public struct Font {
-        public static let Text = UIFont.systemFontOfSize(16)
-        public static let Title = UIFont.systemFontOfSize(14)
+        public static let Text = UIFont.systemFont(ofSize: 16)
+        public static let Title = UIFont.systemFont(ofSize: 14)
     }
 }
 
@@ -113,7 +113,7 @@ class SpiderStruct {
     var selectLevelItem: StructLevelItem?
     var sourceMindType: SourceMindControType?
     
-    private init() {}
+    fileprivate init() {}
 }
 
 

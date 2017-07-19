@@ -28,12 +28,12 @@ class LeftMenuSettingVC: BaseTableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.whiteColor()
+        view.backgroundColor = UIColor.white
         self.navigationTitleLabel.text = "设置"
         self.customLizeNavigationBarBackBtn()
         self.tableView.tableFooterView = UIView()
         
-        let reach = Reachability.reachabilityForInternetConnection().currentReachabilityStatus()
+        let reach = Reachability.forInternetConnection().currentReachabilityStatus()
         switch(reach) {
         case .NotReachable:
             alert("", message: "没有网络", parentVC: self)
@@ -70,46 +70,46 @@ class LeftMenuSettingVC: BaseTableViewController {
 // MARK: -- tableviewDelegate and datasource method
 extension LeftMenuSettingVC{
 
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    func numberOfSectionsInTableView(_ tableView: UITableView) -> Int {
         let sectionNum = self.cellTitle.count
         return sectionNum
     }
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let cellArr = self.cellTitle[section]
         
         return cellArr.count
     }
     
-    override func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 15
     }
     
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        if APP_USER.autoSync == 0 && indexPath == NSIndexPath(forRow: 1, inSection: 0){
+    func tableView(_ tableView: UITableView, heightForRowAtIndexPath indexPath: IndexPath) -> CGFloat {
+        if APP_USER.autoSync == 0 && indexPath == IndexPath(row: 1, section: 0){
 
             return 0
         }
         return 55
     }
     
-    func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: IndexPath) -> CGFloat {
         return 55
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = LeftMenuSettingCell.cellWithTableView(tableView) as! LeftMenuSettingCell
         
         cell.switchBlock { (senderOn) in
-            senderOn ? cell.hidden == false : cell.hidden == true
-            tableView.reloadRowsAtIndexPaths([NSIndexPath(forRow: 1, inSection: 0)], withRowAnimation: UITableViewRowAnimation.Fade)
+            senderOn ? cell.isHidden == false : cell.isHidden == true
+            tableView.reloadRows(at: [IndexPath(row: 1, section: 0)], with: UITableViewRowAnimation.fade)
         }
         
         switch (indexPath.section, indexPath.row) {
         case (0, 1):
-            if APP_USER.autoSync == 0 && indexPath == NSIndexPath(forRow: 1, inSection: 0){
-                cell.hidden = true
+            if APP_USER.autoSync == 0 && indexPath == IndexPath(row: 1, section: 0){
+                cell.isHidden = true
             }
         case (1, 0):
             self.cellDetailDict["\(indexPath.row)\(indexPath.section)"] = getCacheSize()
@@ -123,9 +123,9 @@ extension LeftMenuSettingVC{
         
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAtIndexPath indexPath: IndexPath) {
         
-        let cell = tableView.cellForRowAtIndexPath(indexPath) as! LeftMenuSettingCell
+        let cell = tableView.cellForRow(at: indexPath) as! LeftMenuSettingCell
 
         switch (indexPath.section, indexPath.row) {
         case (0,1):
@@ -140,7 +140,7 @@ extension LeftMenuSettingVC{
             showAlert(arr, cell: cell)
         case (1, 0):
             clearCache()
-            tableView.reloadSections(NSIndexSet(index: indexPath.section), withRowAnimation: UITableViewRowAnimation.None)
+            tableView.reloadSections(IndexSet(integer: indexPath.section), with: UITableViewRowAnimation.none)
             AOHUDVIEW.showTipsWithAutoHide("清除缓存成功", autoHideTime: 1)
         case (2,0):  // 检查更新
             break
@@ -165,16 +165,16 @@ extension LeftMenuSettingVC{
         }
     }
     
-    func showAlert(titleArray:Array<String>, cell:LeftMenuSettingCell) -> Void {
+    func showAlert(_ titleArray:Array<String>, cell:LeftMenuSettingCell) -> Void {
         let alertView:CustomAlertView = CustomAlertView.init(frame: kScreenBounds, titlesArray: titleArray)
 
-        let indexPath:NSIndexPath = tableView.indexPathForCell(cell)!
+        let indexPath:IndexPath = tableView.indexPath(for: cell)!
         
         alertView.clickBtnIndex = {
             (index:Int, string:String) -> Void in
 
             if string != "取消" {
-                cell.cellDetail.setTitle(string, forState: UIControlState.Normal)
+                cell.cellDetail.setTitle(string, for: UIControlState())
                 switch (indexPath.section,indexPath.row) {
                 case (0,1): // 同步频率
                     APP_USER.syncrate = string
@@ -197,20 +197,20 @@ extension LeftMenuSettingVC{
 extension LeftMenuSettingVC{
     
     override func viewDidLayoutSubviews() {
-        if tableView.respondsToSelector(Selector("setSeparatorInset:")) {
-            tableView.separatorInset = UIEdgeInsetsZero
+        if tableView.responds(to: Selector("setSeparatorInset:")) {
+            tableView.separatorInset = UIEdgeInsets.zero
         }
-        if tableView.respondsToSelector(Selector("setLayoutMargins:")) {
-            tableView.layoutMargins = UIEdgeInsetsZero
+        if tableView.responds(to: Selector("setLayoutMargins:")) {
+            tableView.layoutMargins = UIEdgeInsets.zero
         }
     }
     
-    func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
-        if cell.respondsToSelector(Selector("setSeparatorInset:")) {
-            cell.separatorInset = UIEdgeInsetsZero
+    func tableView(_ tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: IndexPath) {
+        if cell.responds(to: Selector("setSeparatorInset:")) {
+            cell.separatorInset = UIEdgeInsets.zero
         }
-        if cell.respondsToSelector(Selector("setLayoutMargins:")) {
-            cell.layoutMargins = UIEdgeInsetsZero
+        if cell.responds(to: Selector("setLayoutMargins:")) {
+            cell.layoutMargins = UIEdgeInsets.zero
         }
     }
     
@@ -219,7 +219,7 @@ extension LeftMenuSettingVC{
 // MARK: 让tableview的section不悬停
 extension LeftMenuSettingVC{
     
-    func scrollViewDidScroll(scrollView: UIScrollView) {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let sectionHeaderHeight:CGFloat = 15
         if scrollView.contentOffset.y <= sectionHeaderHeight && scrollView.contentOffset.y >= 0 {
             scrollView.contentInset = UIEdgeInsetsMake(-scrollView.contentOffset.y, 0, 0, 0)
@@ -236,7 +236,7 @@ extension LeftMenuSettingVC{
 
     // 拼接缓存大小
     func getCacheSize() -> String {
-        let cachePath:String = NSSearchPathForDirectoriesInDomains(.CachesDirectory, .UserDomainMask, true).first!
+        let cachePath:String = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first!
         // 获取cache文件夹下的缓存大小
         let size:NSInteger = FileUtil.getFileUtil().getSizeOfDirectoryPath(cachePath)
         var str: String = "0.00K"
@@ -257,7 +257,7 @@ extension LeftMenuSettingVC{
      清理缓存
      */
     func clearCache() -> Void {
-        let cachePath: String = NSSearchPathForDirectoriesInDomains(.CachesDirectory, .UserDomainMask, true).first!
+        let cachePath: String = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first!
         FileUtil.getFileUtil().removeDirectoryPath(cachePath)
     }
 }

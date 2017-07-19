@@ -15,7 +15,7 @@ import UIKit
 var blockActionDict: [String : (() -> ())] = [:]
 
 extension UIView {
-    private func whenTouch(NumberOfTouche touchNumbers: Int,NumberOfTaps tapNumbers: Int) -> Void {
+    fileprivate func whenTouch(NumberOfTouche touchNumbers: Int,NumberOfTaps tapNumbers: Int) -> Void {
         let tapGesture = UITapGestureRecognizer()
         tapGesture.numberOfTouchesRequired = touchNumbers
         tapGesture.numberOfTapsRequired = tapNumbers
@@ -23,7 +23,7 @@ extension UIView {
         self.addGestureRecognizer(tapGesture)
     }
     
-    func whenTapped(action :(() -> Void)) {
+    func whenTapped(_ action :(() -> Void)) {
         // 手势-一次点击
         _addBlock(NewAction: action)
         whenTouch(NumberOfTouche: 1, NumberOfTaps: 1)
@@ -36,12 +36,12 @@ extension UIView {
     }
 
 
-    private func _addBlock(NewAction newAction:()->()) {
+    fileprivate func _addBlock(NewAction newAction:()->()) {
         let key = String(NSValue(nonretainedObject: self))
         blockActionDict[key] = newAction
     }
 
-    private func _excuteCurrentBlock(){
+    fileprivate func _excuteCurrentBlock(){
         let key = String(NSValue(nonretainedObject: self))
         let block = blockActionDict[key]
         block!()
@@ -51,7 +51,7 @@ extension UIView {
 
 extension UIView{
 
-    func addSubLayerWithFrame(frame:CGRect, color:CGColorRef) -> CALayer {
+    func addSubLayerWithFrame(_ frame:CGRect, color:CGColorRef) -> CALayer {
         let layer:CALayer = CALayer()
         layer.frame = frame
         layer.backgroundColor = color
@@ -59,8 +59,8 @@ extension UIView{
         return layer
     }
     
-    func addBottomFillLineWithColor(color:CGColorRef) -> CALayer {
-        return addSubLayerWithFrame(CGRectMake(0, self.h - 0.5, self.w, 0.5), color: color)
+    func addBottomFillLineWithColor(_ color:CGColorRef) -> CALayer {
+        return addSubLayerWithFrame(CGRect(x: 0, y: self.h - 0.5, width: self.w, height: 0.5), color: color)
 
     
     }

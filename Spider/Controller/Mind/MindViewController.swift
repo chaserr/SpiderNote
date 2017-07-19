@@ -21,70 +21,70 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
     
     var searchResultMind: MindObject?
     
-    private var mindUIInfos = [MindUIInfo]()
+    fileprivate var mindUIInfos = [MindUIInfo]()
     
-    private var ownerProject: ProjectObject?
-    private var ownerMind: MindObject?
-    private var structInfo: String = ""
+    fileprivate var ownerProject: ProjectObject?
+    fileprivate var ownerMind: MindObject?
+    fileprivate var structInfo: String = ""
     
-    private var minds = [MindObject]()
-    private var mindResult: Results<MindObject>!
-    private var notificationToken: NotificationToken?
+    fileprivate var minds = [MindObject]()
+    fileprivate var mindResult: Results<MindObject>!
+    fileprivate var notificationToken: NotificationToken?
     
-    private var beEditing = false
+    fileprivate var beEditing = false
     
-    private var ownerName = ""
+    fileprivate var ownerName = ""
     
-    private var hasChoosedAll = false
+    fileprivate var hasChoosedAll = false
     
-    private var choosedCount = 0 {
+    fileprivate var choosedCount = 0 {
         willSet {
             editBottomBar.choosedCount = newValue
         }
     }
     
-    private var outlineShowed = false
-    private var hasMoved = false
-    private var isFirstMove = true
+    fileprivate var outlineShowed = false
+    fileprivate var hasMoved = false
+    fileprivate var isFirstMove = true
     
-    private var currentLevel = Int(0)
+    fileprivate var currentLevel = Int(0)
     
-    private var movingIndexPath: NSIndexPath?
-    private var putInIndexPath: NSIndexPath?
+    fileprivate var movingIndexPath: IndexPath?
+    fileprivate var putInIndexPath: IndexPath?
     
-    private var catchedView: UIImageView!
+    fileprivate var catchedView: UIImageView!
     
-    private var displayLink: CADisplayLink!
-    private var scrollSpeed = CGFloat(0)
-    private var longPress: UILongPressGestureRecognizer!
+    fileprivate var displayLink: CADisplayLink!
+    fileprivate var scrollSpeed = CGFloat(0)
+    fileprivate var longPress: UILongPressGestureRecognizer!
 
-    private var addMindView = AddMindView()
+    fileprivate var addMindView = AddMindView()
     
-    private lazy var editTopBar: EditMindTopBar = {
+    fileprivate lazy var editTopBar: EditMindTopBar = {
         return EditMindTopBar(title: self.ownerName)
     }()
     
-    private lazy var editBottomBar: EditMindBottomBar = {
+    fileprivate lazy var editBottomBar: EditMindBottomBar = {
         return EditMindBottomBar()
     }()
     
-    private var moveMindUpView: MoveMindUpView?
+    fileprivate var moveMindUpView: MoveMindUpView?
     
-    private var topButton: UIButton = {
+    fileprivate var topButton: UIButton = {
         let button = UIButton(frame: CGRect(x: 0, y: 0, w: 36, h: 40))
         button.imageEdgeInsets = UIEdgeInsets(top: 12, left: 10, bottom: 12, right: 0)
-        button.setImage(UIImage(named: "mind_top_button"), forState: .Normal)
+        button.setImage(UIImage(named: "mind_top_button"), for: UIControlState())
         return button
     }()
     
-    private var searchBar = CustomSearchBar()
+    fileprivate var searchBar = CustomSearchBar()
     
     // MARK: - Controller life cycle
     convenience init(ownerProject: ProjectObject) {
         self.init()
         self.ownerProject = ownerProject
         mindResult = ownerProject.usefulMinds
-        minds.appendContentsOf(mindResult)
+        minds.append(contentsOf: mindResult)
         ownerName = ownerProject.name
         structInfo = ownerProject.name
     }
@@ -93,7 +93,7 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
         self.init()
         self.ownerMind = ownerMind
         mindResult = ownerMind.usefulMinds
-        minds.appendContentsOf(mindResult)
+        minds.append(contentsOf: mindResult)
         ownerName = ownerMind.name
         structInfo = ownerMind.structInfo
     }
@@ -105,30 +105,30 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
             self.ownerMind = mind.ownerMind.first
             ownerName = superMind.name
             mindResult = superMind.usefulMinds
-            minds.appendContentsOf(mindResult)
+            minds.append(contentsOf: mindResult)
             structInfo = superMind.structInfo
 
         } else if let superNote = mind.ownerProject.first {
             self.ownerProject = mind.ownerProject.first
             ownerName = superNote.name
             mindResult = superNote.usefulMinds
-            minds.appendContentsOf(mindResult)
+            minds.append(contentsOf: mindResult)
             structInfo = superNote.name
         }
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.whiteColor()
+        view.backgroundColor = UIColor.white
         customLizeNavigationBarBackBtn()
         
         searchBar.delegate = self
-        structLevelView = StructLevelView.init(frame:CGRectMake(0, 0, kScreenWidth, 40))
-        structLevelView.addBottomFillLineWithColor(RGBCOLORV(0xeaeaea).CGColor)
+        structLevelView = StructLevelView.init(frame:CGRect(x: 0, y: 0, width: kScreenWidth, height: 40))
+        structLevelView.addBottomFillLineWithColor(RGBCOLORV(0xeaeaea).cgColor)
         view.addSubview(structLevelView)
         
         structLevelView.onTap = { [weak self] in
-            self?.presentViewController(OutlineViewController(state: .JustJump), animated: true, completion: nil)
+            self?.present(OutlineViewController(state: .JustJump), animated: true, completion: nil)
         }
 
         createLevelMenu()
@@ -136,15 +136,15 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
         // 回调点击事件
         TriggerBtnCallBack()
         
-        tableView.frame = CGRectMake(0, structLevelView.h, kScreenWidth, kScreenHeight - structLevelView.h - 50)
-        tableView.registerClass(MindViewCell.self, forCellReuseIdentifier: mindReuseID)
-        tableView.registerClass(MindViewCell.self, forCellReuseIdentifier: articleReuseID)
-        tableView.separatorStyle = UITableViewCellSeparatorStyle.None
+        tableView.frame = CGRect(x: 0, y: structLevelView.h, width: kScreenWidth, height: kScreenHeight - structLevelView.h - 50)
+        tableView.register(MindViewCell.self, forCellReuseIdentifier: mindReuseID)
+        tableView.register(MindViewCell.self, forCellReuseIdentifier: articleReuseID)
+        tableView.separatorStyle = UITableViewCellSeparatorStyle.none
         currentLevel = SpiderStruct.sharedInstance.currentLevel
 
         if searchResultMind != nil && !mindUIInfos.isEmpty {
-            let index = minds.indexOf(searchResultMind!)!
-            tableView.scrollToRowAtIndexPath(NSIndexPath.init(forRow: index, inSection: 0), atScrollPosition: UITableViewScrollPosition.Bottom, animated: true)
+            let index = minds.index(of: searchResultMind!)!
+            tableView.scrollToRow(at: IndexPath.init(row: index, section: 0), at: UITableViewScrollPosition.bottom, animated: true)
         }
         
         currentLevel = SpiderStruct.sharedInstance.currentLevel
@@ -153,22 +153,22 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
         addActions()
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        UIApplication.sharedApplication().setStatusBarStyle(.Default, animated: false)
+        UIApplication.shared.setStatusBarStyle(.default, animated: false)
         
         if !beEditing {
             setDataSource()
             SpiderStruct.sharedInstance.currentLevel = currentLevel
             if searchResultMind != nil && !minds.isEmpty {
-                let index = minds.indexOf(searchResultMind!)!
-                tableView.selectRowAtIndexPath(NSIndexPath(forRow: index, inSection: 0), animated: true, scrollPosition: .Bottom)
+                let index = minds.index(of: searchResultMind!)!
+                tableView.selectRow(at: IndexPath(row: index, section: 0), animated: true, scrollPosition: .bottom)
             }
         }
     }
 
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         rfreshCurrentLevelMenu()
         
@@ -180,10 +180,10 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
         }
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        UIApplication.sharedApplication().setStatusBarStyle(.LightContent, animated: false)
+        UIApplication.shared.setStatusBarStyle(.lightContent, animated: false)
     }
     
     override func backAction() {
@@ -197,14 +197,14 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
     }
     
     func rfreshCurrentLevelMenu() -> Void {
-        if SPIDERSTRUCT.sourceMindType == SourceMindControType.ComeFromSelf || SPIDERSTRUCT.sourceMindType == SourceMindControType.ComeFromHome { // 如果是push进来的，那么点击一下structView
+        if SPIDERSTRUCT.sourceMindType == SourceMindControType.comeFromSelf || SPIDERSTRUCT.sourceMindType == SourceMindControType.comeFromHome { // 如果是push进来的，那么点击一下structView
             recodeCurrentLightLevel()
         }
     }
     
     // 创建层级菜单
     func createLevelMenu() -> Void {
-        let levelCount = structInfo.componentsSeparatedByString(" > ")
+        let levelCount = structInfo.components(separatedBy: " > ")
         SPIDERSTRUCT.currentLevel = levelCount.count - 1
         SPIDERSTRUCT.currentMindPath = structInfo
         
@@ -235,14 +235,14 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
                 
                 (structItem:StructLevelItem) -> Void in
                 
-                SPIDERSTRUCT.sourceMindType = SourceMindControType.ComeFromStructLevel
+                SPIDERSTRUCT.sourceMindType = SourceMindControType.comeFromStructLevel
                 // 构造的控制器数量 ：(levelCount?.count)! + 1
                 var newController:[UIViewController] = [MindViewController]()
                 var mindObjVC_Parent:MindViewController!
                 
-                if structItem.currenMind.isKindOfClass(MindObject.self) {
+                if structItem.currenMind.isKind(of: MindObject.self) {
                     let currentMind = structItem.currenMind as! MindObject
-                    let levelCount = currentMind.structInfo.componentsSeparatedByString(" > ")
+                    let levelCount = currentMind.structInfo.components(separatedBy: " > ")
                     var superMind:MindObject?            = (currentMind.ownerMind.first) // 父节点
                     var superProject:ProjectObject?      = (currentMind.ownerProject.first)
                     let vc = MindViewController(ownerMind: currentMind)
@@ -274,8 +274,8 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
                 }
                 
                 // 数组倒序插入
-                let reveredArr:[UIViewController] = Array(newController.reverse())
-                APP_NAVIGATOR.mainNav?.viewControllers.replaceRange(Range(1...(APP_NAVIGATOR.mainNav?.viewControllers.count)!-1), with: reveredArr)
+                let reveredArr:[UIViewController] = Array(newController.reversed())
+                APP_NAVIGATOR.mainNav?.viewControllers.replaceSubrange(Range(1...(APP_NAVIGATOR.mainNav?.viewControllers.count)!-1), with: reveredArr)
             }
         }
     }
@@ -283,7 +283,7 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
     // 记录当前控制器的层级点击状态
     func recodeCurrentLightLevel() -> Void {
         
-        for (index, obj) in structLevelView.containMindArr.enumerate() {
+        for (index, obj) in structLevelView.containMindArr.enumerated() {
             
             if index % 2 == 0 {
                 if ownerMind == obj.currenMind {
@@ -299,7 +299,7 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
     }
     
     // MARK: - Data Source
-    private func setDataSource() {
+    fileprivate func setDataSource() {
         mindUIInfos.removeAll()
         
         for i in 0 ..< minds.count {
@@ -311,14 +311,14 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
         self.tableView.reloadData()
     }
     
-    private func makeUI() {
+    fileprivate func makeUI() {
         // hierarchy
         view.addSubview(addMindView)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: topButton)
 
         navigationItem.titleView = searchBar
         navigationController?.navigationBar.setNeedsLayout()
-        navigationController?.navigationBar.translucent = true
+        navigationController?.navigationBar.isTranslucent = true
         
         addMindView.translatesAutoresizingMaskIntoConstraints = false
         addMindView.snp_makeConstraints { (make) in
@@ -328,14 +328,14 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
         }
     }
     
-    private func addActions() {
+    fileprivate func addActions() {
         /** 添加节点 or 长文 */
         addMindView.addMindHandler = { [weak self] type in
             self?.addMind(type)
         }
         
         /** navigation item actions */
-        topButton.addTarget(self, action: #selector(topItemClicked), forControlEvents: .TouchUpInside)
+        topButton.addTarget(self, action: #selector(topItemClicked), for: .touchUpInside)
         
         /** add gesture */
         longPress = UILongPressGestureRecognizer(target: self, action: #selector(didLongPress))
@@ -359,14 +359,14 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
         }
     }
     
-    func didLongPress(ges: UIGestureRecognizer) {
-        var location = ges.locationInView(tableView)
+    func didLongPress(_ ges: UIGestureRecognizer) {
+        var location = ges.location(in: tableView)
         
         switch ges.state {
             
-        case .Began:
+        case .began:
             
-            if let indexPath = tableView.indexPathForRowAtPoint(location) {
+            if let indexPath = tableView.indexPathForRow(at: location) {
                 
                 if let _ = ownerMind {
                     moveMindUpView = MoveMindUpView()
@@ -377,12 +377,12 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
                     changeModel()
                 }
                 
-                let moveCell = tableView.cellForRowAtIndexPath(indexPath) as! MindViewCell
+                let moveCell = tableView.cellForRow(at: indexPath) as! MindViewCell
                 catchedView = moveCell.getSnapshotImageView()
                 
                 movingIndexPath = indexPath
                 
-                dispatch_async(dispatch_get_main_queue(), {
+                DispatchQueue.main.async(execute: {
                     self.tableView.reloadData()
                 })
                 
@@ -395,7 +395,7 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
                 tableView.addSubview(catchedView)
             }
             
-        case .Changed:
+        case .changed:
             
             moveCatchedViewToLocation(location)
             
@@ -415,7 +415,7 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
                     scrollSpeed = 5.0*((cellCenterY - tableView.frame.height)/halfCellHeight + 1.1)
                 }
                 
-                displayLink.paused = scrollSpeed == 0.0
+                displayLink.isPaused = scrollSpeed == 0.0
             }
             
         default:
@@ -427,15 +427,15 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
                 choosedCount = mindUIInfos.filter({$0.choosed}).count    // 所有操作完成后，更新数据
             }
             
-            if let moveView = moveMindUpView where moveView.isHighlight { // 移入上一级
+            if let moveView = moveMindUpView, moveView.isHighlight { // 移入上一级
                 /** UI */
-                mindUIInfos.removeAtIndex(choosedIndexPath.item)
+                mindUIInfos.remove(at: choosedIndexPath.item)
 
                 UIView.move(catchedView, toPoint: moveView.center, withScalor: 40 / catchedView.frame.width, completion: { done in
                     moveView.removeFromSuperview()
                     
                     self.tableView.beginUpdates()
-                    self.tableView.deleteRowsAtIndexPaths([choosedIndexPath], withRowAnimation: .None)
+                    self.tableView.deleteRows(at: [choosedIndexPath], with: .none)
                     self.tableView.endUpdates()
                 })
                 
@@ -444,13 +444,13 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
                 
                 /** dataSource */
                 SpiderRealm.removeMindUp(minds[choosedIndexPath.item])
-                minds.removeAtIndex(choosedIndexPath.item)
+                minds.remove(at: choosedIndexPath.item)
                 
                 return  // 防止 reload
             }
                 
             if let putIndexPath = putInIndexPath,
-               let putInCell = tableView.cellForRowAtIndexPath(putIndexPath) as? MindViewCell   // 移入兄弟节点
+               let putInCell = tableView.cellForRow(at: putIndexPath) as? MindViewCell   // 移入兄弟节点
             {
                 putInIndexPath = nil
                 
@@ -459,28 +459,28 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
                     mindUIInfos[choosedIndexPath.item + 1].cellHeight += kMindVerticalSpacing
                 }
                 
-                self.mindUIInfos.removeAtIndex(choosedIndexPath.item)
+                self.mindUIInfos.remove(at: choosedIndexPath.item)
                 
                 /** UI */
                 UIView.move(catchedView, toPoint: putInCell.center, withScalor: 0.5, completion: { done in
                     putInCell.unHighlight()
                     
                     self.tableView.beginUpdates()
-                    self.tableView.deleteRowsAtIndexPaths([choosedIndexPath], withRowAnimation: .None)
+                    self.tableView.deleteRows(at: [choosedIndexPath], with: .none)
                     self.tableView.endUpdates()
                 })
                 
                 /** dataSource */
                 SpiderRealm.move(minds[choosedIndexPath.item], to: minds[putIndexPath.item])
-                minds.removeAtIndex(choosedIndexPath.item)
+                minds.remove(at: choosedIndexPath.item)
                 
             } else {
                 
                 catchedView.removeFromSuperview()
-                tableView.reloadRowsAtIndexPaths([choosedIndexPath], withRowAnimation: .None)
+                tableView.reloadRows(at: [choosedIndexPath], with: .none)
             }
             
-            displayLink.paused = true
+            displayLink.isPaused = true
             moveMindUpView?.removeFromSuperview()
         }
     }
@@ -492,10 +492,10 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
             moveView.center.y = tableView.contentOffset.y + kScreenHeight / 2 - 60
         }
         
-        moveCatchedViewToLocation(longPress.locationInView(tableView))
+        moveCatchedViewToLocation(longPress.location(in: tableView))
     }
     
-    func moveCatchedViewToLocation(location: CGPoint) {
+    func moveCatchedViewToLocation(_ location: CGPoint) {
         let y = min(max(location.y, tableView.bounds.origin.y), tableView.bounds.origin.y + tableView.bounds.height)
         catchedView.center = CGPoint(x: location.x, y: y)
         
@@ -507,14 +507,13 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
             }
         }
         
-        guard let newIndexPath = tableView.indexPathForRowAtPoint(catchedView.center),
-                  currentIndexPath = movingIndexPath
-            where newIndexPath != currentIndexPath
+        guard let newIndexPath = tableView.indexPathForRow(at: catchedView.center),
+                  let currentIndexPath = movingIndexPath, newIndexPath != currentIndexPath
             else { return }
         
-        guard let cell = tableView.cellForRowAtIndexPath(newIndexPath) as? MindViewCell else { return }
+        guard let cell = tableView.cellForRow(at: newIndexPath) as? MindViewCell else { return }
         
-        if mindUIInfos[newIndexPath.item].type == .Mind {
+        if mindUIInfos[newIndexPath.item].type == .mind {
             if cell.frame.contains(catchedView.frame) {     // 移动到兄弟节点
                 putInIndexPath = newIndexPath
                 cell.hightlight()
@@ -535,7 +534,7 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
         }
     }
     
-    func moveMindAt(currentIndexPath: NSIndexPath, to newIndexPath: NSIndexPath) {
+    func moveMindAt(_ currentIndexPath: IndexPath, to newIndexPath: IndexPath) {
         if currentIndexPath.item == 0 {
             mindUIInfos[currentIndexPath.item].cellHeight -= kMindVerticalSpacing
             mindUIInfos[newIndexPath.item].cellHeight += kMindVerticalSpacing
@@ -547,14 +546,14 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
         }
         
         let info = mindUIInfos[currentIndexPath.item]
-        mindUIInfos.removeAtIndex(currentIndexPath.item)
-        mindUIInfos.insert(info, atIndex: newIndexPath.item)
+        mindUIInfos.remove(at: currentIndexPath.item)
+        mindUIInfos.insert(info, at: newIndexPath.item)
         
         movingIndexPath = newIndexPath
         
         tableView.beginUpdates()
-        tableView.deleteRowsAtIndexPaths([currentIndexPath], withRowAnimation: .Top)
-        tableView.insertRowsAtIndexPaths([newIndexPath], withRowAnimation: .Top)
+        tableView.deleteRows(at: [currentIndexPath], with: .top)
+        tableView.insertRows(at: [newIndexPath], with: .top)
         tableView.endUpdates()
         
         SpiderRealm.swap(minds[currentIndexPath.item], minds[newIndexPath.item], in: ownerMind ?? ownerProject)
@@ -570,25 +569,25 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
             beEditing = false
             isFirstMove = true
             displayLink.invalidate()
-            navigationController?.fd_fullscreenPopGestureRecognizer.enabled = true
+            navigationController?.fd_fullscreenPopGestureRecognizer.isEnabled = true
             
             tableView.frame.size = view.frame.size
-            tableView.backgroundColor = UIColor.whiteColor()
+            tableView.backgroundColor = UIColor.white
             tableView.sectionHeaderHeight = 40
             
             editBottomBar.removeFromSuperview()
             
-            UIView.animateWithDuration(0.3, animations: { 
+            UIView.animate(withDuration: 0.3, animations: { 
                 self.addMindView.alpha = 1
                 self.structLevelView.alpha = 1
             })
             
-            UIView.animateWithDuration(0.1, animations: {
+            UIView.animate(withDuration: 0.1, animations: {
                 self.tableView.frame = CGRect(x: 0, y: 40, w: kScreenWidth, h: self.view.frame.height - 40)
                 self.tableView.reloadData()
             })
             
-            SPIDERSTRUCT.sourceMindType = SourceMindControType.ComeFromSelf
+            SPIDERSTRUCT.sourceMindType = SourceMindControType.comeFromSelf
             recodeCurrentLightLevel()
             
         } else {
@@ -597,7 +596,7 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
                 guard let sSelf = self else { return }
 
                 switch change {
-                case .Update(_, let delete, _, _):
+                case .update(_, let delete, _, _):
                     if sSelf.outlineShowed && !delete.isEmpty {
                         sSelf.hasMoved = true
                     }
@@ -609,7 +608,7 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
             beEditing = true
             tableView.backgroundColor = UIColor.color(withHex: 0xebebeb)
             
-            navigationController?.fd_fullscreenPopGestureRecognizer.enabled = false
+            navigationController?.fd_fullscreenPopGestureRecognizer.isEnabled = false
             
             structLevelView.alpha = 0
             addMindView.alpha = 0
@@ -620,8 +619,8 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
             editTopBar.addToView(navigationController!.view)
             editBottomBar.addToView(view)
             displayLink = CADisplayLink(target: self, selector: #selector(scrollEvent))
-            displayLink.addToRunLoop(.mainRunLoop(), forMode: NSDefaultRunLoopMode)
-            displayLink.paused = true
+            displayLink.add(to: .main, forMode: RunLoopMode.defaultRunLoopMode)
+            displayLink.isPaused = true
         }
     }
     
@@ -638,7 +637,7 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
     }
     
     // MARK: - Edit Minds
-    func addMind(type: MindType) {
+    func addMind(_ type: MindType) {
         let alert = CreateMindView()
         alert.moveTo(view.window!)
         
@@ -654,7 +653,7 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
         }
     }
     
-    func deleteChoosedMinds(doInRealm doInRealm: Bool = true) {
+    func deleteChoosedMinds(doInRealm: Bool = true) {
         var deleteCount = 0
         let infos = mindUIInfos
         
@@ -662,12 +661,12 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
             
             if infos[i].choosed {
                 let index = i - deleteCount
-                mindUIInfos.removeAtIndex(index)
+                mindUIInfos.remove(at: index)
                 deleteCount += 1
                 
                 /** UI */
                 tableView.beginUpdates()
-                tableView.deleteRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: 0)], withRowAnimation: .Fade)
+                tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .fade)
                 tableView.endUpdates()
                 
                 // 在数据库删掉之前先刷新层级菜单
@@ -675,7 +674,7 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
 
                 /** dataSource */
                 if doInRealm { SpiderRealm.removeMind(minds[index], in: ownerMind ?? ownerProject) }
-                minds.removeAtIndex(index)
+                minds.remove(at: index)
             }
         }
         
@@ -695,21 +694,21 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
         
         outlineShowed = true
         let outlineVC = OutlineViewController(state: .MoveMind, toMoveItems: choosedMindIDs)
-        presentViewController(outlineVC, animated: true, completion: nil)
+        present(outlineVC, animated: true, completion: nil)
     }
     
-    func editMindAt(index: Int) {
+    func editMindAt(_ index: Int) {
         let alert = CreateMindView(text: mindUIInfos[index].name)
         
         alert.doneHandler = { [weak self] text in
             SpiderRealm.updateMind(self!.minds[index], text: text)
             
-            let rect = text.boundingRectWithSize(CGSize(width: kMindTextLabelWidth, height: CGFloat(FLT_MAX)), options: [.UsesLineFragmentOrigin, .UsesFontLeading], attributes: [NSFontAttributeName: SpiderConfig.Font.Text], context: nil)
+            let rect = text.boundingRect(with: CGSize(width: kMindTextLabelWidth, height: CGFloat(FLT_MAX)), options: [.usesLineFragmentOrigin, .usesFontLeading], attributes: [NSFontAttributeName: SpiderConfig.Font.Text], context: nil)
             
             self?.mindUIInfos[index].name = text
             self?.mindUIInfos[index].labelHeight = rect.height
             
-            self?.tableView.reloadRowsAtIndexPaths([NSIndexPath.init(forRow: index, inSection: 0)], withRowAnimation: .Fade)
+            self?.tableView.reloadRows(at: [IndexPath.init(row: index, section: 0)], with: .fade)
         }
         
         alert.moveTo(view.window!)
@@ -721,7 +720,7 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
         AppNavigator.popToRootViewController(true)
     }
 
-    func updateHeight(index: Int) {
+    func updateHeight(_ index: Int) {
         
         if mindUIInfos[index].foldable {
             mindUIInfos[index].cellHeight += mindUIInfos[index].labelHeight - kMindTextLabelMinHeight
@@ -731,7 +730,7 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
         tableView.endUpdates()
     }
     
-    func fold(index: Int) {
+    func fold(_ index: Int) {
         mindUIInfos[index].cellHeight = 95
         
         if index == 0 {
@@ -742,19 +741,19 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
         tableView.endUpdates()
     }
     
-    func operationToRefreshStructLevel(mind: MindObject) -> Void {
+    func operationToRefreshStructLevel(_ mind: MindObject) -> Void {
         // 在数据库删掉之前先刷新层级菜单
         for item in structLevelView.currentMindArray {
-            if item.isKindOfClass(MindObject.self) && (item as! MindObject).id == mind.id {
+            if item.isKind(of: MindObject.self) && (item as! MindObject).id == mind.id {
                 // 删除的是当前层级菜单的下一级
                 SPIDERSTRUCT.lastMind = ownerMind
-                SPIDERSTRUCT.allPushMindPath = structInfo.componentsSeparatedByString(" > ")
+                SPIDERSTRUCT.allPushMindPath = structInfo.components(separatedBy: " > ")
                 break
             }
         }
     }
     
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         print("touch begin dismiss keyboard")
         view.endEditing(true)
     }
@@ -763,14 +762,14 @@ class MindViewController: BaseTableViewController, UISearchBarDelegate, UINaviga
 // MARK: - TableView DelegatetableViewview
 extension MindViewController {
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        tableView.deselectRowAtIndexPath(indexPath, animated: true)
+    func tableView(_ tableView: UITableView, didSelectRowAtIndexPath indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
         
         if beEditing {
             
             let choosed = mindUIInfos[indexPath.item].choosed
             mindUIInfos[indexPath.item].choosed = !choosed
-            tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: .None)
+            tableView.reloadRows(at: [indexPath], with: .none)
             choosedCount = mindUIInfos.filter({$0.choosed}).count
             
         } else {
@@ -778,13 +777,13 @@ extension MindViewController {
             let mind = mindUIInfos[indexPath.item]
             let currentLevel = SPIDERSTRUCT.currentLevel
             
-            if mind.type == .Mind {
+            if mind.type == .mind {
                 
                 if currentLevel <= 3 {
                     
                     SPIDERSTRUCT.currentLevel += 1
                     let vc = MindViewController(ownerMind: minds[indexPath.item])
-                    SPIDERSTRUCT.sourceMindType = SourceMindControType.ComeFromSelf
+                    SPIDERSTRUCT.sourceMindType = SourceMindControType.comeFromSelf
                     AppNavigator.pushViewController(vc, animated: false)
                     
                 } else {
@@ -801,7 +800,7 @@ extension MindViewController {
         }
     }
     
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForRowAtIndexPath indexPath: IndexPath) -> CGFloat {
         if beEditing {
             return 100
         } else {
@@ -813,11 +812,11 @@ extension MindViewController {
 // MARK: - TableView DataSource
 extension MindViewController {
 
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return mindUIInfos.count
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let info = mindUIInfos[indexPath.item]
         
         if beEditing {
@@ -825,12 +824,12 @@ extension MindViewController {
 
             /** 编辑 */
             cell.editHandler = { [weak self] in
-                let index = tableView.indexPathForCell(cell)!.item
+                let index = tableView.indexPath(for: cell)!.item
                 self?.editMindAt(index)
             }
             
             if indexPath == movingIndexPath {
-                cell.hidden = true
+                cell.isHidden = true
             }
             
             return cell
@@ -860,14 +859,14 @@ extension MindViewController {
 
 extension MindViewController {
     
-    func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         searchHeaderViewClick()
     }
     
     func searchHeaderViewClick() -> Void {
         let searchMainController = SearchMainViewController()
         // 防止多次push
-        if !(navigationController!.topViewController!.isKindOfClass(SearchMainViewController)) {
+        if !(navigationController!.topViewController!.isKind(of: SearchMainViewController.self)) {
             navigationController?.pushViewController(searchMainController, animated: true)
             
         }

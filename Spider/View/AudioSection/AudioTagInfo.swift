@@ -9,13 +9,13 @@
 import Foundation
 
 enum AudioTagType: Int {
-    case Text = 0
-    case Pic  = 1
+    case text = 0
+    case pic  = 1
 }
 
 struct AudioTagInfo {
     var id: String
-    var type = AudioTagType.Text
+    var type = AudioTagType.text
     
     var time: String
     var pic: PicInfo?
@@ -26,20 +26,20 @@ struct AudioTagInfo {
     
     init(content: String? = nil, pic: UIImage? = nil, selected: Bool, time: String, height: CGFloat = kAudioTagCellHeight) {
         
-        self.id       = NSUUID().UUIDString
+        self.id       = UUID().uuidString
         self.height   = height
         self.time     = time
         self.selected = selected
         
         if let text = content {
             self.content = text
-            self.type = .Text
+            self.type = .text
         }
         
         if let pic = pic {
             pic.saveToDisk(withid: id)
             self.pic    = PicInfo(id: id, image: pic)
-            self.type    = .Pic
+            self.type    = .pic
         }
     }
     
@@ -53,10 +53,10 @@ struct AudioTagInfo {
         
         switch type {
             
-        case .Text:
+        case .text:
             self.content = tag.content
             
-        case .Pic:
+        case .pic:
             pic = PicInfo(tagObject: tag)
         }
         

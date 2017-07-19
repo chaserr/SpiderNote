@@ -12,139 +12,139 @@ import AVFoundation
 private var myContext = 0
 private let textColor = UIColor.color(withHex: 0xdddddd)
 private let disabledColor = UIColor.color(withHex: 0xdddddd, alpha: 0.5)
-private let textFont = UIFont.systemFontOfSize(13)
+private let textFont = UIFont.systemFont(ofSize: 13)
 
 public enum AudioToolBarType {
-    case Record
-    case Play
+    case record
+    case play
 }
 
 class AudioRecordToolBar: UIView {
     
     var quitHandler: (() -> Void)?
-    var doneHandler: (String -> Void)?
-    var markPicHandler: (String -> Void)?
-    var markTextHandler: (String -> Void)?
+    var doneHandler: ((String) -> Void)?
+    var markPicHandler: ((String) -> Void)?
+    var markTextHandler: ((String) -> Void)?
     var reRecordHandler: (() -> Void)?
     
-    private var type: AudioToolBarType! = .Record
+    fileprivate var type: AudioToolBarType! = .record
     
-    private var hasRecorded = false
+    fileprivate var hasRecorded = false
     
-    private var isCurrent = false
-    private var beInterrupted = false
+    fileprivate var isCurrent = false
+    fileprivate var beInterrupted = false
     
     var audioID: String?
     
-    private var player: AVAudioPlayer!
-    private var recorder: AVAudioRecorder!
-    private var totalTime: NSTimeInterval!
-    private var playedTime: NSTimeInterval?
+    fileprivate var player: AVAudioPlayer!
+    fileprivate var recorder: AVAudioRecorder!
+    fileprivate var totalTime: TimeInterval!
+    fileprivate var playedTime: TimeInterval?
     
-    private var displayLink: CADisplayLink?
+    fileprivate var displayLink: CADisplayLink?
     
-    private var viewController: UIViewController!
+    fileprivate var viewController: UIViewController!
     
-    private var recordButton: UIButton = {
+    fileprivate var recordButton: UIButton = {
         let button = UIButton()
-        button.setBackgroundImage(UIImage(named: "audio_record"), forState: .Normal)
+        button.setBackgroundImage(UIImage(named: "audio_record"), for: UIControlState())
         return button
     }()
     
-    private var markButton: UIButton = {
+    fileprivate var markButton: UIButton = {
         let button = UIButton()
-        button.setTitle("标记", forState: .Normal)
-        button.setTitleColor(textColor, forState: .Normal)
-        button.setTitleColor(disabledColor, forState: .Disabled)
+        button.setTitle("标记", for: UIControlState())
+        button.setTitleColor(textColor, for: UIControlState())
+        button.setTitleColor(disabledColor, for: .disabled)
         button.titleLabel?.font = textFont
-        button.enabled = false
+        button.isEnabled = false
         return button
     }()
     
-    private var doneButton: UIButton = {
+    fileprivate var doneButton: UIButton = {
         let button = UIButton()
-        button.setTitle("完成", forState: .Normal)
-        button.setTitleColor(textColor, forState: .Normal)
-        button.setTitleColor(disabledColor, forState: .Disabled)
+        button.setTitle("完成", for: UIControlState())
+        button.setTitleColor(textColor, for: UIControlState())
+        button.setTitleColor(disabledColor, for: .disabled)
         button.titleLabel?.font = textFont
         return button
     }()
     
-    private var timeLabel: UILabel = {
+    fileprivate var timeLabel: UILabel = {
         let label = UILabel()
         label.text = "00:00"
         label.textColor = textColor
-        label.textAlignment = .Center
+        label.textAlignment = .center
         label.font = textFont
         return label
     }()
     
-    private var quitButton: UIButton = {
+    fileprivate var quitButton: UIButton = {
         let button = UIButton()
-        button.setBackgroundImage(UIImage(named: "audio_quit"), forState: .Normal)
+        button.setBackgroundImage(UIImage(named: "audio_quit"), for: UIControlState())
         return button
     }()
     
-    private lazy var markContainter: UIImageView = {
+    fileprivate lazy var markContainter: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "audio_mark")
-        imageView.hidden = true
-        imageView.userInteractionEnabled = true
+        imageView.isHidden = true
+        imageView.isUserInteractionEnabled = true
         return imageView
     }()
     
-    private lazy var markTextButton: UIButton = {
+    fileprivate lazy var markTextButton: UIButton = {
         let button = UIButton()
-        button.setTitle("文字", forState: .Normal)
-        button.setTitleColor(UIColor.color(withHex: 0xd5d5d5), forState: .Normal)
-        button.titleLabel?.font = UIFont.systemFontOfSize(13)
+        button.setTitle("文字", for: UIControlState())
+        button.setTitleColor(UIColor.color(withHex: 0xd5d5d5), for: UIControlState())
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 13)
         return button
     }()
     
-    private lazy var markPicButton: UIButton = {
+    fileprivate lazy var markPicButton: UIButton = {
         let button = UIButton()
-        button.setTitle("图片", forState: .Normal)
-        button.setTitleColor(UIColor.color(withHex: 0xd5d5d5), forState: .Normal)
-        button.titleLabel?.font = UIFont.systemFontOfSize(13)
+        button.setTitle("图片", for: UIControlState())
+        button.setTitleColor(UIColor.color(withHex: 0xd5d5d5), for: UIControlState())
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 13)
         return button
     }()
     
-    private var playButton: UIButton = {
+    fileprivate var playButton: UIButton = {
         let button = UIButton()
-        button.setBackgroundImage(UIImage(named: "audio_play"), forState: .Normal)
+        button.setBackgroundImage(UIImage(named: "audio_play"), for: UIControlState())
         return button
     }()
     
-    private lazy var playSlider: AudioSlider = {
+    fileprivate lazy var playSlider: AudioSlider = {
         return AudioSlider()
     }()
     
-    private lazy var currentTimeLabel: UILabel = {
+    fileprivate lazy var currentTimeLabel: UILabel = {
         let label = UILabel()
         label.text = "00:00"
         label.textColor = textColor
-        label.textAlignment = .Center
-        label.font = UIFont.systemFontOfSize(10)
+        label.textAlignment = .center
+        label.font = UIFont.systemFont(ofSize: 10)
         return label
     }()
     
-    private lazy var totalTimeLabel: UILabel = {
+    fileprivate lazy var totalTimeLabel: UILabel = {
         let label = UILabel()
         label.textColor = textColor
-        label.textAlignment = .Center
-        label.font = UIFont.systemFontOfSize(10)
+        label.textAlignment = .center
+        label.font = UIFont.systemFont(ofSize: 10)
         return label
     }()
     
-    private lazy var recordSettings = {
-        return [AVSampleRateKey : NSNumber(float: Float(44100.0)),//声音采样率
-            AVFormatIDKey : NSNumber(unsignedInt: kAudioFormatMPEG4AAC),//编码格式
-            AVNumberOfChannelsKey : NSNumber(int: 2),//采集音轨
+    fileprivate lazy var recordSettings = {
+        return [AVSampleRateKey : NSNumber(value: Float(44100.0) as Float),//声音采样率
+            AVFormatIDKey : NSNumber(value: kAudioFormatMPEG4AAC as UInt32),//编码格式
+            AVNumberOfChannelsKey : NSNumber(value: 2 as Int32),//采集音轨
             AVEncoderBitRateKey : 64000,
-            AVEncoderAudioQualityKey : NSNumber(int: Int32(AVAudioQuality.Medium.rawValue))]//音频质量
+            AVEncoderAudioQualityKey : NSNumber(value: Int32(AVAudioQuality.medium.rawValue) as Int32)]//音频质量
     }()
     
-    init(audioURL: NSURL? = nil, inController controller: UIViewController, playedTime: NSTimeInterval? = nil) {
+    init(audioURL: URL? = nil, inController controller: UIViewController, playedTime: TimeInterval? = nil) {
         super.init(frame: CGRect(x: 0, y: kScreenHeight-kAudioToolBarHeight, width: kScreenWidth, height: kAudioToolBarHeight))
         backgroundColor = UIColor.color(withHex: 0x4b4b4b)
         
@@ -152,9 +152,9 @@ class AudioRecordToolBar: UIView {
         
         if let url = audioURL {
             
-            type = .Play
-            doneButton.setTitle("返回", forState: .Normal)
-            markButton.enabled = true
+            type = .play
+            doneButton.setTitle("返回", for: UIControlState())
+            markButton.isEnabled = true
             
             
             if let player = SpiderPlayer.sharedManager.prepareToPlay(url) {
@@ -173,23 +173,23 @@ class AudioRecordToolBar: UIView {
                 
                 guard let player = SpiderPlayer.sharedManager.player else { return }
                 
-                type = .Play
+                type = .play
                 
                 self.player = player
                 totalTime = player.duration
                 
-                doneButton.setTitle("返回", forState: .Normal)
+                doneButton.setTitle("返回", for: UIControlState())
                 totalTimeLabel.text = totalTime.toMinSec()
                 currentTimeLabel.text = startTime.toMinSec()
                 playSlider.value = Float(player.currentTime / totalTime)
-                markButton.enabled = true
+                markButton.isEnabled = true
 
                 makeUI()
                 addActions()
                 
-                if player.playing {
-                    playButton.setBackgroundImage(UIImage(named: "audio_pause"), forState: .Normal)
-                    displayLink?.paused = false
+                if player.isPlaying {
+                    playButton.setBackgroundImage(UIImage(named: "audio_pause"), for: UIControlState())
+                    displayLink?.isPaused = false
                 }
                 
             } else {
@@ -200,8 +200,8 @@ class AudioRecordToolBar: UIView {
             }
         }
         
-        if type == .Play {
-            SpiderPlayer.sharedManager.addObserver(self, forKeyPath: "changed", options: .Old, context: &myContext)
+        if type == .play {
+            SpiderPlayer.sharedManager.addObserver(self, forKeyPath: "changed", options: .old, context: &myContext)
         }
     }
     
@@ -209,7 +209,7 @@ class AudioRecordToolBar: UIView {
         super.removeFromSuperview()
         displayLink?.invalidate()
         
-        if type == .Play {
+        if type == .play {
             SpiderPlayer.sharedManager.removeObserver(self, forKeyPath: "changed")
         }
         
@@ -222,12 +222,12 @@ class AudioRecordToolBar: UIView {
         }
     }
     
-    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if context == &myContext {
-            if let key = keyPath where key == "changed" {
-                dispatch_async(dispatch_get_main_queue(), {
-                    self.playButton.setBackgroundImage(UIImage(named: "audio_play"), forState: .Normal)
-                    self.displayLink?.paused = true
+            if let key = keyPath, key == "changed" {
+                DispatchQueue.main.async(execute: {
+                    self.playButton.setBackgroundImage(UIImage(named: "audio_play"), for: UIControlState())
+                    self.displayLink?.isPaused = true
                 })
             }
         }
@@ -237,28 +237,28 @@ class AudioRecordToolBar: UIView {
     
     func addActions() {
         
-        if type == .Record {
+        if type == .record {
             
-            doneButton.enabled = false
-            quitButton.addTarget(self, action: #selector(quitButtonClicked), forControlEvents: .TouchUpInside)
-            recordButton.addTarget(self, action: #selector(recordButtonClicked), forControlEvents: .TouchUpInside)
+            doneButton.isEnabled = false
+            quitButton.addTarget(self, action: #selector(quitButtonClicked), for: .touchUpInside)
+            recordButton.addTarget(self, action: #selector(recordButtonClicked), for: .touchUpInside)
             
         } else {
             
-            playButton.addTarget(self, action: #selector(playButtonClicked), forControlEvents: .TouchUpInside)
-            playSlider.addTarget(self, action: #selector(playSliderMoved), forControlEvents: .ValueChanged)
+            playButton.addTarget(self, action: #selector(playButtonClicked), for: .touchUpInside)
+            playSlider.addTarget(self, action: #selector(playSliderMoved), for: .valueChanged)
             player.delegate = self
         }
         
-        doneButton.addTarget(self, action: #selector(doneButtonCliked), forControlEvents: .TouchUpInside)
-        markButton.addTarget(self, action: #selector(markButtonClicked), forControlEvents: .TouchUpInside)
-        markTextButton.addTarget(self, action: #selector(markTextButtonClicked), forControlEvents: .TouchUpInside)
-        markPicButton.addTarget(self, action: #selector(markPicButtonClicked), forControlEvents: .TouchUpInside)
+        doneButton.addTarget(self, action: #selector(doneButtonCliked), for: .touchUpInside)
+        markButton.addTarget(self, action: #selector(markButtonClicked), for: .touchUpInside)
+        markTextButton.addTarget(self, action: #selector(markTextButtonClicked), for: .touchUpInside)
+        markPicButton.addTarget(self, action: #selector(markPicButtonClicked), for: .touchUpInside)
         
         displayLink = CADisplayLink(target: self, selector: #selector(updateTimeLabel))
         displayLink?.frameInterval = 6 // 10次每秒
-        displayLink?.addToRunLoop(NSRunLoop.currentRunLoop(), forMode: NSRunLoopCommonModes)
-        displayLink?.paused = true
+        displayLink?.add(to: RunLoop.current, forMode: RunLoopMode.commonModes)
+        displayLink?.isPaused = true
     }
     
     func quitButtonClicked() {
@@ -287,23 +287,23 @@ class AudioRecordToolBar: UIView {
     
     func saveRecord() {
         
-        type = .Play
+        type = .play
         
         if let spiderPlayer = SpiderPlayer.sharedManager.prepareToPlay(recorder.url) {
             player = spiderPlayer
             player.delegate = self
             
-            SpiderPlayer.sharedManager.addObserver(self, forKeyPath: "changed", options: .Old, context: &myContext)
+            SpiderPlayer.sharedManager.addObserver(self, forKeyPath: "changed", options: .old, context: &myContext)
             
             totalTime = player.duration
             totalTimeLabel.text = totalTime.toMinSec()
             
             doneHandler?(totalTime.toMinSec())
             changeUIToPlayType()
-            playSlider.addTarget(self, action: #selector(playSliderMoved), forControlEvents: .ValueChanged)
-            playButton.addTarget(self, action: #selector(playButtonClicked), forControlEvents: .TouchUpInside)
+            playSlider.addTarget(self, action: #selector(playSliderMoved), for: .valueChanged)
+            playButton.addTarget(self, action: #selector(playButtonClicked), for: .touchUpInside)
             
-            displayLink?.paused = false
+            displayLink?.isPaused = false
             
         } else {
             println("audio record tool bar error")
@@ -311,7 +311,7 @@ class AudioRecordToolBar: UIView {
     }
     
     func doneButtonCliked() {
-        if type == .Record {
+        if type == .record {
             
             if timeLabel.text!.toTime() >= 2 {
                 recorder.stop()
@@ -334,14 +334,14 @@ class AudioRecordToolBar: UIView {
     }
     
     func markButtonClicked() {
-        markContainter.hidden = !markContainter.hidden
+        markContainter.isHidden = !markContainter.isHidden
     }
     
     func markPicButtonClicked() {
         
-        markContainter.hidden = true
+        markContainter.isHidden = true
         
-        if type == .Record {
+        if type == .record {
             markPicHandler?(timeLabel.text!)
         } else {
             markPicHandler?(player.currentTime.toMinSec())
@@ -350,16 +350,16 @@ class AudioRecordToolBar: UIView {
     
     func markTextButtonClicked() {
         
-        markContainter.hidden = true
+        markContainter.isHidden = true
         
-        if type == .Record {
+        if type == .record {
             markTextHandler?(timeLabel.text!)
         } else {
             markTextHandler?(player.currentTime.toMinSec())
         }
     }
     
-    func initRecorder(id: String) {
+    func initRecorder(_ id: String) {
         guard let url = APP_UTILITY.getAudioFilePath(id) else { return }
         
         if recorder != nil {
@@ -367,21 +367,21 @@ class AudioRecordToolBar: UIView {
         }
         
         do {
-            try recorder = AVAudioRecorder(URL: url, settings: recordSettings)
+            try recorder = AVAudioRecorder(url: url, settings: recordSettings)
             recorder.delegate = self
             try AVAudioSession.sharedInstance().setActive(true)
             
             if recorder.prepareToRecord() {
                 recorder.record()
                 
-                recordButton.setBackgroundImage(UIImage(named: "audio_pause"), forState: .Normal)
+                recordButton.setBackgroundImage(UIImage(named: "audio_pause"), for: UIControlState())
                 
                 hasRecorded = true
                 
-                markButton.enabled = true
-                doneButton.enabled = false
+                markButton.isEnabled = true
+                doneButton.isEnabled = false
                 
-                displayLink?.paused = false
+                displayLink?.isPaused = false
             }
         } catch {
             println("Audio Section Recorder Init Failed......")
@@ -391,7 +391,7 @@ class AudioRecordToolBar: UIView {
     func recordButtonClicked() {
         
         if !hasRecorded {
-            audioID = NSUUID().UUIDString
+            audioID = UUID().uuidString
             initRecorder(audioID!)
             
         } else {
@@ -408,48 +408,48 @@ class AudioRecordToolBar: UIView {
                 })
                 
             } else {
-                recorder.recording ? pauseRecord() : startRecord()
+                recorder.isRecording ? pauseRecord() : startRecord()
             }
         }
     }
     
-    private func pauseRecord() {
+    fileprivate func pauseRecord() {
         recorder.pause()
-        recordButton.setBackgroundImage(UIImage(named: "audio_record"), forState: .Normal)
-        doneButton.enabled = true
-        displayLink?.paused = true
+        recordButton.setBackgroundImage(UIImage(named: "audio_record"), for: UIControlState())
+        doneButton.isEnabled = true
+        displayLink?.isPaused = true
     }
     
-    private func startRecord() {
+    fileprivate func startRecord() {
         recorder.record()
-        recordButton.setBackgroundImage(UIImage(named: "audio_pause"), forState: .Normal)
-        doneButton.enabled = false
-        displayLink?.paused = false
+        recordButton.setBackgroundImage(UIImage(named: "audio_pause"), for: UIControlState())
+        doneButton.isEnabled = false
+        displayLink?.isPaused = false
     }
     
     func playButtonClicked() {
         
-        if player.playing {
+        if player.isPlaying {
             
-            playButton.setBackgroundImage(UIImage(named: "audio_play"), forState: .Normal)
+            playButton.setBackgroundImage(UIImage(named: "audio_play"), for: UIControlState())
             player.pause()
-            displayLink?.paused = true
+            displayLink?.isPaused = true
             
         } else {
             
-            playButton.setBackgroundImage(UIImage(named: "audio_pause"), forState: .Normal)
+            playButton.setBackgroundImage(UIImage(named: "audio_pause"), for: UIControlState())
             player.play()
-            displayLink?.paused = false
+            displayLink?.isPaused = false
         }
     }
     
-    func playSliderMoved(sender: UISlider) {
-        player.currentTime = NSTimeInterval(Float(totalTime) * (sender.value))
+    func playSliderMoved(_ sender: UISlider) {
+        player.currentTime = TimeInterval(Float(totalTime) * (sender.value))
         currentTimeLabel.text = player.currentTime.toMinSec()
     }
     
     func updateTimeLabel() {
-        if type == .Record {
+        if type == .record {
             timeLabel.text = recorder.currentTime.toMinSec()
         } else {
             currentTimeLabel.text = player.currentTime.toMinSec()
@@ -457,14 +457,14 @@ class AudioRecordToolBar: UIView {
         }
     }
     
-    func playAt(time: NSTimeInterval) {
-        if !player.playing {
+    func playAt(_ time: TimeInterval) {
+        if !player.isPlaying {
             player.play()
         }
         player.currentTime = time
 
-        displayLink?.paused = false
-        playButton.setBackgroundImage(UIImage(named: "audio_pause"), forState: .Normal)
+        displayLink?.isPaused = false
+        playButton.setBackgroundImage(UIImage(named: "audio_pause"), for: UIControlState())
     }
     
     
@@ -483,7 +483,7 @@ class AudioRecordToolBar: UIView {
         markTextButton.translatesAutoresizingMaskIntoConstraints = false
         markPicButton.translatesAutoresizingMaskIntoConstraints = false
         
-        if type == .Record {
+        if type == .record {
             addSubview(timeLabel)
             addSubview(recordButton)
             addSubview(quitButton)
@@ -527,35 +527,35 @@ class AudioRecordToolBar: UIView {
             addSubview(currentTimeLabel)
             addSubview(totalTimeLabel)
             addSubview(playButton)
-            bringSubviewToFront(markContainter)
+            bringSubview(toFront: markContainter)
             
             currentTimeLabel.translatesAutoresizingMaskIntoConstraints = false
             totalTimeLabel.translatesAutoresizingMaskIntoConstraints = false
             playButton.translatesAutoresizingMaskIntoConstraints = false
             
-            currentTimeLabel.snp_makeConstraints(closure: { (make) in
+            currentTimeLabel.snp_makeConstraints({ (make) in
                 make.left.equalTo(15)
                 make.centerY.equalTo(playSlider)
             })
             
-            totalTimeLabel.snp_makeConstraints(closure: { (make) in
+            totalTimeLabel.snp_makeConstraints({ (make) in
                 make.right.equalTo(-15)
                 make.centerY.equalTo(playSlider)
             })
             
-            playButton.snp_makeConstraints(closure: { (make) in
+            playButton.snp_makeConstraints({ (make) in
                 make.width.height.equalTo(40)
                 make.top.equalTo(playSlider.snp_bottom).offset(14)
                 make.centerX.equalTo(self)
             })
             
-            markButton.snp_makeConstraints(closure: { (make) in
+            markButton.snp_makeConstraints({ (make) in
                 make.width.height.equalTo(40)
                 make.left.equalTo(86)
                 make.centerY.equalTo(playButton)
             })
             
-            doneButton.snp_makeConstraints(closure: { (make) in
+            doneButton.snp_makeConstraints({ (make) in
                 make.width.height.equalTo(40)
                 make.right.equalTo(-86)
                 make.centerY.equalTo(playButton)
@@ -590,13 +590,13 @@ class AudioRecordToolBar: UIView {
         addSubview(currentTimeLabel)
         addSubview(totalTimeLabel)
         addSubview(playButton)
-        bringSubviewToFront(markContainter)
+        bringSubview(toFront: markContainter)
         
         currentTimeLabel.translatesAutoresizingMaskIntoConstraints = false
         totalTimeLabel.translatesAutoresizingMaskIntoConstraints = false
         playButton.translatesAutoresizingMaskIntoConstraints = false
         
-        doneButton.setTitle("返回", forState: .Normal)
+        doneButton.setTitle("返回", for: UIControlState())
         
         currentTimeLabel.snp_makeConstraints { (make) in
             make.left.equalTo(15)
@@ -634,27 +634,27 @@ class AudioRecordToolBar: UIView {
 }
 
 extension AudioRecordToolBar: AVAudioPlayerDelegate {
-    func audioPlayerDidFinishPlaying(player: AVAudioPlayer, successfully flag: Bool) {
-        playButton.setBackgroundImage(UIImage(named: "audio_play"), forState: .Normal)
+    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+        playButton.setBackgroundImage(UIImage(named: "audio_play"), for: UIControlState())
     }
 }
 
 extension AudioRecordToolBar: AVAudioRecorderDelegate {
-    func audioRecorderEncodeErrorDidOccur(recorder: AVAudioRecorder, error: NSError?) {
+    func audioRecorderEncodeErrorDidOccur(_ recorder: AVAudioRecorder, error: Error?) {
 
     }
     
-    func audioRecorderBeginInterruption(recorder: AVAudioRecorder) {
+    func audioRecorderBeginInterruption(_ recorder: AVAudioRecorder) {
         println(" Recoder begin interruption")
         
         beInterrupted = true
         recorder.stop()
-        recordButton.setBackgroundImage(UIImage(named: "audio_record"), forState: .Normal)
-        doneButton.enabled = true
-        displayLink?.paused = true
+        recordButton.setBackgroundImage(UIImage(named: "audio_record"), for: UIControlState())
+        doneButton.isEnabled = true
+        displayLink?.isPaused = true
     }
     
-    func audioRecorderEndInterruption(recorder: AVAudioRecorder, withOptions flags: Int) {
+    func audioRecorderEndInterruption(_ recorder: AVAudioRecorder, withOptions flags: Int) {
 
     }
 }

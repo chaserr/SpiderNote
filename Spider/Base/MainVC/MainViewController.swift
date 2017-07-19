@@ -17,28 +17,28 @@ class MainViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationTitleLabel = UILabel.init(frame: CGRectMake(0, 0, 176, 46))
-        navigationTitleLabel.textAlignment = NSTextAlignment.Center
-        navigationTitleLabel.font = UIFont.systemFontOfSize(18)
-        navigationTitleLabel.backgroundColor = UIColor.clearColor()
+        navigationTitleLabel = UILabel.init(frame: CGRect(x: 0, y: 0, width: 176, height: 46))
+        navigationTitleLabel.textAlignment = NSTextAlignment.center
+        navigationTitleLabel.font = UIFont.systemFont(ofSize: 18)
+        navigationTitleLabel.backgroundColor = UIColor.clear
         navigationTitleLabel.textColor = RGBCOLORV(0x282828)
-        navigationTitleLabel.lineBreakMode = NSLineBreakMode.ByTruncatingTail
+        navigationTitleLabel.lineBreakMode = NSLineBreakMode.byTruncatingTail
         self.navigationItem.titleView = navigationTitleLabel
         
 //        if ((navigationController?.navigationBar.respondsToSelector(Selector("interactivePopGestureRecognizer"))) != nil) {
 //            self.navigationController!.interactivePopGestureRecognizer!.delegate = nil;
 //        }
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(MainViewController.contentSizeDidChangeNotification(_:)), name: UIContentSizeCategoryDidChangeNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.contentSizeDidChangeNotification(_:)), name: NSNotification.Name.UIContentSizeCategoryDidChange, object: nil)
     }
     
-    @objc private func contentSizeDidChangeNotification(notification: NSNotification) {
+    @objc fileprivate func contentSizeDidChangeNotification(_ notification: Notification) {
         if let userInfo: NSDictionary = notification.userInfo {
             self.contentSizeDidChange(userInfo[UIContentSizeCategoryNewValueKey] as! String)
         }
     }
     
-    func contentSizeDidChange(size: String) {
+    func contentSizeDidChange(_ size: String) {
         // Implement in subclass
     }
     
@@ -52,24 +52,24 @@ class MainViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
     
     // MARK:控制器生命周期
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
     }
     
-    override func viewDidDisappear(animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
     }
     
@@ -82,8 +82,8 @@ class MainViewController: UIViewController {
 extension MainViewController{
 
     
-    override func setLeftBarButtonItem(barButtonItem:UIBarButtonItem) -> Void {
-        let negativeSpace:UIBarButtonItem = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
+    override func setLeftBarButtonItem(_ barButtonItem:UIBarButtonItem) -> Void {
+        let negativeSpace:UIBarButtonItem = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonSystemItem.fixedSpace, target: nil, action: nil)
         
         if UIDevice.isHigherIOS7() {
             negativeSpace.width = 0
@@ -96,8 +96,8 @@ extension MainViewController{
         
     }
     
-    func setRightBarButtonItem(barButtonItem:UIBarButtonItem) -> Void {
-        let negativeSpace:UIBarButtonItem = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
+    func setRightBarButtonItem(_ barButtonItem:UIBarButtonItem) -> Void {
+        let negativeSpace:UIBarButtonItem = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonSystemItem.fixedSpace, target: nil, action: nil)
         
         if UIDevice.isHigherIOS7() {
             negativeSpace.width = 0
@@ -112,15 +112,15 @@ extension MainViewController{
     
     // 自定义返回按钮
     override func customLizeNavigationBarBackBtn() -> Void {
-        backButton = UIButton.init(type: UIButtonType.Custom)
-        backButton.frame = CGRectMake(0.0, 0.0, 30.0, 44.0)
-        backButton.imageView?.contentMode = UIViewContentMode.Center
-        backButton.setImage(UIImage(named: "nav_back"), forState: UIControlState.Normal)
+        backButton = UIButton.init(type: UIButtonType.custom)
+        backButton.frame = CGRect(x: 0.0, y: 0.0, width: 30.0, height: 44.0)
+        backButton.imageView?.contentMode = UIViewContentMode.center
+        backButton.setImage(UIImage(named: "nav_back"), for: UIControlState())
         backButton.imageEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 10)
 //        backButton.contentHorizontalAlignment = UIControlContentHorizontalAlignment.Left
-        backButton.addTarget(self, action: #selector(backAction), forControlEvents: UIControlEvents.TouchUpInside)
+        backButton.addTarget(self, action: #selector(backAction), for: UIControlEvents.touchUpInside)
         let backBarBtnItem:UIBarButtonItem = UIBarButtonItem.init(customView: backButton)
-        backBarBtnItem.style = UIBarButtonItemStyle.Plain
+        backBarBtnItem.style = UIBarButtonItemStyle.plain
         setLeftBarButtonItem(backBarBtnItem)
         
     }

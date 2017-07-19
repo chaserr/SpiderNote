@@ -12,12 +12,12 @@ private let cellID = "AudioSectionCellID"
 
 class AudioSectionViewController: UIViewController {
     
-    var type: AudioToolBarType = .Record
+    var type: AudioToolBarType = .record
     
-    private var lastSelectedIndex: NSIndexPath! {
+    fileprivate var lastSelectedIndex: IndexPath! {
         willSet {
             if newValue == nil {
-                tagPlayButton.hidden = true
+                tagPlayButton.isHidden = true
             }
         }
     }
@@ -26,34 +26,34 @@ class AudioSectionViewController: UIViewController {
     
     var audioID: String?
     
-    private var picking = false
+    fileprivate var picking = false
     
-    private var tagToast: AudioTagToast?
+    fileprivate var tagToast: AudioTagToast?
     
-    private var playedTime: NSTimeInterval?
-    private var section: SectionObject?
+    fileprivate var playedTime: TimeInterval?
+    fileprivate var section: SectionObject?
     
-    private var toShowTag: TagObject?
+    fileprivate var toShowTag: TagObject?
     
-    private lazy var tagPlayButton: UIButton = {
+    fileprivate lazy var tagPlayButton: UIButton = {
         let button = UIButton(frame: CGRect(x: 0, y: 0, width: 48, height: 25))
-        button.setBackgroundImage(UIImage(named: "audio_tag_play"), forState: .Normal)
+        button.setBackgroundImage(UIImage(named: "audio_tag_play"), for: UIControlState())
         return button
     }()
     
-    private var tableView: AudioTagTableView = {
+    fileprivate var tableView: AudioTagTableView = {
         return AudioTagTableView()
     }()
     
-    private var titleView: AudioTitleView = {
+    fileprivate var titleView: AudioTitleView = {
         return AudioTitleView()
     }()
     
-    private var toolBar: AudioRecordToolBar!
+    fileprivate var toolBar: AudioRecordToolBar!
     
     // MARK: - Life Cycle
     
-    init(section: SectionObject? = nil, toShowTag: TagObject? = nil, playedTime: NSTimeInterval? = nil) {
+    init(section: SectionObject? = nil, toShowTag: TagObject? = nil, playedTime: TimeInterval? = nil) {
         super.init(nibName: nil, bundle: nil)
         self.section = section
         self.toShowTag = toShowTag
@@ -66,10 +66,10 @@ class AudioSectionViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        edgesForExtendedLayout = .None
+        edgesForExtendedLayout = UIRectEdge()
         
-        if let section = section, audioObject = section.audio {
-            type = .Play
+        if let section = section, let audioObject = section.audio {
+            type = .play
             
             titleView.title = section.ownerName
             
@@ -88,16 +88,15 @@ class AudioSectionViewController: UIViewController {
                 let audioURL = APP_UTILITY.getAudioFilePath(audioObject.url)
                 toolBar = AudioRecordToolBar(audioURL: audioURL, inController: self)
             }
-            
-            let tags = audioObject.tags.sorted("location", ascending: true)
-            
+            let tags = audioObject.tags.sorted(byKeyPath: "location", ascending: true)
+        
             for tag in tags {
                 tagSources.append(AudioTagInfo(tag: tag))
             }
             
         } else {
             
-            type = .Record
+            type = .record
             
             if let article = SpiderConfig.ArticleList.article {
                 titleView.title = article.name
@@ -105,7 +104,7 @@ class AudioSectionViewController: UIViewController {
                 titleView.title = "未归档"
             }
             
-            navigationController?.fd_fullscreenPopGestureRecognizer.enabled = false
+            navigationController?.fd_fullscreenPopGestureRecognizer.isEnabled = false
             toolBar = AudioRecordToolBar(inController: self)
         }
         
@@ -116,20 +115,20 @@ class AudioSectionViewController: UIViewController {
         view.addSubview(tableView)
         view.addSubview(toolBar)
         
-        tagPlayButton.hidden = true
+        tagPlayButton.isHidden = true
         tableView.addSubview(tagPlayButton)
         
         addActions()
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         navigationController?.setNavigationBarHidden(true, animated: false)
-        UIApplication.sharedApplication().statusBarStyle = .Default
+        UIApplication.shared.statusBarStyle = .default
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         guard let tag = toShowTag else { return }
@@ -138,16 +137,16 @@ class AudioSectionViewController: UIViewController {
             
             if tag.id == tagSources[i].id {
                 
-                let indexPath = NSIndexPath(forItem: i, inSection: 0)
+                let indexPath = IndexPath(item: i, section: 0)
                 unFoldCellAt(indexPath)
-                tableView.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Top, animated: true)
+                tableView.scrollToRow(at: indexPath, at: .top, animated: true)
             }
         }
         
         toShowTag = nil
     }
     
-    override func viewDidDisappear(animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         
         if !picking {
@@ -162,7 +161,7 @@ class AudioSectionViewController: UIViewController {
     
     // MARK: - View's Actions
     func addActions() {
-        tagPlayButton.addTarget(self, action: #selector(tagPlayButtonClicked), forControlEvents: .TouchUpInside)
+        tagPlayButton.addTarget(self, action: #selector(tagPlayButtonClicked), for: .touchUpInside)
         
         // gesture
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(didLongPress))
@@ -172,9 +171,9 @@ class AudioSectionViewController: UIViewController {
         toolBar.quitHandler = { [weak self] in
             
             if let navigator = self?.navigationController {
-                navigator.popViewControllerAnimated(true)
+                navigator.popViewController(animated: true)
             } else {
-                self?.dismissViewControllerAnimated(true, completion: nil)
+                self?.dismiss(animated: true, completion: nil)
             }
         }
         
@@ -205,7 +204,7 @@ class AudioSectionViewController: UIViewController {
                 self?.picking = false
             })
             
-            self?.presentViewController(picker, animated: true, completion: nil)
+            self?.present(picker, animated: true, completion: nil)
         }
     }
     
@@ -218,26 +217,26 @@ class AudioSectionViewController: UIViewController {
         
         section = SpiderRealm.createAudioSection(toolBar.audioID!, duration: duration, with: tagSources)
         
-        type = .Play
-        navigationController?.fd_fullscreenPopGestureRecognizer.enabled = true
+        type = .play
+        navigationController?.fd_fullscreenPopGestureRecognizer.isEnabled = true
         foldCell()
     }
     
-    func didLongPress(sender: UILongPressGestureRecognizer) {
+    func didLongPress(_ sender: UILongPressGestureRecognizer) {
         
-        if sender.state == .Began {
+        if sender.state == .began {
             
-            let location = sender.locationInView(tableView)
-            let indexPath = tableView.indexPathForRowAtPoint(location)
+            let location = sender.location(in: tableView)
+            let indexPath = tableView.indexPathForRow(at: location)
             
             if let indexPath = indexPath {
                 
                 let tagInfo = tagSources[indexPath.item]
-                let cell = tableView.cellForRowAtIndexPath(indexPath) as! AudioTagInfoCell
-                let toastCenter = cell.convertPoint(cell.getCenter(), toView: view).addOffset(CGPoint(x: 0, y: -17))
+                let cell = tableView.cellForRow(at: indexPath) as! AudioTagInfoCell
+                let toastCenter = cell.convert(cell.getCenter(), to: view).addOffset(CGPoint(x: 0, y: -17))
                 
                 tagToast?.removeFromSuperview()
-                tagToast = AudioTagToast(type: tagInfo.type == .Pic ? "PicToast" : "TextToast")
+                tagToast = AudioTagToast(type: tagInfo.type == .pic ? "PicToast" : "TextToast")
                 tagToast!.center = toastCenter
                 view.addSubview(tagToast!)
                 
@@ -260,7 +259,7 @@ class AudioSectionViewController: UIViewController {
     
     // MARK: - Common Methods
     
-    func addTag(info: AudioTagInfo) {
+    func addTag(_ info: AudioTagInfo) {
         var atIndex = -1
         
         for i in 0 ..< tagSources.count {
@@ -278,25 +277,25 @@ class AudioSectionViewController: UIViewController {
         foldCell()
         
         tableView.beginUpdates()
-        tagSources.insert(info, atIndex: atIndex)
-        tableView.insertRowsAtIndexPaths([NSIndexPath(forRow: atIndex, inSection: 0)], withRowAnimation: .None)
+        tagSources.insert(info, at: atIndex)
+        tableView.insertRows(at: [IndexPath(row: atIndex, section: 0)], with: .none)
         tableView.endUpdates()
         
-        unFoldCellAt(NSIndexPath(forItem: atIndex, inSection: 0))
+        unFoldCellAt(IndexPath(item: atIndex, section: 0))
         
         if let section = section {
             SpiderRealm.addTag(TagObject(tagInfo: info), to: section, at: atIndex)
         }
     }
     
-    func editTagAt(index: NSIndexPath, with text: String) {
+    func editTagAt(_ index: IndexPath, with text: String) {
         let tagInfo = tagSources[index.item]
         
         tagSources[index.item].content = text
         tableView.reloadData()
         
         if tagInfo.selected {
-            let cell = tableView.cellForRowAtIndexPath(index) as! AudioTagInfoCell
+            let cell = tableView.cellForRow(at: index) as! AudioTagInfoCell
             tagSources[index.item].height = cell.unfoldTag()
             tableView.beginUpdates()
             tableView.endUpdates()
@@ -307,7 +306,7 @@ class AudioSectionViewController: UIViewController {
         }
     }
     
-    func deleteTagAt(index: NSIndexPath) {
+    func deleteTagAt(_ index: IndexPath) {
         
         let tagInfo = tagSources[index.item]
         
@@ -316,8 +315,8 @@ class AudioSectionViewController: UIViewController {
         }
         
         tableView.beginUpdates()
-        tagSources.removeAtIndex(index.item)
-        tableView.deleteRowsAtIndexPaths([index], withRowAnimation: .Fade)
+        tagSources.remove(at: index.item)
+        tableView.deleteRows(at: [index], with: .fade)
         tableView.endUpdates()
         
         if let section = section {
@@ -327,7 +326,7 @@ class AudioSectionViewController: UIViewController {
     
     func foldCell() {
         
-        if let _ = tagToast where tagToast!.isDescendantOfView(view) {
+        if let _ = tagToast, tagToast!.isDescendant(of: view) {
             tagToast?.removeFromSuperview()
         }
         
@@ -337,14 +336,14 @@ class AudioSectionViewController: UIViewController {
             
             tableView.beginUpdates()
             tagSources[lastSelectedIndex.item].height = kAudioTagCellHeight
-            let lastCell = tableView.cellForRowAtIndexPath(lastSelectedIndex) as! AudioTagInfoCell
+            let lastCell = tableView.cellForRow(at: lastSelectedIndex) as! AudioTagInfoCell
             lastCell.foldTag()
             tableView.endUpdates()
         }
     }
     
-    func unFoldCellAt(indexPath: NSIndexPath) {
-        if let _ = tagToast where tagToast!.isDescendantOfView(view) {
+    func unFoldCellAt(_ indexPath: IndexPath) {
+        if let _ = tagToast, tagToast!.isDescendant(of: view) {
             tagToast?.removeFromSuperview()
         }
         
@@ -356,7 +355,7 @@ class AudioSectionViewController: UIViewController {
             // TODO: - 展开 & 折叠 动画细调
             foldCell()
             
-            let nowCell = tableView.cellForRowAtIndexPath(indexPath) as! AudioTagInfoCell
+            let nowCell = tableView.cellForRow(at: indexPath) as! AudioTagInfoCell
             lastSelectedIndex = indexPath
             tagSources[indexPath.item].selected = true
             
@@ -364,10 +363,10 @@ class AudioSectionViewController: UIViewController {
             tagSources[indexPath.item].height = nowCell.unfoldTag()
             tableView.endUpdates()
             
-            if type == .Play {
+            if type == .play {
                 let buttonOrigin = CGPoint(x: 12, y: 4.5 + CGFloat(indexPath.item) * kAudioTagCellHeight)
                 tagPlayButton.frame.origin = buttonOrigin
-                tagPlayButton.hidden = false
+                tagPlayButton.isHidden = false
             }
         }
 
@@ -381,24 +380,24 @@ class AudioSectionViewController: UIViewController {
 
 // MARK: - TableView
 extension AudioSectionViewController: UITableViewDelegate, UITableViewDataSource {
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return tagSources.count
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = AudioTagInfoCell(info: tagSources[indexPath.item])
         return cell
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         unFoldCellAt(indexPath)
     }
     
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return tagSources[indexPath.item].height
     }
 }

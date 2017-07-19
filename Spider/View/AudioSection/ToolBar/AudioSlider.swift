@@ -18,18 +18,18 @@ class AudioSlider: UISlider {
     init() {
         super.init(frame: CGRect(x: (kScreenWidth - ado_toolbar_slider_width) / 2, y: 26, width: ado_toolbar_slider_width, height: ado_toolbar_slider_height))
         
-        minimumTrackTintColor = UIColor.whiteColor()
+        minimumTrackTintColor = UIColor.white
         maximumTrackTintColor = UIColor.color(withHex: 0x878787)
-        thumbTintColor = UIColor.whiteColor()
+        thumbTintColor = UIColor.white
         
         let currentImage = currentThumbImage!
-        thumbImage = UIImage(CGImage: currentImage.CGImage!, scale: currentImage.size.height / ado_toolbar_slider_height, orientation: .Up)
+        thumbImage = UIImage(cgImage: currentImage.cgImage!, scale: currentImage.size.height / ado_toolbar_slider_height, orientation: .up)
         
-        setThumbImage(thumbImage, forState: .Normal)
-        setThumbImage(thumbImage, forState: .Highlighted)
+        setThumbImage(thumbImage, for: UIControlState())
+        setThumbImage(thumbImage, for: .highlighted)
     }
     
-    override func thumbRectForBounds(bounds: CGRect, trackRect rect: CGRect, value: Float) -> CGRect {
+    override func thumbRect(forBounds bounds: CGRect, trackRect rect: CGRect, value: Float) -> CGRect {
         return CGRect(x: CGFloat(value) * bounds.width - ado_toolbar_slider_thumb / 2, y: ado_toolbar_slider_height / 2 - ado_toolbar_slider_thumb / 2, width: ado_toolbar_slider_thumb, height: ado_toolbar_slider_thumb)
     }
     

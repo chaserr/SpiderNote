@@ -9,61 +9,61 @@
 import UIKit
 
 private enum PicDetailStatus {
-    case Editing    // 编辑页
-    case Showing    // 浏览页
-    case AddAudio   // 正在添加音频标签
-    case Deleting   // 删除图片中
+    case editing    // 编辑页
+    case showing    // 浏览页
+    case addAudio   // 正在添加音频标签
+    case deleting   // 删除图片中
 }
 
 class PicDetailViewController: UIViewController {
     
     // MARK: - Some Info
-    private var section: SectionObject?
+    fileprivate var section: SectionObject?
     
-    private var toShowTag: TagObject?
+    fileprivate var toShowTag: TagObject?
     
-    private var picInfos = [PicSectionInfo]() {
+    fileprivate var picInfos = [PicSectionInfo]() {
         didSet {
             hasModified = true
         }
     }
     
-    private var isNewSection = false
+    fileprivate var isNewSection = false
     
-    private var deletedInfos = [PicSectionInfo]()
+    fileprivate var deletedInfos = [PicSectionInfo]()
     
-    private var picImageViews = [UIImageView]()
+    fileprivate var picImageViews = [UIImageView]()
     
-    private var tagViewPool = [String: PicTagView]()
+    fileprivate var tagViewPool = [String: PicTagView]()
     
-    private var status = PicDetailStatus.Editing
+    fileprivate var status = PicDetailStatus.editing
     
-    private var hasModified = false
+    fileprivate var hasModified = false
     
-    private var tagLocation = CGPointZero   // 添加标签的位置
-    private var tagPanOrigin = CGPoint()    // 用于标签移动时的计算
+    fileprivate var tagLocation = CGPoint.zero   // 添加标签的位置
+    fileprivate var tagPanOrigin = CGPoint()    // 用于标签移动时的计算
     
-    private var showTag = true              // 浏览模式中隐藏和显示标签
+    fileprivate var showTag = true              // 浏览模式中隐藏和显示标签
     
-    private var editToastID: String?        // 正在编辑的标签ID
+    fileprivate var editToastID: String?        // 正在编辑的标签ID
     
-    private var currentIndex: Int {     // 当前图片所在的位置
+    fileprivate var currentIndex: Int {     // 当前图片所在的位置
         return Int(picScrollView.contentOffset.x / kScreenWidth)
     }
     
-    private var currentImageView: UIImageView {
+    fileprivate var currentImageView: UIImageView {
         return picImageViews[currentIndex]
     }
     
-    private var currentImageSize: CGSize {
+    fileprivate var currentImageSize: CGSize {
         return currentImageView.frame.size
     }
     
     // MARK: - common views
-    private var textTagDetailView: PicTextTagDetailView!
-    private var playingAudioTag: PicAudioTagView? = nil  // 正在播放的音频标签
+    fileprivate var textTagDetailView: PicTextTagDetailView!
+    fileprivate var playingAudioTag: PicAudioTagView? = nil  // 正在播放的音频标签
     
-    private var editToast: PicTagEditToast! {
+    fileprivate var editToast: PicTagEditToast! {
         didSet {
             
             editToast.editHandler = { [weak self] in
@@ -76,7 +76,7 @@ class PicDetailViewController: UIViewController {
         }
     }
     
-    private var addAudioTagView: PicAddAudioTagView! {
+    fileprivate var addAudioTagView: PicAddAudioTagView! {
         didSet {
             
             addAudioTagView.cancelRecorderHandler = { [weak self] in
@@ -89,7 +89,7 @@ class PicDetailViewController: UIViewController {
         }
     }
     
-    private var addTextTagView: SectionAddTextView! {
+    fileprivate var addTextTagView: SectionAddTextView! {
         didSet {
             addTextTagView.doneHandler = { [weak self] text in
                 self?.editTextTagDone(text)
@@ -97,10 +97,10 @@ class PicDetailViewController: UIViewController {
         }
     }
     
-    private lazy var editBar: PicTopBar! = {
+    fileprivate lazy var editBar: PicTopBar! = {
         
         let bar = PicTopBar(images: self.picInfos.map({ $0.picInfo.image }))
-        bar.hidden = true
+        bar.isHidden = true
         self.view.addSubview(bar)
         
         bar.cancelHandler = { [weak self] in
@@ -112,7 +112,7 @@ class PicDetailViewController: UIViewController {
         }
         
         bar.beginDeleteHandler = { [weak self] in
-            self?.status = .Deleting
+            self?.status = .deleting
         }
         
         bar.deleteHandler = { [weak self] index in
@@ -130,17 +130,17 @@ class PicDetailViewController: UIViewController {
         return bar
     }()
     
-    lazy private var browseBar: PicTopShowView! = {
+    lazy fileprivate var browseBar: PicTopShowView! = {
         let bar = PicTopShowView(index: self.currentIndex, num: self.picInfos.count)
-        bar.hidden = true
+        bar.isHidden = true
         self.view.addSubview(bar)
         
         bar.backHandler = { [weak self] in
             
             if let navigator = self?.navigationController {
-                navigator.popViewControllerAnimated(true)
+                navigator.popViewController(animated: true)
             } else {
-                self?.dismissViewControllerAnimated(true, completion: nil)
+                self?.dismiss(animated: true, completion: nil)
             }
         }
         
@@ -151,7 +151,7 @@ class PicDetailViewController: UIViewController {
         return bar
     }()
     
-    private lazy var picScrollView: PicScrollView = {
+    fileprivate lazy var picScrollView: PicScrollView = {
         let scrollV = PicScrollView(pageCount: self.picInfos.count)
         scrollV.delegate        = self
         self.view.addSubview(scrollV)
@@ -159,35 +159,35 @@ class PicDetailViewController: UIViewController {
         return scrollV
     }()
     
-    lazy private var addTagButton: UIButton = {
+    lazy fileprivate var addTagButton: UIButton = {
         let button = UIButton(frame: CGRect(x: kPicAddTagOx, y: kPicAddTagOy, width: kPicAddTagS, height: kPicAddTagS))
-        button.setBackgroundImage(UIImage(named: "pic_add_tag_button"), forState: .Normal)
-        button.hidden = true
+        button.setBackgroundImage(UIImage(named: "pic_add_tag_button"), for: UIControlState())
+        button.isHidden = true
         self.view.addSubview(button)
         
-        button.addTarget(self, action: #selector(addTagClicked), forControlEvents: .TouchUpInside)
+        button.addTarget(self, action: #selector(addTagClicked), for: .touchUpInside)
         
         return button
     }()
     
-    lazy private var addTagView: PicSelectTagTypeView! = {
+    lazy fileprivate var addTagView: PicSelectTagTypeView! = {
         let view = PicSelectTagTypeView()
-        view.hidden = true
+        view.isHidden = true
         self.view.addSubview(view)
         
-        view.text.addTarget(self, action: #selector(addTextTagClicked), forControlEvents: .TouchUpInside)
-        view.pic.addTarget(self, action: #selector(addPicTagClicked), forControlEvents: .TouchUpInside)
-        view.audio.addTarget(self, action: #selector(addAudioTagClicked), forControlEvents: .TouchUpInside)
+        view.text.addTarget(self, action: #selector(addTextTagClicked), for: .touchUpInside)
+        view.pic.addTarget(self, action: #selector(addPicTagClicked), for: .touchUpInside)
+        view.audio.addTarget(self, action: #selector(addAudioTagClicked), for: .touchUpInside)
         
         return view
     }()
 
-    lazy private var bottomView: PicBottomView = {
+    lazy fileprivate var bottomView: PicBottomView = {
         let view = PicBottomView()
-        view.hidden = true
+        view.isHidden = true
         self.view.addSubview(view)
         
-        view.showTagButton.addTarget(self, action: #selector(showTagClicked), forControlEvents: .TouchUpInside)
+        view.showTagButton.addTarget(self, action: #selector(showTagClicked), for: .touchUpInside)
         
         return view
     }()
@@ -224,30 +224,30 @@ extension PicDetailViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        edgesForExtendedLayout = .None
+        edgesForExtendedLayout = UIRectEdge()
         
         view.backgroundColor = SpiderConfig.Color.BackgroundDark
         
         if let _ = section {
             
-            status = .Showing
-            picScrollView.scrollEnabled = true
+            status = .showing
+            picScrollView.isScrollEnabled = true
             
-            bottomView.hidden = true
-            browseBar.hidden = false
-            editBar.hidden = true    // 预先加载
+            bottomView.isHidden = true
+            browseBar.isHidden = false
+            editBar.isHidden = true    // 预先加载
             
         } else {
             
-            status = .Editing
-            picScrollView.scrollEnabled = false
+            status = .editing
+            picScrollView.isScrollEnabled = false
             
             // 注意层级
-            editBar.hidden = false
-            addTagButton.hidden = false
-            addTagView.hidden = true
+            editBar.isHidden = false
+            addTagButton.isHidden = false
+            addTagView.isHidden = true
             
-            navigationController?.fd_fullscreenPopGestureRecognizer.enabled = false
+            navigationController?.fd_fullscreenPopGestureRecognizer.isEnabled = false
         }
         
         makeUI()
@@ -257,42 +257,42 @@ extension PicDetailViewController {
         picScrollView.addGestureRecognizer(tap)
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        UIApplication.sharedApplication().setStatusBarStyle(.LightContent, animated: false)
+        UIApplication.shared.setStatusBarStyle(.lightContent, animated: false)
         navigationController?.setNavigationBarHidden(true, animated: false)
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        guard let tag = toShowTag, ownerIndex = tag.picOwnerIndex else { return }
+        guard let tag = toShowTag, let ownerIndex = tag.picOwnerIndex else { return }
         
         picScrollView.setContentOffset(CGPoint(x: kScreenWidth * CGFloat(ownerIndex), y: 0), animated: true)
         didTap(tag.id)
         toShowTag = nil
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        UIApplication.sharedApplication().setStatusBarStyle(.Default, animated: false)
+        UIApplication.shared.setStatusBarStyle(.default, animated: false)
     }
     
-    override func viewDidDisappear(animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         
     }
     
-    override func preferredStatusBarStyle() -> UIStatusBarStyle {
+    override var preferredStatusBarStyle : UIStatusBarStyle {
         print("preferred bar style")
-        return .LightContent
+        return .lightContent
     }
     
     func makeUI() {
         
-        func addTagViews(tags: [String: PicTagInfo], toView superView: UIImageView, withImageSize imageSize: CGSize) {
+        func addTagViews(_ tags: [String: PicTagInfo], toView superView: UIImageView, withImageSize imageSize: CGSize) {
             
             superView.resizeToFit(imageSize)
             let newSize = superView.frame.size
@@ -306,13 +306,13 @@ extension PicDetailViewController {
                 
                 switch tag.type {
                     
-                case .Text:
+                case .text:
                     tagView = PicTextTagView(location: location, text: tag.content!, direction: tag.direction, inSize: newSize)
                     
-                case .Pic:
+                case .pic:
                     tagView = PicPicTagView(location: location, picInfo: tag.picInfo!, direction: tag.direction, inSize: newSize)
                     
-                case .Audio:
+                case .audio:
                     tagView = PicAudioTagView(location: location, audioInfo: tag.audioInfo!, direction: tag.direction, inSize: newSize)
                 }
                 
@@ -332,7 +332,7 @@ extension PicDetailViewController {
             let centerP = CGPoint(x: kScreenWidth * (CGFloat(i) + 0.5), y: kPicDetailH / 2)
             
             let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: kScreenWidth, height: kPicDetailH))
-            imageView.userInteractionEnabled = true
+            imageView.isUserInteractionEnabled = true
             
             if let image = picNode.picInfo.image {
                 
@@ -361,34 +361,34 @@ extension PicDetailViewController {
     
     // MARK: - Gesture
     
-    func tapped(sender: UITapGestureRecognizer) {
+    func tapped(_ sender: UITapGestureRecognizer) {
         
         switch status {
             
-        case .Deleting:
-            status = .Editing
+        case .deleting:
+            status = .editing
             editBar.cancelDelete()
             
-        case .Editing:
+        case .editing:
             
             checkIfTagEditToastExist()
             
             if hasCurrentImageLoaded() {    // 若图片还没加载进来，不能添加标签
-                let location = sender.locationInView(currentImageView)
+                let location = sender.location(in: currentImageView)
                 
                 if currentImageView.contains(location) {
                     tagLocation = location
-                    addTagView.hidden = false
+                    addTagView.isHidden = false
                 }
             }
             
-        case .Showing:
+        case .showing:
             
             if !checkIfTextTagDetailViewExist() {
-                bottomView.hidden = !bottomView.hidden
+                bottomView.isHidden = !bottomView.isHidden
             }
             
-        case .AddAudio:
+        case .addAudio:
             return
         }
     }
@@ -399,19 +399,19 @@ extension PicDetailViewController {
     
     func doneEdit() {    // 切换到浏览模式
         
-        status = .Showing
-        picScrollView.scrollEnabled = true
-        navigationController?.fd_fullscreenPopGestureRecognizer.enabled = true
+        status = .showing
+        picScrollView.isScrollEnabled = true
+        navigationController?.fd_fullscreenPopGestureRecognizer.isEnabled = true
         checkIfTagEditToastExist()
         
-        bottomView.hidden = true
-        browseBar.hidden = false
+        bottomView.isHidden = true
+        browseBar.isHidden = false
         browseBar.count = picInfos.count
         browseBar.currentIndex = currentIndex
         
-        editBar.hidden = true
-        addTagButton.hidden = true
-        addTagView.hidden = true
+        editBar.isHidden = true
+        addTagButton.isHidden = true
+        addTagView.isHidden = true
         
         /* 写入数据库 */
         saveToDataBase()
@@ -419,34 +419,34 @@ extension PicDetailViewController {
     
     func goToEdit() {    // 切换到编辑模式
         
-        status = .Editing
-        picScrollView.scrollEnabled = false
-        navigationController?.fd_fullscreenPopGestureRecognizer.enabled = false
+        status = .editing
+        picScrollView.isScrollEnabled = false
+        navigationController?.fd_fullscreenPopGestureRecognizer.isEnabled = false
         checkIfTextTagDetailViewExist()
         
         if let tag = playingAudioTag {
             tag.stop()
         }
         
-        bottomView.hidden = true
-        browseBar.hidden = true
+        bottomView.isHidden = true
+        browseBar.isHidden = true
         
         // 注意显示层级
-        editBar.hidden = false
+        editBar.isHidden = false
         editBar.updateIndex(currentIndex)
         
-        addTagButton.hidden = false
-        addTagView.hidden = true
+        addTagButton.isHidden = false
+        addTagView.isHidden = true
         
         for (_, tagView) in tagViewPool {
-            tagView.hidden = false
+            tagView.isHidden = false
         }
     }
     
     func showTagClicked() {     // 浏览模式中选择是否显示标签
         
         for (_, tagView) in tagViewPool {
-            tagView.hidden = showTag
+            tagView.isHidden = showTag
         }
         
         showTag = !showTag
@@ -458,7 +458,7 @@ extension PicDetailViewController {
             
             SpiderAlert.confirmOrCancel(title: "", message: "确定放弃添加？", confirmTitle: "确定", cancelTitle: "取消", inViewController: self, withConfirmAction: { [weak self] in
                 // TODO: - Clean useless source
-                self?.dismissViewControllerAnimated(true, completion: nil)
+                self?.dismiss(animated: true, completion: nil)
             }, cancelAction: { })
             
         } else {
@@ -480,7 +480,7 @@ extension PicDetailViewController {
     
     func backToLastSaved() {
         
-        if let section = section where !isNewSection {
+        if let section = section, !isNewSection {
             picInfos = section.pics.map({ PicSectionInfo(object: $0) })
             
             for picView in picImageViews {
@@ -507,7 +507,7 @@ extension PicDetailViewController {
                         
         } else {
             
-            guard let picSection = section where hasModified else { return }
+            guard let picSection = section, hasModified else { return }
             
             SpiderRealm.updatePicSection(picSection, with: picInfos)
             
@@ -520,15 +520,15 @@ extension PicDetailViewController {
     
     // MARK: - 图片的删除&添加
     
-    func deletePicAt(index: Int) {
-        status = .Editing
+    func deletePicAt(_ index: Int) {
+        status = .editing
         checkIfTagEditToastExist()
         
         deletedInfos.append(picInfos[index])
-        picInfos.removeAtIndex(index)
+        picInfos.remove(at: index)
         
         picImageViews[index].removeFromSuperview()
-        picImageViews.removeAtIndex(index)
+        picImageViews.remove(at: index)
         
         for i in index ..< picInfos.count {
             picImageViews[i].shfit(-kScreenWidth)
@@ -561,16 +561,16 @@ extension PicDetailViewController {
             self?.editBar.addPics(photos)
         }
         
-        presentViewController(picker, animated: true, completion: nil)
+        present(picker, animated: true, completion: nil)
     }
     
-    func addPics(images: [UIImage]) {
+    func addPics(_ images: [UIImage]) {
         
         for image in images {
             picInfos.append(PicSectionInfo(photo: image))
             
             let imageView = UIImageView()
-            imageView.userInteractionEnabled = true
+            imageView.isUserInteractionEnabled = true
             imageView.resizeToFit(image.size)
             imageView.image = image
             
@@ -591,32 +591,32 @@ extension PicDetailViewController {
     
     // MARK: - 添加标签按钮
     func addTagClicked() {
-        if status == .Deleting {
-            status = .Editing
+        if status == .deleting {
+            status = .editing
             
         } else {
             
             checkIfTagEditToastExist()
-            addTagView.hidden = false
+            addTagView.isHidden = false
             
             // 放在中间区域
             tagLocation = CGPoint(x: currentImageView.frame.width / 2 + randomInRange(0...20), y: currentImageView.frame.height / 2 + randomInRange(0...20))
         }
     }
     
-    func addTag(info: PicTagInfo) {
+    func addTag(_ info: PicTagInfo) {
         var tagView: PicTagView
         
         switch info.type {
             
-        case .Text:
-            tagView = PicTextTagView(location: info.perXY, text: info.content!, direction: .None, inSize: currentImageSize)
+        case .text:
+            tagView = PicTextTagView(location: info.perXY, text: info.content!, direction: .none, inSize: currentImageSize)
             
-        case .Pic:
-            tagView = PicPicTagView(location: info.perXY, picInfo: info.picInfo!, direction: .None, inSize: currentImageSize)
+        case .pic:
+            tagView = PicPicTagView(location: info.perXY, picInfo: info.picInfo!, direction: .none, inSize: currentImageSize)
             
-        case .Audio:
-            tagView = PicAudioTagView(location: info.perXY, audioInfo: info.audioInfo!, direction: .None, inSize: currentImageSize)
+        case .audio:
+            tagView = PicAudioTagView(location: info.perXY, audioInfo: info.audioInfo!, direction: .none, inSize: currentImageSize)
         }
         
         tagView.id = info.id
@@ -635,7 +635,7 @@ extension PicDetailViewController {
     // MARK: - 添加文字标签
     func addTextTagClicked() {
         
-        addTagView.hidden = true
+        addTagView.isHidden = true
         
         addTextTagView = SectionAddTextView(text: "")
         view.addSubview(addTextTagView)
@@ -650,7 +650,7 @@ extension PicDetailViewController {
         view.addSubview(addTextTagView)
     }
     
-    func editTextTagDone(text: String) {
+    func editTextTagDone(_ text: String) {
         if let editID = editToastID {
             
             var textTag = picInfos[currentIndex].tags[editID]!
@@ -662,7 +662,7 @@ extension PicDetailViewController {
             
         } else {
             
-            let tagInfo = PicTagInfo(id: NSUUID().UUIDString, type: .Text, perXY: tagLocation, content: text)
+            let tagInfo = PicTagInfo(id: UUID().uuidString, type: .text, perXY: tagLocation, content: text)
             addTag(tagInfo)
         }
     }
@@ -674,41 +674,41 @@ extension PicDetailViewController {
             self?.savePicTag(photos[0])
         }
         
-        presentViewController(picker, animated: true, completion: nil)
+        present(picker, animated: true, completion: nil)
     }
     
-    func savePicTag(pic: UIImage) {
-        let id = NSUUID().UUIDString
+    func savePicTag(_ pic: UIImage) {
+        let id = UUID().uuidString
         pic.saveToDisk(withid: id)
         
         let picInfo = PicInfo(id: id, image: pic)
-        let tagInfo = PicTagInfo(id: id, type: .Pic, perXY: tagLocation, picInfo: picInfo)
+        let tagInfo = PicTagInfo(id: id, type: .pic, perXY: tagLocation, picInfo: picInfo)
         
         addTag(tagInfo)
     }
     
     // MARK: - 添加音频标签
     func addAudioTagClicked() {
-        status = .AddAudio
-        addTagButton.hidden = true
-        addTagView.hidden = true
+        status = .addAudio
+        addTagButton.isHidden = true
+        addTagView.isHidden = true
         
         addAudioTagView = PicAddAudioTagView()
         view.addSubview(addAudioTagView)
     }
     
     func exitRecord() {
-        status = .Editing
-        addTagButton.hidden = false
+        status = .editing
+        addTagButton.isHidden = false
         
         addAudioTagView.removeFromSuperview()
     }
     
-    func saveRecord(audioID: String, duration: String) {
+    func saveRecord(_ audioID: String, duration: String) {
         exitRecord()
         
         let audioInfo = AudioInfo(id: audioID, duration: duration)
-        let tagInfo = PicTagInfo(id: audioID, type: .Audio, perXY: tagLocation, audioInfo: audioInfo)
+        let tagInfo = PicTagInfo(id: audioID, type: .audio, perXY: tagLocation, audioInfo: audioInfo)
         addTag(tagInfo)
     }
     
@@ -717,10 +717,10 @@ extension PicDetailViewController {
     func deleteTagClicked() {
         guard let deleteID = editToastID else { return }
         
-        picInfos[currentIndex].tags[deleteID]?.state = .Deleted
+        picInfos[currentIndex].tags[deleteID]?.state = .deleted
         
         tagViewPool[deleteID]?.removeFromSuperview()
-        tagViewPool.removeValueForKey(deleteID)
+        tagViewPool.removeValue(forKey: deleteID)
         
         editToastID = nil
     }
@@ -729,45 +729,45 @@ extension PicDetailViewController {
 // MARK: - tag Delegate: 标签的相关手势处理
 extension PicDetailViewController: PicTagDelegate {
     
-    func didPan(id: String, sender: UIPanGestureRecognizer) {
+    func didPan(_ id: String, sender: UIPanGestureRecognizer) {
         
-        if status == .Editing {
+        if status == .editing {
             checkIfTagEditToastExist()
             
             guard let tagView = tagViewPool[id] else { return }
             
             switch sender.state {
                 
-            case .Began:
-                if status != .Deleting {    // 用于取消图片删除状态
+            case .began:
+                if status != .deleting {    // 用于取消图片删除状态
                     tagPanOrigin = tagView.frame.origin
                 }
                 
-            case .Changed:
-                if status != .Deleting {
-                    let offset = sender.translationInView(picScrollView)
+            case .changed:
+                if status != .deleting {
+                    let offset = sender.translation(in: picScrollView)
                     let point = tagPanOrigin.addOffset(offset)
                     tagView.moveInRect(currentImageView.bounds, with: point)
                 }
                 
             default:
-                if status != .Deleting {
+                if status != .deleting {
                     
                     picInfos[currentIndex].tags[id]?.perXY = tagView.perXY
                     
                 } else {
-                    status = .Editing
+                    status = .editing
                     editBar.cancelDelete()
                 }
             }
         }
     }
     
-    func didTap(id: String) {
+    func didTap(_ id: String) {
         
         guard let tagView = tagViewPool[id] else { return }
         
-        if status == .Editing { // 编辑模式中点击后旋转
+        if status == .editing { // 编辑模式中点击后旋转
             checkIfTagEditToastExist()
             
             tagView.rotate()
@@ -775,25 +775,25 @@ extension PicDetailViewController: PicTagDelegate {
             picInfos[currentIndex].tags[id]?.perXY = tagView.perXY
         }
         
-        if status == .Showing { // 浏览模式中点击后查看具体内容
+        if status == .showing { // 浏览模式中点击后查看具体内容
             checkIfTextTagDetailViewExist()
             
             switch tagView.type {
                 
-            case .Text:
+            case .text:
                 
                 let tag = tagView as! PicTextTagView
                 textTagDetailView = PicTextTagDetailView(text: tag.text)
                 view.addSubview(textTagDetailView)
-                bottomView.hidden = true
+                bottomView.isHidden = true
                 
-            case .Pic:
+            case .pic:
                 
                 guard let tagImage = picInfos[currentIndex].tags[id]?.picInfo?.image else { return }
                 let picTagDetailView = PicPicTagDetailView(image: tagImage)
                 view.addSubview(picTagDetailView)
                 
-            case .Audio:
+            case .audio:
                 
                 if playingAudioTag?.id != tagView.id {
                     playingAudioTag?.stop()
@@ -805,27 +805,27 @@ extension PicDetailViewController: PicTagDelegate {
             }
         }
         
-        if status == .Deleting {
-            status = .Editing
+        if status == .deleting {
+            status = .editing
             editBar.cancelDelete()
         }
     }
     
-    func didLongPress(id: String, sender: UILongPressGestureRecognizer) {
+    func didLongPress(_ id: String, sender: UILongPressGestureRecognizer) {
         
         guard let tagView = tagViewPool[id] else { return }
         
         let toastC = CGPoint(x: tagView.center.x, y: tagView.origin.y - kpicTagEditTH / 2 - 6)
         
-        if status == .Editing { // 只在编辑模式中长按编辑标签
+        if status == .editing { // 只在编辑模式中长按编辑标签
             
-            if sender.state == .Began {
+            if sender.state == .began {
                 
                 checkIfTagEditToastExist()
                 
                 switch tagView.type {
                     
-                case .Text:
+                case .text:
                     editToast = PicTagEditToast(center: toastC, canEdit: true)
                     
                 default:
@@ -837,8 +837,8 @@ extension PicDetailViewController: PicTagDelegate {
             }
         }
         
-        if status == .Deleting {
-            status = .Editing
+        if status == .deleting {
+            status = .editing
             editBar.cancelDelete()
         }
     }
@@ -853,9 +853,9 @@ extension PicDetailViewController: PicTagDelegate {
         }
     }
     
-    func checkIfTagEditToastExist() -> Bool {   // 移除标签编辑 toast
+    @discardableResult func checkIfTagEditToastExist() -> Bool {   // 移除标签编辑 toast
         
-        if let _ = editToastID where editToast.isDescendantOfView(view) {
+        if let _ = editToastID, editToast.isDescendant(of: view) {
             
             editToast.removeFromSuperview()
             editToastID = nil
@@ -867,13 +867,13 @@ extension PicDetailViewController: PicTagDelegate {
         }
     }
     
-    func checkIfTextTagDetailViewExist() -> Bool { // 移除文字标签展示
+   @discardableResult func checkIfTextTagDetailViewExist() -> Bool { // 移除文字标签展示
         
         if textTagDetailView != nil {
             
             textTagDetailView.removeFromSuperview()
             textTagDetailView = nil
-            bottomView.hidden = true
+            bottomView.isHidden = true
             
             return true
             
@@ -885,11 +885,11 @@ extension PicDetailViewController: PicTagDelegate {
 
 // MARK: - ScrollView Delegate
 extension PicDetailViewController: UIScrollViewDelegate {
-    func scrollViewWillBeginDragging(scrollView: UIScrollView) {
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         checkIfTextTagDetailViewExist()
     }
     
-    func scrollViewDidScroll(scrollView: UIScrollView) {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
         checkIfTagEditToastExist()
         
         if browseBar != nil {
@@ -897,7 +897,7 @@ extension PicDetailViewController: UIScrollViewDelegate {
         }
     }
     
-    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
 
     }
 }

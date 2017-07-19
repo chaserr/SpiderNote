@@ -26,22 +26,22 @@ public enum FileExtension: String {
     }
 }
 
-extension NSFileManager {
+extension FileManager {
     
-    class func spiderImageURLWithID(id: String) -> NSURL? {
+    class func spiderImageURLWithID(_ id: String) -> URL? {
         if let urlString = AppUtility.instance?.imageFilePath(),
-           let imageCacheURL = NSURL(string: urlString) {
-            return imageCacheURL.URLByAppendingPathComponent("\(id).\(FileExtension.JPEG.rawValue)")
+           let imageCacheURL = URL(string: urlString) {
+            return imageCacheURL.appendingPathComponent("\(id).\(FileExtension.JPEG.rawValue)")
         }
         
         return nil
     }
     
-    class func savePic(imageData: NSData) -> String? {
-        let id = NSUUID().UUIDString
+    class func savePic(_ imageData: Data) -> String? {
+        let id = UUID().uuidString
         if let imageURL = spiderImageURLWithID(id),
            let imagePath = imageURL.path {
-            if defaultManager().createFileAtPath(imagePath, contents: imageData, attributes: nil) {
+            if `default`.createFile(atPath: imagePath, contents: imageData, attributes: nil) {
                 return id
             }
         }
@@ -58,12 +58,12 @@ extension NSFileManager {
         return nil
     }
     
-    public class func diskExistAudio(withID id: String) -> NSURL? {
-        guard let url = NSURL(string: APP_UTILITY.voiceFilePath()) else { return nil }
+    public class func diskExistAudio(withID id: String) -> URL? {
+        guard let url = URL(string: APP_UTILITY.voiceFilePath()) else { return nil }
         
-        let audioURL = url.URLByAppendingPathComponent("\(id).\(FileExtension.M4A.rawValue)")
+        let audioURL = url.appendingPathComponent("\(id).\(FileExtension.M4A.rawValue)")
         
-        if defaultManager().fileExistsAtPath(audioURL!.path!) {
+        if `default`.fileExists(atPath: audioURL!.path!) {
             return audioURL
         } else {
             return nil
@@ -74,7 +74,7 @@ extension NSFileManager {
 extension UIImage {
     public func saveToCache() -> String? {
         if let imageData = UIImageJPEGRepresentation(self, 0.0),
-           let id = NSFileManager.savePic(imageData) {
+           let id = FileManager.savePic(imageData) {
             return id
         }
         

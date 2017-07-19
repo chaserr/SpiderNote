@@ -11,7 +11,7 @@ let QNUPLOADHELPER = QNUploadHelper.getInstance()
 
 class QNUploadHelper: NSObject {
 
-    var successBlock: (str: String) -> Void = {
+    var successBlock: (_ str: String) -> Void = {
     
         (str: String) -> Void in
     }

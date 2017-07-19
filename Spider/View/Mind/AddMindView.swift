@@ -12,27 +12,27 @@ class AddMindView: UIView {
     var addMindHandler: ((MindType) -> Void)?
     
     init() {
-        super.init(frame: CGRectZero)
-        backgroundColor = UIColor.clearColor() // mc_add_mind
+        super.init(frame: CGRect.zero)
+        backgroundColor = UIColor.clear // mc_add_mind
         
         let buttonS = CGFloat(36)
         let articleButton = UIButton(frame: CGRect(x: 2, y: 2, width: buttonS, height: buttonS))
-        articleButton.setImage(UIImage(named: "mind_article_icon")!.resize(buttonS), forState: .Normal)
-        articleButton.addTarget(self, action: #selector(addArticleButtonClicked), forControlEvents: .TouchUpInside)
+        articleButton.setImage(UIImage(named: "mind_article_icon")!.resize(buttonS), for: UIControlState())
+        articleButton.addTarget(self, action: #selector(addArticleButtonClicked), for: .touchUpInside)
         addSubview(articleButton)
         
         let nodeButton = UIButton(frame: CGRect(x: 2, y: 36 + 16, width: buttonS, height: buttonS))
-        nodeButton.setImage(UIImage(named: "mind_submind_icon")!.resize(buttonS), forState: .Normal)
-        nodeButton.addTarget(self, action: #selector(addMindButtonClicked), forControlEvents: .TouchUpInside)
+        nodeButton.setImage(UIImage(named: "mind_submind_icon")!.resize(buttonS), for: UIControlState())
+        nodeButton.addTarget(self, action: #selector(addMindButtonClicked), for: .touchUpInside)
         addSubview(nodeButton)
     }
     
     func addMindButtonClicked() {
-        addMindHandler?(.Mind)
+        addMindHandler?(.mind)
     }
     
     func addArticleButtonClicked() {
-        addMindHandler?(.Article)
+        addMindHandler?(.article)
     }
 
     required init?(coder aDecoder: NSCoder) {

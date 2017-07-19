@@ -28,7 +28,7 @@ class BaseTableViewController: MainViewController , UITableViewDelegate, UITable
     
     override init() {
         super.init()
-        tableViewStyle = UITableViewStyle.Plain
+        tableViewStyle = UITableViewStyle.plain
     }
     
     init(style:UITableViewStyle) {
@@ -40,55 +40,55 @@ class BaseTableViewController: MainViewController , UITableViewDelegate, UITable
         super.loadView()
         let bounds = view.bounds
         let tableRect:CGRect!
-        let viewController = self.parentViewController
-        if viewController != nil && viewController?.isKindOfClass(UINavigationController) == true {
-            tableRect = CGRectMake(0, 0, bounds.size.width, bounds.size.height);
+        let viewController = self.parent
+        if viewController != nil && viewController?.isKind(of: UINavigationController.self) == true {
+            tableRect = CGRect(x: 0, y: 0, width: bounds.size.width, height: bounds.size.height);
 
         }else{
         
-            tableRect = CGRectMake(0, 64, bounds.size.width, bounds.size.height);
+            tableRect = CGRect(x: 0, y: 64, width: bounds.size.width, height: bounds.size.height);
 
         }
         
         tableView = UITableView.init(frame: tableRect, style: tableViewStyle)
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.backgroundColor = UIColor.whiteColor()
+        tableView.backgroundColor = UIColor.white
         tableView.showsVerticalScrollIndicator = false
-        tableView.autoresizingMask = [.FlexibleHeight, .FlexibleWidth]
+        tableView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
         tableView.tableFooterView = UIView()
 //        tableView.separatorStyle = UITableViewCellSeparatorStyle.None
         view.addSubview(tableView)
         
-        let tableHeaderRect:CGRect = CGRectMake(0, 0, CGRectGetWidth(self.tableView.bounds), 0.01);
+        let tableHeaderRect:CGRect = CGRect(x: 0, y: 0, width: self.tableView.bounds.width, height: 0.01);
         
         self.tableView.tableHeaderView = UIView.init(frame: tableHeaderRect);
-        self.edgesForExtendedLayout = UIRectEdge.None;
+        self.edgesForExtendedLayout = UIRectEdge();
         
     }
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         tableView.setEditing(false, animated: animated)
     }
     
-    override func viewDidDisappear(animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         if tableView != nil {
-            let indexPath:NSIndexPath? = tableView.indexPathForSelectedRow
+            let indexPath:IndexPath? = tableView.indexPathForSelectedRow
             if indexPath != nil {
-            tableView.deselectRowAtIndexPath(indexPath!, animated: true)
+            tableView.deselectRow(at: indexPath!, animated: true)
             }
         }
     }
@@ -99,26 +99,26 @@ class BaseTableViewController: MainViewController , UITableViewDelegate, UITable
     
     
 // MARK: --TableView DataSource
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 0
     }
     
-    func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 0.01
         
     }
     
-    func tableView(tableView: UITableView, editingStyleForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCellEditingStyle {
-        return UITableViewCellEditingStyle.None
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+        return UITableViewCellEditingStyle.none
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell()
         
         return cell
     }
     
-    func tableView(tableView: UITableView, willSelectRowAtIndexPath indexPath: NSIndexPath) -> NSIndexPath? {
+    func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
         return indexPath
     }
 

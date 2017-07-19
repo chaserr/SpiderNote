@@ -11,16 +11,16 @@ import UIKit
 class OutlineProjectListCell: UITableViewCell {
 
     init(text: String, hightlight: Bool) {
-        super.init(style: .Default, reuseIdentifier: nil)
+        super.init(style: .default, reuseIdentifier: nil)
         
-        selectionStyle = .None
-        backgroundColor = UIColor.whiteColor()
+        selectionStyle = .none
+        backgroundColor = UIColor.white
         
         textLabel?.text = text
-        textLabel?.font = UIFont.systemFontOfSize(16)
+        textLabel?.font = UIFont.systemFont(ofSize: 16)
         textLabel?.textColor = hightlight ? UIColor.color(withHex: 0x43a047) : SpiderConfig.Color.DarkText
         
-        imageView?.image =  UIImage(named: "outline_topbar_icon")?.imageWithRenderingMode(.AlwaysTemplate)
+        imageView?.image =  UIImage(named: "outline_topbar_icon")?.withRenderingMode(.alwaysTemplate)
         imageView?.tintColor = hightlight ? UIColor.color(withHex: 0x43a047) : SpiderConfig.Color.DarkText
         
         if hightlight {

@@ -15,18 +15,18 @@ private let editEdge   = UIEdgeInsetsMake(4 + 10, 16, 10, 16)
 class ArticleTextCell: ArticleBaseCell {
     var tapAction: (() -> Void)?
     
-    private var contentLabelEdge: Constraint? = nil
+    fileprivate var contentLabelEdge: Constraint? = nil
     
-    private var beEditing = false
+    fileprivate var beEditing = false
     
-    private var contentLabel: UILabel = {
+    fileprivate var contentLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
         label.font = SpiderConfig.Font.Text
         label.textColor = SpiderConfig.Color.DarkText
         label.numberOfLines = 0
-        label.userInteractionEnabled = true
+        label.isUserInteractionEnabled = true
         return label
     }()
     
@@ -43,11 +43,11 @@ class ArticleTextCell: ArticleBaseCell {
         }
     }
     
-    func didTap(sender: UITapGestureRecognizer) {
+    func didTap(_ sender: UITapGestureRecognizer) {
         tapAction?()
     }
     
-    func configurationWithSection(section: SectionObject, layout: SectionLayout, editing: Bool) {
+    func configurationWithSection(_ section: SectionObject, layout: SectionLayout, editing: Bool) {
         super.configureSection(layout, editing: editing)
         contentLabel.text = section.text
         

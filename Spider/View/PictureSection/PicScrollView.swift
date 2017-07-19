@@ -17,19 +17,19 @@ class PicScrollView: UIScrollView {
         
         backgroundColor = SpiderConfig.Color.BackgroundDark
         alwaysBounceVertical = false
-        pagingEnabled   = true
+        isPagingEnabled   = true
         bounces         = false
     }
     
     /** 侧滑冲突处理 */
-    override func hitTest(point: CGPoint, withEvent event: UIEvent?) -> UIView? {
+    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         let popRect = CGRect(x: 0, y: 0, width: kEdgePopGesWidth, height: kPicDetailH)
-        let xPoint = CGPoint(x: point.x % kScreenWidth, y: point.y)
+        let xPoint = CGPoint(x: point.x.truncatingRemainder(dividingBy: kScreenWidth), y: point.y)
         
-        if scrollEnabled && popRect.contains(xPoint) {
+        if isScrollEnabled && popRect.contains(xPoint) {
             for subView in subviews {
                 if subView.contain(point) {
-                    let point = self.convertPoint(point, toView: subView)
+                    let point = self.convert(point, to: subView)
                     for view in subView.subviews {
                         if view.contain(point) {
                             return view
@@ -40,7 +40,7 @@ class PicScrollView: UIScrollView {
             
             return superview
         } else {
-            return super.hitTest(point, withEvent: event)
+            return super.hitTest(point, with: event)
         }
     }
     

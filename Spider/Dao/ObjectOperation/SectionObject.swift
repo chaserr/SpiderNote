@@ -11,9 +11,9 @@ import Realm
 import RealmSwift
 
 public enum SectionType: Int {
-    case Text   = 0
-    case Pic    = 1
-    case Audio  = 2
+    case text   = 0
+    case pic    = 1
+    case audio  = 2
 }
 
 class SectionObject: Object {
@@ -31,7 +31,7 @@ class SectionObject: Object {
     /** 删除标志位 */
     dynamic var deleteFlag: Int = 0
     /** 类型 */
-    dynamic var type: Int = SectionType.Text.rawValue    
+    dynamic var type: Int = SectionType.text.rawValue    
     /** type = Text */
     dynamic var text: String? = ""
     
@@ -47,11 +47,11 @@ class SectionObject: Object {
     convenience init(type: SectionType, undoc: Int = 0, text: String? = nil) {
         self.init()
 
-        self.id            = NSUUID().UUIDString
+        self.id            = UUID().uuidString
         self.type          = type.rawValue
         self.text          = text
         self.undocFlag     = undoc
-        self.updateAt      = NSDate().toString()
+        self.updateAt      = Date().toString()
         self.syncTimesTamp = updateAt
     }
     
@@ -88,10 +88,10 @@ extension SectionObject {
         
         switch type {
             
-        case .Audio:
+        case .audio:
             return audio!.tags.count
             
-        case .Pic:
+        case .pic:
             var count = 0
             let _ = pics.map({ count += $0.tags.count })
             return count
@@ -129,7 +129,7 @@ extension SectionObject {
         return owner.first?.sections.indexOf(self)
     }
     
-    func update(time: String = NSDate().toString()) {
+    func update(_ time: String = Date().toString()) {
         updateAt = time
         modifiyFlag = 1
     }

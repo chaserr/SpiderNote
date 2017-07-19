@@ -7,10 +7,10 @@
 //
 
 import UIKit
-typealias SwitchBlock = (senderOn: Bool) -> Void
+typealias SwitchBlock = (_ senderOn: Bool) -> Void
 class LeftMenuSettingCell: UITableViewCell {
 
-    var indexPath:NSIndexPath!
+    var indexPath:IndexPath!
     
     @IBOutlet weak var cellTitle: UILabel!
     
@@ -25,24 +25,24 @@ class LeftMenuSettingCell: UITableViewCell {
         // Initialization code
     }
 
-    override func setSelected(selected: Bool, animated: Bool) {
+    override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state
     }
     
     
-    class func cellWithTableView(tableview:UITableView) -> UITableViewCell {
+    class func cellWithTableView(_ tableview:UITableView) -> UITableViewCell {
         
         let cellID = className
-        var cell = tableview.dequeueReusableCellWithIdentifier(cellID)
+        var cell = tableview.dequeueReusableCell(withIdentifier: cellID)
         if cell == nil {
-            cell = NSBundle.mainBundle().loadNibNamed(className, owner: nil, options: nil)!.last as! LeftMenuSettingCell
+            cell = Bundle.main.loadNibNamed(className, owner: nil, options: nil)!.last as! LeftMenuSettingCell
         }
         return cell!
     }
     
-    func setDefaultValue(indexPath:NSIndexPath, titleArray:Array<AnyObject>, cellDetailDic:Dictionary<String, String>) -> Void {
+    func setDefaultValue(_ indexPath:IndexPath, titleArray:Array<AnyObject>, cellDetailDic:Dictionary<String, String>) -> Void {
 
         self.indexPath = indexPath
         let sectionOTitle:Array = (titleArray[indexPath.section]) as! Array<AnyObject>
@@ -52,41 +52,41 @@ class LeftMenuSettingCell: UITableViewCell {
 
         switch (indexPath.section, indexPath.row) {
         case (0,0):
-            cellSwitch.hidden = false
-            cellSwitch.on = APP_USER.autoSync == 0 ? false : true
-            cellDetail.hidden = true
+            cellSwitch.isHidden = false
+            cellSwitch.isOn = APP_USER.autoSync == 0 ? false : true
+            cellDetail.isHidden = true
         case (0,1):
-            cellDetail.setTitle(APP_USER.syncrate, forState: UIControlState.Normal)
+            cellDetail.setTitle(APP_USER.syncrate, for: UIControlState())
         case (0,2):
-            cellSwitch.hidden = false
-            cellSwitch.on = APP_USER.wifiSync == 0 ? false : true
-            cellDetail.hidden = true
+            cellSwitch.isHidden = false
+            cellSwitch.isOn = APP_USER.wifiSync == 0 ? false : true
+            cellDetail.isHidden = true
         case (0,3):
-            cellDetail.setTitle(APP_USER.uploadPhotoSizeLiimit, forState: UIControlState.Normal)
+            cellDetail.setTitle(APP_USER.uploadPhotoSizeLiimit, for: UIControlState())
         case (1,0):
-            cellDetail.setTitle(cellDetailContent, forState: UIControlState.Normal)
+            cellDetail.setTitle(cellDetailContent, for: UIControlState())
         case (2,0):
-            cellDetail.setTitle(VERSIONMANAGE.appLocalVersion(), forState: UIControlState.Normal)
+            cellDetail.setTitle(VERSIONMANAGE.appLocalVersion(), for: UIControlState())
         case (3,_):
-            self.accessoryType = UITableViewCellAccessoryType.DisclosureIndicator
+            self.accessoryType = UITableViewCellAccessoryType.disclosureIndicator
         default:
             break
         }
 
     }
     
-    func switchBlock(block: SwitchBlock) -> Void {
+    func switchBlock(_ block: @escaping SwitchBlock) -> Void {
         switchBlock = block
     }
     
-    @IBAction func switchAction(sender: UISwitch) {
+    @IBAction func switchAction(_ sender: UISwitch) {
         
         switch (indexPath.section, indexPath.row) {
         case (0,0):
-            APP_USER.autoSync = sender.on == true ? 1 : 0
-            switchBlock!(senderOn: sender.on)
+            APP_USER.autoSync = sender.isOn == true ? 1 : 0
+            switchBlock!(sender.isOn)
         case (0,2):
-            APP_USER.wifiSync = sender.on == true ? 1 : 0
+            APP_USER.wifiSync = sender.isOn == true ? 1 : 0
 
         default:
             break

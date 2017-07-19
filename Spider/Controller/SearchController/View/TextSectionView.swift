@@ -10,7 +10,7 @@ import UIKit
 
 class TextSectionView: UIView {
     
-    typealias TapTextAction = (type:ClickViewType) -> Void
+    typealias TapTextAction = (_ type:ClickViewType) -> Void
     var tapTextAction:TapTextAction!
     
     var seperatorView: UIView!
@@ -30,7 +30,7 @@ class TextSectionView: UIView {
         contentText                        = UILabel()
         contentText.font                   = SYSTEMFONT(16)
         contentText.textColor              = RGBCOLORV(0x666666)
-        contentText.lineBreakMode          = NSLineBreakMode.ByTruncatingTail
+        contentText.lineBreakMode          = NSLineBreakMode.byTruncatingTail
         contentText.numberOfLines          = 0
 
         addSubview(seperatorView)
@@ -38,30 +38,30 @@ class TextSectionView: UIView {
         backgroundView.addSubview(contentText)
         addUIConstraints()
         addTapGesture { (UITapGestureRecognizer) in
-            self.tapTextAction(type: ClickViewType.Text)
+            self.tapTextAction(ClickViewType.text)
         }
 
     }
     
     func addUIConstraints() -> Void {
-        seperatorView.snp_makeConstraints { (make) in
+        seperatorView.snp.makeConstraints { (make) in
             make.left.top.right.equalToSuperview().offset(0)
             make.height.equalTo(1)
         }
-        backgroundView.snp_makeConstraints { (make) in
+        backgroundView.snp.makeConstraints { (make) in
             make.left.equalToSuperview().offset(15)
-            make.top.equalTo(seperatorView.snp_bottom).offset(10)
+            make.top.equalTo(seperatorView.snp.bottom).offset(10)
             make.center.equalToSuperview()
         }
         
-        contentText.snp_makeConstraints { (make) in
+        contentText.snp.makeConstraints { (make) in
             make.top.equalTo(5)
             make.left.equalTo(10)
             make.center.equalToSuperview()
         }
     }
     
-    func tapTextView(tap:TapTextAction) -> Void {
+    func tapTextView(_ tap:@escaping TapTextAction) -> Void {
         tapTextAction = tap
     }
     required init?(coder aDecoder: NSCoder) {

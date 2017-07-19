@@ -27,16 +27,16 @@ extension String{
         }
     }
     
-    func stringByAppendingPathComponent(pathConmonent:String) -> String
+    func stringByAppendingPathComponent(_ pathConmonent:String) -> String
     {
-        return self.OCString.stringByAppendingPathComponent(pathConmonent) as String
+        return self.OCString.appendingPathComponent(pathConmonent) as String
     }
     
     var stringByDeletingPathExtension: String {
     
         get{
         
-            return self.OCString.stringByDeletingPathExtension
+            return self.OCString.deletingPathExtension
         }
     }
     
@@ -58,7 +58,7 @@ extension String{
     
     func isAllDigit() -> Bool {
         for uni in unicodeScalars {
-            if NSCharacterSet.decimalDigitCharacterSet().longCharacterIsMember(uni.value) {
+            if CharacterSet.decimalDigits.contains(UnicodeScalar(uni.value)!) {
                 continue
             }
             return false

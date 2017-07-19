@@ -18,11 +18,11 @@ class SearchResultVC: MainViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         customLizeNavigationBarBackBtn()
-        view.backgroundColor = UIColor.redColor()
+        view.backgroundColor = UIColor.red
         
-        searchResult = UIButton.init(type: UIButtonType.System)
-        searchResult.frame = CGRectMake(0, 100, 200, 200)
-        searchResult.setTitle(buttonTitle, forState: UIControlState.Normal)
+        searchResult = UIButton.init(type: UIButtonType.system)
+        searchResult.frame = CGRect(x: 0, y: 100, width: 200, height: 200)
+        searchResult.setTitle(buttonTitle, for: UIControlState())
         view.addSubview(searchResult)
     }
 
@@ -32,19 +32,19 @@ class SearchResultVC: MainViewController {
     }
     
     // MARK:控制器生命周期
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
     }
     
-    override func viewDidDisappear(animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
     }
     

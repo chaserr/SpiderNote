@@ -17,70 +17,70 @@ enum AlertType: String {
 
 final class SpiderAlert {
     // MARK: - Alert Controller
-    class func alert(title title: String, message: String?, dismissTitle: String, inViewController viewController: UIViewController?, withDismissAction dismissAction: (() -> Void)?) {
+    class func alert(title: String, message: String?, dismissTitle: String, inViewController viewController: UIViewController?, withDismissAction dismissAction: (() -> Void)?) {
         
-        dispatch_async(dispatch_get_main_queue()) {
+        DispatchQueue.main.async {
             
-            let alertController = UIAlertController(title: title, message: message, preferredStyle: .Alert)
+            let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
             
-            let action: UIAlertAction = UIAlertAction(title: dismissTitle, style: .Default) { action in
+            let action: UIAlertAction = UIAlertAction(title: dismissTitle, style: .default) { action in
                 if let dismissAction = dismissAction {
                     dismissAction()
                 }
             }
             alertController.addAction(action)
             
-            viewController?.presentViewController(alertController, animated: true, completion: nil)
+            viewController?.present(alertController, animated: true, completion: nil)
         }
     }
     
-    class func tellYou(message message: String, inViewController viewController: UIViewController?) {
-        dispatch_async(dispatch_get_main_queue()) { 
-            let alertController = UIAlertController(title: "", message: message, preferredStyle: .Alert)
+    class func tellYou(message: String, inViewController viewController: UIViewController?) {
+        DispatchQueue.main.async { 
+            let alertController = UIAlertController(title: "", message: message, preferredStyle: .alert)
             
-            let action = UIAlertAction(title: "知道了", style: .Default) { action in
-                alertController.dismissViewControllerAnimated(true, completion: nil)
+            let action = UIAlertAction(title: "知道了", style: .default) { action in
+                alertController.dismiss(animated: true, completion: nil)
             }
             alertController.addAction(action)
             
-            viewController?.presentViewController(alertController, animated: true, completion: nil)
+            viewController?.present(alertController, animated: true, completion: nil)
         }
     }
     
-    class func confirmOrCancel(title title: String, message: String, confirmTitle: String = "确定", cancelTitle: String = "取消", inViewController viewController: UIViewController?, withConfirmAction confirmAction: () -> Void, cancelAction: () -> Void = { }) {
+    class func confirmOrCancel(title: String, message: String, confirmTitle: String = "确定", cancelTitle: String = "取消", inViewController viewController: UIViewController?, withConfirmAction confirmAction: @escaping () -> Void, cancelAction: @escaping () -> Void = { }) {
         
-        dispatch_async(dispatch_get_main_queue()) {
+        DispatchQueue.main.async {
             
-            let alertController = UIAlertController(title: title, message: message, preferredStyle: .Alert)
+            let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
             
-            let cancelAction: UIAlertAction = UIAlertAction(title: cancelTitle, style: .Cancel) { action in
+            let cancelAction: UIAlertAction = UIAlertAction(title: cancelTitle, style: .cancel) { action in
                 cancelAction()
             }
             alertController.addAction(cancelAction)
             
-            let confirmAction: UIAlertAction = UIAlertAction(title: confirmTitle, style: .Default) { action in
+            let confirmAction: UIAlertAction = UIAlertAction(title: confirmTitle, style: .default) { action in
                 confirmAction()
             }
             alertController.addAction(confirmAction)
             
-            viewController?.presentViewController(alertController, animated: true, completion: nil)
+            viewController?.present(alertController, animated: true, completion: nil)
         }
     }
     
     // MARK: - Toast
-    class func alert(type type: AlertType, inView superview: UIView) {
-        dispatch_async(dispatch_get_main_queue(), {
+    class func alert(type: AlertType, inView superview: UIView) {
+        DispatchQueue.main.async(execute: {
             
             let alertLabel = UILabel()
             alertLabel.text = type.rawValue
-            alertLabel.font = UIFont.systemFontOfSize(12)
-            alertLabel.textColor = UIColor.whiteColor()
-            alertLabel.textAlignment = .Center
+            alertLabel.font = UIFont.systemFont(ofSize: 12)
+            alertLabel.textColor = UIColor.white
+            alertLabel.textAlignment = .center
             alertLabel.backgroundColor = UIColor(white: 0, alpha: 0.3)
             
             alertLabel.layer.cornerRadius = 4.0
             alertLabel.layer.masksToBounds = true
-            alertLabel.userInteractionEnabled = true
+            alertLabel.isUserInteractionEnabled = true
             
             switch type {
                 case .ShortRecord:

@@ -18,39 +18,39 @@ private var myContext = 0
 
 class ArticleListViewController: UIViewController {
     
-    private var articleName: String = ""
+    fileprivate var articleName: String = ""
     
-    private var sections: Results<SectionObject>!
+    fileprivate var sections: Results<SectionObject>!
     
-    private var sectionItems = [SectionObject]()
+    fileprivate var sectionItems = [SectionObject]()
     
-    private var notificationToken: NotificationToken?
+    fileprivate var notificationToken: NotificationToken?
     
-    private var toShowIndexPath: NSIndexPath?
+    fileprivate var toShowIndexPath: IndexPath?
     
-    private var originIndex: Int = 0
+    fileprivate var originIndex: Int = 0
     
     // undoc box
-    private var dragInSectionID = ""
-    private var dragCancelled = false
-    private var unboxDragging = false
-    private var dragInSection: SectionObject?
-    private var undocGes: UILongPressGestureRecognizer!
-    private var cellSnapView: UnBoxToArticleSnapView?
+    fileprivate var dragInSectionID = ""
+    fileprivate var dragCancelled = false
+    fileprivate var unboxDragging = false
+    fileprivate var dragInSection: SectionObject?
+    fileprivate var undocGes: UILongPressGestureRecognizer!
+    fileprivate var cellSnapView: UnBoxToArticleSnapView?
     
     // editing
-    private var beEditing = false
-    private var hasMoved = false
-    private var outlineShowed = false
-    private var catchedView: UIImageView!
-    private var movingIndexPath: NSIndexPath?
-    private var displayLink: CADisplayLink?
-    private var scrollSpeed = CGFloat(0)
-    private var longPressGes: UILongPressGestureRecognizer!
-    private var isFirstMove = false
-    private var hasChoosedAll = false
+    fileprivate var beEditing = false
+    fileprivate var hasMoved = false
+    fileprivate var outlineShowed = false
+    fileprivate var catchedView: UIImageView!
+    fileprivate var movingIndexPath: IndexPath?
+    fileprivate var displayLink: CADisplayLink?
+    fileprivate var scrollSpeed = CGFloat(0)
+    fileprivate var longPressGes: UILongPressGestureRecognizer!
+    fileprivate var isFirstMove = false
+    fileprivate var hasChoosedAll = false
     
-    private var chooseCount = 0 {
+    fileprivate var chooseCount = 0 {
         didSet {
             bottomBar.choosedCount = chooseCount
         }
@@ -58,18 +58,18 @@ class ArticleListViewController: UIViewController {
     
     // common view
     
-    private var statusBar: UIView = {
+    fileprivate var statusBar: UIView = {
         let view = UIView(frame: CGRect(x: 0, y: 0, w: kScreenWidth, h: kStatusBarHeight))
         view.backgroundColor = SpiderConfig.Color.BackgroundDark
         return view
     }()
     
-    private lazy var unboxView = ArticleUndocBoxView()
+    fileprivate lazy var unboxView = ArticleUndocBoxView()
     
-    private lazy var toolBar: ArticleBottomBar = {
+    fileprivate lazy var toolBar: ArticleBottomBar = {
         let bar = ArticleBottomBar()
         bar.backHandler = { [weak self] in
-            self?.navigationController?.popViewControllerAnimated(true)
+            self?.navigationController?.popViewController(animated: true)
         }
         
         bar.unchiveHandler = { [weak self] in
@@ -79,7 +79,7 @@ class ArticleListViewController: UIViewController {
         return bar
     }()
     
-    private lazy var bottomBar: EditMindBottomBar = {
+    fileprivate lazy var bottomBar: EditMindBottomBar = {
         let bar = EditMindBottomBar()
         bar.deleteHandler = { [weak self] in
             self?.deleteChoosedSections()
@@ -91,7 +91,7 @@ class ArticleListViewController: UIViewController {
         return bar
     }()
     
-    private lazy var topBar: EditMindTopBar = {
+    fileprivate lazy var topBar: EditMindTopBar = {
         let bar = EditMindTopBar(title: self.articleName)
         bar.doneHandler = { [weak self] in
             self?.changeModel()
@@ -103,25 +103,25 @@ class ArticleListViewController: UIViewController {
         return bar
     }()
     
-    private lazy var addSectoinButton: UIButton? = {
+    fileprivate lazy var addSectoinButton: UIButton? = {
         let button = UIButton()
         button.imageEdgeInsets = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
-        button.setImage(UIImage(named: "article_add_button"), forState: .Normal)
-        button.addTarget(self, action: #selector(addSectionClicked), forControlEvents: .TouchUpInside)
+        button.setImage(UIImage(named: "article_add_button"), for: UIControlState())
+        button.addTarget(self, action: #selector(addSectionClicked), for: .touchUpInside)
         return button
     }()
 
-    private lazy var toUndocView = MoveMindUpView(toUndoc: true)
+    fileprivate lazy var toUndocView = MoveMindUpView(toUndoc: true)
     
-    private lazy var tableView = ArticleListTableView()
+    fileprivate lazy var tableView = ArticleListTableView()
     
-    private lazy var addSectionIndicator: UIImageView? = {
+    fileprivate lazy var addSectionIndicator: UIImageView? = {
         return UIImageView(image: UIImage(named: "article_nil_background"))
     }()
     
-    private lazy var addSectionView = AddMediaView(unDoc: false)
+    fileprivate lazy var addSectionView = AddMediaView(unDoc: false)
     
-    private var layoutPool = LayoutPool()
+    fileprivate var layoutPool = LayoutPool()
     
     // MARK: - Life Cycle
     convenience init(id: String) {
@@ -135,18 +135,18 @@ class ArticleListViewController: UIViewController {
         articleName = article.name
         
         sections = article.sections.filter("deleteFlag == 0")
-        sectionItems.appendContentsOf(sections)
+        sectionItems.append(contentsOf: sections)
 
         notificationToken = sections.addNotificationBlock { [weak self] (changes: RealmCollectionChange) in
             
-            guard let tableView = self?.tableView, sSelf = self else { return }
+            guard let tableView = self?.tableView, let sSelf = self else { return }
             
             switch changes {
                 
-            case .Initial:
+            case .initial:
                 break
                 
-            case .Update(let results, let delete, let insert, let modifications):
+            case .update(let results, let delete, let insert, let modifications):
                 
                 if !delete.isEmpty && sSelf.outlineShowed {   // disappear to outlineVC
                     sSelf.hasMoved = true
@@ -156,13 +156,13 @@ class ArticleListViewController: UIViewController {
                     
                     guard let index = insert.first else { return }
                     
-                    let section = results[index], indexPath = NSIndexPath(forRow: index, inSection: 1)
+                    let section = results[index], indexPath = IndexPath(row: index, section: 1)
                     
                     if section.id != sSelf.dragInSectionID {
-                        sSelf.sectionItems.insert(section, atIndex: index)
+                        sSelf.sectionItems.insert(section, at: index)
                         
                         if section.type == 0 {  // TextSection
-                            tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+                            tableView.insertRows(at: [indexPath], with: .fade)
                         } else {
                             sSelf.toShowIndexPath = indexPath
                         }
@@ -174,36 +174,36 @@ class ArticleListViewController: UIViewController {
                     sSelf.addSectoinButton?.removeFromSuperview()
                 }
                 
-                guard let cell = tableView.cellForRowAtIndexPath(NSIndexPath(forRow: 0, inSection: 0)) as? ArticleTitleCell else {
+                guard let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? ArticleTitleCell else {
                     return
                 }
 
                 cell.sectionCountLabel.text = "\(results.count)个段落"
                 
-            case .Error(let error):
+            case .error(let error):
                 print(error)
             }
         }
         
-        SpiderPlayer.sharedManager.addObserver(self, forKeyPath: "changed", options: .Old, context: &myContext)
+        SpiderPlayer.sharedManager.addObserver(self, forKeyPath: "changed", options: .old, context: &myContext)
         
         longPressGes = UILongPressGestureRecognizer(target: self, action: #selector(didLongPress))
         tableView.addGestureRecognizer(longPressGes)
         
-        tableView.registerClass(ArticlePicsCell.self, forCellReuseIdentifier: articlePicsCellID)
-        tableView.registerClass(ArticleTextCell.self, forCellReuseIdentifier: articleTextCellID)
-        tableView.registerClass(ArticleAudioCell.self, forCellReuseIdentifier: articleAudioCellID)
-        tableView.registerClass(ArticleTitleCell.self, forCellReuseIdentifier: articleTitleCellID)
+        tableView.register(ArticlePicsCell.self, forCellReuseIdentifier: articlePicsCellID)
+        tableView.register(ArticleTextCell.self, forCellReuseIdentifier: articleTextCellID)
+        tableView.register(ArticleAudioCell.self, forCellReuseIdentifier: articleAudioCellID)
+        tableView.register(ArticleTitleCell.self, forCellReuseIdentifier: articleTitleCellID)
         
         makeUI()
     }
     
-    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         
         if context == &myContext {
-            if let key = keyPath where key == "changed" {
+            if let key = keyPath, key == "changed" {
                 guard let _ = toShowIndexPath else {    // 如有新增段落，跳过updateUI
-                    dispatch_async(dispatch_get_main_queue(), {
+                    DispatchQueue.main.async(execute: {
                         let lastID = SpiderPlayer.sharedManager.lastID
                         let time = SpiderPlayer.sharedManager.lastPlayedTime
                         
@@ -217,20 +217,20 @@ class ArticleListViewController: UIViewController {
         }
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
     
-        UIApplication.sharedApplication().setStatusBarStyle(beEditing ? .Default : .LightContent, animated: false)
+        UIApplication.shared.setStatusBarStyle(beEditing ? .default : .lightContent, animated: false)
         navigationController?.setNavigationBarHidden(true, animated: false)
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         if let indexPath = toShowIndexPath {    // 新建图片、音频段落
             toShowIndexPath = nil
             tableView.beginUpdates()
-            tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+            tableView.insertRows(at: [indexPath], with: .fade)
             tableView.endUpdates()
         }
         
@@ -241,21 +241,21 @@ class ArticleListViewController: UIViewController {
         }
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
     }
     
-    override func viewDidDisappear(animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         
-        if isMovingFromParentViewController() {
+        if isMovingFromParentViewController {
             notificationToken?.stop()
             
             SpiderPlayer.sharedManager.removeObserver(self, forKeyPath: "changed", context: &myContext)
             SpiderPlayer.sharedManager.reset()
             
-            UIApplication.sharedApplication().setStatusBarStyle(.Default, animated: false)
+            UIApplication.shared.setStatusBarStyle(.default, animated: false)
             
             SpiderConfig.ArticleList.reset()
             
@@ -263,8 +263,8 @@ class ArticleListViewController: UIViewController {
         }
     }
 
-    private func makeUI() {
-        view.backgroundColor = UIColor.whiteColor()
+    fileprivate func makeUI() {
+        view.backgroundColor = UIColor.white
         tableView.delegate        = self
         tableView.dataSource      = self
         
@@ -280,12 +280,12 @@ class ArticleListViewController: UIViewController {
             view.addSubview(addSectoinButton!)
             view.addSubview(addSectionIndicator!)
             
-            addSectionIndicator!.snp_makeConstraints(closure: { (make) in
+            addSectionIndicator!.snp_makeConstraints({ (make) in
                 make.size.equalTo(CGSize(width: 150, height: 245))
                 make.center.equalTo(view)
             })
             
-            addSectoinButton!.snp_makeConstraints(closure: { (make) in
+            addSectoinButton!.snp_makeConstraints({ (make) in
                 make.size.equalTo(40)
                 make.centerX.equalTo(view)
                 make.top.equalTo(addSectionIndicator!.snp_bottom)
@@ -295,7 +295,7 @@ class ArticleListViewController: UIViewController {
     
     func pushUnchiveView() {
         unboxView.articleDelegate = self
-        navigationController?.fd_fullscreenPopGestureRecognizer.enabled = false
+        navigationController?.fd_fullscreenPopGestureRecognizer.isEnabled = false
         unboxView.moveTo(view)
     }
     
@@ -307,14 +307,14 @@ class ArticleListViewController: UIViewController {
 // MARK: - Move & Edit
 extension ArticleListViewController {
     
-    func didLongPress(ges: UILongPressGestureRecognizer) {
-        var location = ges.locationInView(tableView)
+    func didLongPress(_ ges: UILongPressGestureRecognizer) {
+        var location = ges.location(in: tableView)
         
         switch ges.state {
             
-        case .Began:
+        case .began:
             
-            guard let indexPath = tableView.indexPathForRowAtPoint(location) where indexPath.section != 0 else { return }
+            guard let indexPath = tableView.indexPathForRow(at: location), indexPath.section != 0 else { return }
             
             toUndocView.moveToView(tableView)
             
@@ -322,7 +322,7 @@ extension ArticleListViewController {
                 changeModel()
             }
             
-            if let moveCell = tableView.cellForRowAtIndexPath(indexPath) {
+            if let moveCell = tableView.cellForRow(at: indexPath) {
                 
                 catchedView = moveCell.getSnapshotImageView()
                 tableView.addSubview(catchedView)
@@ -330,7 +330,7 @@ extension ArticleListViewController {
                 movingIndexPath = indexPath
                 originIndex = indexPath.item
                 
-                dispatch_async(dispatch_get_main_queue(), {
+                DispatchQueue.main.async(execute: {
                     self.tableView.reloadData()
                 })
                 
@@ -346,7 +346,7 @@ extension ArticleListViewController {
                 changeModel()
             }
 
-        case .Changed:
+        case .changed:
             
             moveCatchedViewToLocation(location)
 
@@ -367,7 +367,7 @@ extension ArticleListViewController {
                     scrollSpeed = 8.0*((cellCenterY - tableView.frame.height)/halfCellHeight + 1.1)
                 }
                 
-                displayLink?.paused = scrollSpeed == 0.0
+                displayLink?.isPaused = scrollSpeed == 0.0
             }
             
         default:
@@ -383,8 +383,8 @@ extension ArticleListViewController {
                 UIView.move(catchedView, toPoint: toUndocView.center, withScalor: 40 / catchedView.frame.width, completion: { [weak self] done in
                     self?.toUndocView.removeFromSuperview()
                     self?.tableView.beginUpdates()
-                    self!.sectionItems.removeAtIndex(choosedIndexPath.item)
-                    self?.tableView.deleteRowsAtIndexPaths([choosedIndexPath], withRowAnimation: .None)
+                    self!.sectionItems.remove(at: choosedIndexPath.item)
+                    self?.tableView.deleteRows(at: [choosedIndexPath], with: .none)
                     self?.tableView.endUpdates()
                 })
                 
@@ -400,16 +400,16 @@ extension ArticleListViewController {
                 
                 catchedView.removeFromSuperview()
                 toUndocView.removeFromSuperview()
-                tableView.reloadRowsAtIndexPaths([choosedIndexPath], withRowAnimation: .None)
+                tableView.reloadRows(at: [choosedIndexPath], with: .none)
             }
         
-            displayLink?.paused = true
+            displayLink?.isPaused = true
             
             break
         }
     }
     
-    func moveCatchedViewToLocation(location: CGPoint) {
+    func moveCatchedViewToLocation(_ location: CGPoint) {
         let y = min(max(location.y, tableView.bounds.origin.y), tableView.bounds.origin.y + tableView.bounds.height)
         catchedView.center = CGPoint(x: location.x, y: y)
         
@@ -419,11 +419,11 @@ extension ArticleListViewController {
             toUndocView.isHighlight = false
         }
         
-        guard let newIndexPath = tableView.indexPathForRowAtPoint(catchedView.center),
-                  currentIndexPath = movingIndexPath where newIndexPath != currentIndexPath
+        guard let newIndexPath = tableView.indexPathForRow(at: catchedView.center),
+                  let currentIndexPath = movingIndexPath, newIndexPath != currentIndexPath
         else { return }
         
-        guard let cell = tableView.cellForRowAtIndexPath(newIndexPath) else { return }
+        guard let cell = tableView.cellForRow(at: newIndexPath) else { return }
         
         if newIndexPath.item < currentIndexPath.item {
             if catchedView.center.y < cell.frame.origin.y + 30 {
@@ -436,7 +436,7 @@ extension ArticleListViewController {
         }
     }
     
-    func moveSection(at aIndexP: NSIndexPath, to bIndexP: NSIndexPath) {
+    func moveSection(at aIndexP: IndexPath, to bIndexP: IndexPath) {
         
         if bIndexP.section == 1 {
             
@@ -447,8 +447,8 @@ extension ArticleListViewController {
                 if let section = dragInSection {
                     
                     movingIndexPath = bIndexP
-                    sectionItems.insert(section, atIndex: bIndexP.item)
-                    tableView.insertRowsAtIndexPaths([bIndexP], withRowAnimation: .Fade)
+                    sectionItems.insert(section, at: bIndexP.item)
+                    tableView.insertRows(at: [bIndexP], with: .fade)
                 }
                 
             } else {
@@ -456,7 +456,7 @@ extension ArticleListViewController {
                 swap(&sectionItems[aIndexP.item], &sectionItems[bIndexP.item])
                 
                 movingIndexPath = bIndexP
-                tableView.moveRowAtIndexPath(aIndexP, toIndexPath: bIndexP)
+                tableView.moveRow(at: aIndexP, to: bIndexP)
             }
         
         } else {
@@ -464,9 +464,9 @@ extension ArticleListViewController {
             if unboxDragging && !dragCancelled {
                 dragCancelled = true
                 movingIndexPath = bIndexP
-                sectionItems.removeAtIndex(aIndexP.item)
+                sectionItems.remove(at: aIndexP.item)
                 tableView.beginUpdates()
-                tableView.deleteRowsAtIndexPaths([aIndexP], withRowAnimation: .Top)
+                tableView.deleteRows(at: [aIndexP], with: .top)
                 tableView.endUpdates()
             }
         }
@@ -481,11 +481,11 @@ extension ArticleListViewController {
             displayLink?.invalidate()
             tableView.beEditing = false
             
-            UIApplication.sharedApplication().setStatusBarStyle(.LightContent, animated: false)
-            navigationController?.fd_fullscreenPopGestureRecognizer.enabled = true
+            UIApplication.shared.setStatusBarStyle(.lightContent, animated: false)
+            navigationController?.fd_fullscreenPopGestureRecognizer.isEnabled = true
             
-            view.backgroundColor = UIColor.whiteColor()
-            toolBar.hidden = false
+            view.backgroundColor = UIColor.white
+            toolBar.isHidden = false
             chooseCount = 0
             layoutPool.chooseAllItem(false)
             bottomBar.removeFromSuperview()
@@ -496,21 +496,21 @@ extension ArticleListViewController {
             
             beEditing = true
             isFirstMove = true
-            UIApplication.sharedApplication().setStatusBarStyle(.Default, animated: false)
-            navigationController?.fd_fullscreenPopGestureRecognizer.enabled = false
+            UIApplication.shared.setStatusBarStyle(.default, animated: false)
+            navigationController?.fd_fullscreenPopGestureRecognizer.isEnabled = false
             
             view.backgroundColor = SpiderConfig.Color.EditTheme
             
             tableView.beEditing = true
             tableView.reloadData()
             
-            toolBar.hidden = true
+            toolBar.isHidden = true
             topBar.addToView(view)
             bottomBar.addToView(view)
             
             displayLink = CADisplayLink(target: self, selector: #selector(scrollEvent))
-            displayLink?.addToRunLoop(.mainRunLoop(), forMode: NSDefaultRunLoopMode)
-            displayLink?.paused = true
+            displayLink?.add(to: .main, forMode: RunLoopMode.defaultRunLoopMode)
+            displayLink?.isPaused = true
         }
     }
     
@@ -519,7 +519,7 @@ extension ArticleListViewController {
         
         toUndocView.center.y = tableView.contentOffset.y + kScreenHeight / 2 - 60
         
-        moveCatchedViewToLocation(longPressGes.locationInView(tableView))
+        moveCatchedViewToLocation(longPressGes.location(in: tableView))
     }
     
     func choosedAllSections() {
@@ -531,7 +531,7 @@ extension ArticleListViewController {
         chooseCount = hasChoosedAll ? sectionItems.count : 0
     }
     
-    func deleteChoosedSections(doInRealm doInRealm: Bool = true) {
+    func deleteChoosedSections(doInRealm: Bool = true) {
         guard let article = SpiderConfig.ArticleList.article else { return }
         
         let ids = layoutPool.deleteChoosed()
@@ -539,13 +539,13 @@ extension ArticleListViewController {
 
         for id in ids {
             
-            guard let index = sectionItems.indexOf({ $0.id == id }) else { return }
+            guard let index = sectionItems.index(where: { $0.id == id }) else { return }
             
             sections.append(sectionItems[index])
 
-            sectionItems.removeAtIndex(index)
+            sectionItems.remove(at: index)
             tableView.beginUpdates()
-            tableView.deleteRowsAtIndexPaths([NSIndexPath(forItem: index, inSection: 1)], withRowAnimation: .Top)
+            tableView.deleteRows(at: [IndexPath(item: index, section: 1)], with: .top)
             tableView.endUpdates()
         }
         
@@ -555,7 +555,7 @@ extension ArticleListViewController {
     
     func moveInOutline() {
         outlineShowed = true
-        presentViewController(OutlineViewController(state: .MoveSection, toMoveItems: layoutPool.choosedItems()), animated: true, completion: nil)
+        present(OutlineViewController(state: .MoveSection, toMoveItems: layoutPool.choosedItems()), animated: true, completion: nil)
     }
 }
 
@@ -563,37 +563,37 @@ extension ArticleListViewController {
 
 extension ArticleListViewController: ArticleUndocBoxDelegate {
     
-    func didBeginToDragSeciton(section: SectionObject, layout: UndocBoxLayout, ges: UILongPressGestureRecognizer) {
+    func didBeginToDragSeciton(_ section: SectionObject, layout: UndocBoxLayout, ges: UILongPressGestureRecognizer) {
 
         if let snapView = UnBoxToArticleSnapView(info: layout) {
             
             displayLink = CADisplayLink(target: self, selector: #selector(undocScrollEvent))
-            displayLink?.addToRunLoop(.mainRunLoop(), forMode: NSDefaultRunLoopMode)
-            displayLink?.paused = true
+            displayLink?.add(to: .main, forMode: RunLoopMode.defaultRunLoopMode)
+            displayLink?.isPaused = true
             unboxDragging = true
             dragInSection = section
             
-            let point = ges.locationInView(tableView)
+            let point = ges.location(in: tableView)
             undocGes = ges
 
             cellSnapView = snapView
             snapView.center = point
             tableView.addSubview(snapView)
             
-            guard let indexPath = tableView.indexPathForRowAtPoint(point) where indexPath.section != 0 else { return }
+            guard let indexPath = tableView.indexPathForRow(at: point) , indexPath.section != 0 else { return }
             
             movingIndexPath = indexPath
             originIndex = indexPath.item
-            sectionItems.insert(section, atIndex: indexPath.item)
-            tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .None)
+            sectionItems.insert(section, at: indexPath.item)
+            tableView.insertRows(at: [indexPath], with: .none)
         }
     }
     
-    func didChange(ges: UILongPressGestureRecognizer) {
+    func didChange(_ ges: UILongPressGestureRecognizer) {
         
         if let snapView = cellSnapView {
             
-            let loc = undocGes.locationInView(tableView)
+            let loc = undocGes.location(in: tableView)
             moveUndocItemToLocation(loc)
             
             if tableView.contentSize.height > tableView.frame.height {
@@ -614,21 +614,21 @@ extension ArticleListViewController: ArticleUndocBoxDelegate {
                     scrollSpeed = 0
                 }
                 
-                displayLink?.paused = scrollSpeed == 0.0
+                displayLink?.isPaused = scrollSpeed == 0.0
             }
         }
     }
     
-    func didEndDrag(location: CGPoint) {
+    func didEndDrag(_ location: CGPoint) {
         unboxView.articleDelegate = nil
         unboxView.removeFromSuperview()
         cellSnapView?.removeFromSuperview()
         
         displayLink?.invalidate()
         undocGes = nil
-        navigationController?.fd_fullscreenPopGestureRecognizer.enabled = true
+        navigationController?.fd_fullscreenPopGestureRecognizer.isEnabled = true
         
-        if let choosedIndexPath = movingIndexPath, undocSection = dragInSection {
+        if let choosedIndexPath = movingIndexPath, let undocSection = dragInSection {
             
             if choosedIndexPath.section == 1 {
                 
@@ -645,7 +645,7 @@ extension ArticleListViewController: ArticleUndocBoxDelegate {
                 }
    
                 movingIndexPath = nil
-                tableView.reloadRowsAtIndexPaths([choosedIndexPath], withRowAnimation: .None)
+                tableView.reloadRows(at: [choosedIndexPath], with: .none)
             }
             
             dragInSectionID = undocSection.id
@@ -657,18 +657,18 @@ extension ArticleListViewController: ArticleUndocBoxDelegate {
     }
     
     func didQuitUndocBox() {
-        navigationController?.fd_fullscreenPopGestureRecognizer.enabled = true
+        navigationController?.fd_fullscreenPopGestureRecognizer.isEnabled = true
     }
     
-    func moveUndocItemToLocation(location: CGPoint) {
+    func moveUndocItemToLocation(_ location: CGPoint) {
         let y = min(max(location.y, tableView.bounds.origin.y), tableView.bounds.origin.y + tableView.bounds.height)
         cellSnapView?.center = CGPoint(x: location.x, y: y)
         
-        guard let newIndexPath = tableView.indexPathForRowAtPoint(location),
-            currentIndexPath = movingIndexPath where newIndexPath != currentIndexPath
+        guard let newIndexPath = tableView.indexPathForRow(at: location),
+            let currentIndexPath = movingIndexPath, newIndexPath != currentIndexPath
             else { return }
         
-        guard let cell = tableView.cellForRowAtIndexPath(newIndexPath) else { return }
+        guard let cell = tableView.cellForRow(at: newIndexPath) else { return }
         
         if newIndexPath.item < currentIndexPath.item {
             if cellSnapView!.center.y < cell.frame.origin.y + 30 {
@@ -683,81 +683,81 @@ extension ArticleListViewController: ArticleUndocBoxDelegate {
     
     func undocScrollEvent() {
         tableView.contentOffset.y = min(max(0.0, tableView.contentOffset.y + scrollSpeed), tableView.contentSize.height - tableView.frame.height)
-        moveUndocItemToLocation(undocGes.locationInView(tableView))
+        moveUndocItemToLocation(undocGes.location(in: tableView))
     }
 }
 
 // MARK: - TableView Delegate
 
 extension ArticleListViewController: UITableViewDataSource, UITableViewDelegate {
-    private enum Section: Int {
-        case Title = 0
-        case Content = 1
+    fileprivate enum Section: Int {
+        case title = 0
+        case content = 1
     }
     
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    func numberOfSections(in tableView: UITableView) -> Int {
         return 2
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard let section = Section(rawValue: section) else { return 0 }
         
         switch section {
             
-        case .Title:
+        case .title:
             return 1
             
-        case .Content:
+        case .content:
             return sectionItems.count
         }
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let section = Section(rawValue: indexPath.section) else { return UITableViewCell() }
         
-        func cellForSection(section: SectionObject) -> UITableViewCell {
+        func cellForSection(_ section: SectionObject) -> UITableViewCell {
             
             let type = SectionType(rawValue: section.type)!
             
             switch type {
                 
-            case .Pic:
-                let cell = tableView.dequeueReusableCellWithIdentifier(articlePicsCellID, forIndexPath: indexPath) as! ArticlePicsCell
+            case .pic:
+                let cell = tableView.dequeueReusableCell(withIdentifier: articlePicsCellID, for: indexPath) as! ArticlePicsCell
                 return cell
                 
-            case .Audio:
-                let cell = tableView.dequeueReusableCellWithIdentifier(articleAudioCellID, forIndexPath: indexPath) as! ArticleAudioCell
+            case .audio:
+                let cell = tableView.dequeueReusableCell(withIdentifier: articleAudioCellID, for: indexPath) as! ArticleAudioCell
                 return cell
                 
-            case .Text:
-                let cell = tableView.dequeueReusableCellWithIdentifier(articleTextCellID, forIndexPath: indexPath) as! ArticleTextCell
+            case .text:
+                let cell = tableView.dequeueReusableCell(withIdentifier: articleTextCellID, for: indexPath) as! ArticleTextCell
                 return cell
             }
         }
         
         switch section {
             
-        case .Title:
+        case .title:
             
-            return tableView.dequeueReusableCellWithIdentifier(articleTitleCellID, forIndexPath: indexPath) as! ArticleTitleCell
+            return tableView.dequeueReusableCell(withIdentifier: articleTitleCellID, for: indexPath) as! ArticleTitleCell
             
-        case .Content:
+        case .content:
             
             let sectionInfo = sectionItems[indexPath.item]
             return cellForSection(sectionInfo)
         }
     }
     
-    func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
         guard let section = Section(rawValue: indexPath.section),
-                  cell = cell as? ArticleBaseCell else {
+                  let cell = cell as? ArticleBaseCell else {
             return
         }
         
         cell.addSectionHandler = { [weak self] in
             
-            if let indexPath = tableView.indexPathForCell(cell) {
+            if let indexPath = tableView.indexPath(for: cell) {
                 
                 if indexPath.section == 0 {
                     SpiderConfig.ArticleList.insertIndex = 0
@@ -768,14 +768,14 @@ extension ArticleListViewController: UITableViewDataSource, UITableViewDelegate 
             }
         }
         
-        func configureSectionCell(cell: UITableViewCell, withSection section: SectionObject) {
+        func configureSectionCell(_ cell: UITableViewCell, withSection section: SectionObject) {
             
             var layout = layoutPool.cellLayoutOfSection(section)
             let type = SectionType(rawValue: section.type)!
             
             switch type {
                 
-            case .Text:
+            case .text:
                 
                 guard let cell = cell as? ArticleTextCell else { return }
                 
@@ -784,7 +784,7 @@ extension ArticleListViewController: UITableViewDataSource, UITableViewDelegate 
                     if self!.beEditing {
                         
                         self!.chooseCount += self!.layoutPool.updateSelectState(section) ? 1 : -1
-                        tableView.reloadRowsAtIndexPaths([tableView.indexPathForCell(cell)!], withRowAnimation: .None)
+                        tableView.reloadRows(at: [tableView.indexPath(for: cell)!], with: .none)
                         
                     } else {
 
@@ -802,18 +802,18 @@ extension ArticleListViewController: UITableViewDataSource, UITableViewDelegate 
                 
                 cell.configurationWithSection(section, layout: layout, editing: beEditing)
                 
-            case .Pic:
+            case .pic:
                 
                 guard let cell = cell as? ArticlePicsCell else { return }
                 
                 cell.tapAction = { [weak self] in
                     
-                    guard let indexPath = tableView.indexPathForCell(cell) else { return }
+                    guard let indexPath = tableView.indexPath(for: cell) else { return }
                     
                     if self!.beEditing {
                         
                         self!.chooseCount += self!.layoutPool.updateSelectState(section) ? 1 : -1
-                        tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: .None)
+                        tableView.reloadRows(at: [indexPath], with: .none)
                         
                     } else {
                         
@@ -827,7 +827,7 @@ extension ArticleListViewController: UITableViewDataSource, UITableViewDelegate 
                     
                 cell.congfigureWithSection(section, layout: layout, editing: beEditing)
                 
-            case .Audio:
+            case .audio:
                 
                 guard let cell = cell as? ArticleAudioCell else { return }
                 layout = layoutPool.updatePlayedTimeOfSection(section)
@@ -837,17 +837,17 @@ extension ArticleListViewController: UITableViewDataSource, UITableViewDelegate 
         
         switch section {
             
-        case .Title:
+        case .title:
             
             guard let cell = cell as? ArticleTitleCell  else { return }
-            cell.hidden = beEditing
+            cell.isHidden = beEditing
             cell.configureTitleCell(articleName, sectionCount: sections.count)
             
-        case .Content:
+        case .content:
             
-            if let movingIndexP = movingIndexPath where movingIndexP == indexPath {
+            if let movingIndexP = movingIndexPath, movingIndexP == indexPath {
                 
-                cell.hidden = true
+                cell.isHidden = true
                 
             } else {
                 
@@ -857,36 +857,36 @@ extension ArticleListViewController: UITableViewDataSource, UITableViewDelegate 
         }
     }
     
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
         guard let section = Section(rawValue: indexPath.section) else { return 0 }
         
         switch section {
             
-        case .Title:
+        case .title:
             return beEditing ? 0 : 80 + kArticleCellBottomOffset
             
-        case .Content:
+        case .content:
             let sectionInfo = sectionItems[indexPath.item]
             return layoutPool.heightOfSection(sectionInfo)
         }
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let section = Section(rawValue: indexPath.section) else { return }
         
-        if section != .Title {
+        if section != .title {
             
             let sectionObject = sectionItems[indexPath.item]
             let type = SectionType(rawValue: sectionObject.type)!
             
             switch type {
-            case .Audio:
+            case .audio:
                 
                 if beEditing {
                     
                     chooseCount += layoutPool.updateSelectState(sectionObject) ? 1 : -1
-                    tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: .None)
+                    tableView.reloadRows(at: [indexPath], with: .none)
                     
                 } else {
                     

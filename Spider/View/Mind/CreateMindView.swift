@@ -9,9 +9,9 @@
 import UIKit
 
 class CreateMindView: UIView {
-    var doneHandler: (String -> Void)?
+    var doneHandler: ((String) -> Void)?
     
-    private var addView: AddNewMindView!
+    fileprivate var addView: AddNewMindView!
     
     init(text: String = "") {
         super.init(frame: CGRect(x: 0, y: 0, width: kScreenWidth, height: kScreenHeight))
@@ -31,24 +31,24 @@ class CreateMindView: UIView {
         }
     }
     
-    func moveTo(view: UIView) {
+    func moveTo(_ view: UIView) {
         view.addSubview(self)
         addView.alpha = 0
         addSubview(addView)
         
-        UIView.animateWithDuration(0.3) {
+        UIView.animate(withDuration: 0.3, animations: {
             self.alpha = 1
             self.addView.alpha = 1
-        }
+        }) 
     }
     
     func quitEdit() {
-        UIView.animateWithDuration(0.4, animations: {
+        UIView.animate(withDuration: 0.4, animations: {
             self.alpha = 0
-        }) { done in
+        }, completion: { done in
             self.addView.removeFromSuperview()
             self.removeFromSuperview()
-        }
+        }) 
     }
     
     required init?(coder aDecoder: NSCoder) {

@@ -20,12 +20,12 @@ class UndocTextCell: UndocBaseCell {
 //        return textV
 //    }()
     
-    private var textLabel: UILabel = {
+    fileprivate var textLabel: UILabel = {
         let label = UILabel()
         label.font = SpiderConfig.Font.Text
         label.textColor = SpiderConfig.Color.DarkText
         label.numberOfLines = 0
-        label.textAlignment = .Center
+        label.textAlignment = .center
         return label
     }()
     
@@ -40,7 +40,7 @@ class UndocTextCell: UndocBaseCell {
         }
     }
     
-    override func configureWithInfo(info: UndocBoxLayout, editing: Bool = false) {
+    override func configureWithInfo(_ info: UndocBoxLayout, editing: Bool = false) {
         super.configureWithInfo(info, editing: editing)
         textLabel.text = info.text
     }

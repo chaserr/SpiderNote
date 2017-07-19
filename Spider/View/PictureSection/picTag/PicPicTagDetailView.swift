@@ -11,12 +11,12 @@ import UIKit
 class PicPicTagDetailView: UIView {
     init(image: UIImage) {
         super.init(frame: CGRect(x: 0, y: 0, width: kScreenWidth, height: kScreenHeight))
-        backgroundColor = UIColor.blackColor()
+        backgroundColor = UIColor.black
         
         let imageVH = kScreenWidth / image.size.width * kScreenHeight
         let imageView = UIImageView(frame: CGRect(x: 0, y: (kScreenHeight - imageVH) / 2, width: kScreenWidth, height: imageVH))
         imageView.image = image
-        imageView.contentMode = .ScaleAspectFit
+        imageView.contentMode = .scaleAspectFit
         addSubview(imageView)
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(removeFromSuperview))

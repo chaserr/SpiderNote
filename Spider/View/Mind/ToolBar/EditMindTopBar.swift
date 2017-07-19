@@ -13,38 +13,38 @@ class EditMindTopBar: UIView {
     var doneHandler: (() -> Void)?
     var chooseAllHandler: (() -> Void)?
     
-    private var choosedAll = false
+    fileprivate var choosedAll = false
 
-    private lazy var titleLabel: UILabel = {
+    fileprivate lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.textAlignment = .Center
+        label.textAlignment = .center
         label.textColor = UIColor.color(withHex: 0x222222)
-        label.font = UIFont.systemFontOfSize(18)
+        label.font = UIFont.systemFont(ofSize: 18)
         return label
     }()
     
-    private lazy var chooseAllButton: UIButton = {
+    fileprivate lazy var chooseAllButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("全选", forState: .Normal)
-        button.setTitleColor(UIColor.color(withHex: 0x5FB85F), forState: .Normal)
-        button.titleLabel?.font = UIFont.systemFontOfSize(15)
+        button.setTitle("全选", for: UIControlState())
+        button.setTitleColor(UIColor.color(withHex: 0x5FB85F), for: UIControlState())
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 15)
         return button
     }()
     
-    private lazy var doneButton: UIButton = {
+    fileprivate lazy var doneButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("完成", forState: .Normal)
-        button.setTitleColor(UIColor.color(withHex: 0x5FB85F), forState: .Normal)
-        button.titleLabel?.font = UIFont.systemFontOfSize(15)
+        button.setTitle("完成", for: UIControlState())
+        button.setTitleColor(UIColor.color(withHex: 0x5FB85F), for: UIControlState())
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 15)
         return button
     }()
     
     init(title: String) {
         super.init(frame: CGRect(x: 0, y: 0, w: kScreenWidth, h: 64))
-        backgroundColor = UIColor.whiteColor()
+        backgroundColor = UIColor.white
         
         titleLabel.text = title
         makeUI()
@@ -52,8 +52,8 @@ class EditMindTopBar: UIView {
     }
     
     func addActions() {
-        doneButton.addTarget(self, action: #selector(doneButtonClicked), forControlEvents: .TouchUpInside)
-        chooseAllButton.addTarget(self, action: #selector(chooseAllButtonClicked), forControlEvents: .TouchUpInside)
+        doneButton.addTarget(self, action: #selector(doneButtonClicked), for: .touchUpInside)
+        chooseAllButton.addTarget(self, action: #selector(chooseAllButtonClicked), for: .touchUpInside)
     }
     
     func doneButtonClicked() {
@@ -70,11 +70,11 @@ class EditMindTopBar: UIView {
     
     func chooseAllButtonClicked() {
         choosedAll = !choosedAll
-        chooseAllButton.setTitle(choosedAll ? "取消" : "全选", forState: .Normal)
+        chooseAllButton.setTitle(choosedAll ? "取消" : "全选", for: UIControlState())
         chooseAllHandler?()
     }
     
-    func addToView(view: UIView) {
+    func addToView(_ view: UIView) {
         frame.origin = CGPoint(x: 0, y: -64)
         view.addSubview(self)
         

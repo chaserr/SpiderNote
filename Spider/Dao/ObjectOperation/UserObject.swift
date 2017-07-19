@@ -35,8 +35,8 @@ class UserObject: Object {
     dynamic var occupancySpace: String = ""
     
     // 重写set方法
-    dynamic private var _image: UIImage? = nil
-    dynamic private var imageData: NSData? = nil
+    dynamic fileprivate var _image: UIImage? = nil
+    dynamic fileprivate var imageData: Data? = nil
     dynamic var userPortrial: UIImage? {
     
         set{
@@ -75,7 +75,7 @@ class UserObject: Object {
     }
     
     /** 内容直接更新 , 适用于从数据库查询已有对象，更新某一个属性*/
-    func updateUserObj(transtionBlock: () -> Void) -> Void {
+    func updateUserObj(_ transtionBlock: () -> Void) -> Void {
         try! REALM.realm.write({
             transtionBlock()
         })
@@ -94,9 +94,9 @@ class UserObject: Object {
         }
     }
     
-    static func fetchUserObj(userId: String) -> UserObject?{
+    static func fetchUserObj(_ userId: String) -> UserObject?{
     
-        return REALM.realm.objectForPrimaryKey(self, key: userId)!
+        return REALM.realm.object(ofType: self, forPrimaryKey: userId as AnyObject)!
     }
     
 }

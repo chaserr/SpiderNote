@@ -11,12 +11,12 @@ import UIKit
 class OutlineTableView: UITableView {
 
     init() {
-        super.init(frame: CGRectZero, style: .Plain)
+        super.init(frame: CGRect.zero, style: .plain)
         
         rowHeight = kOutlineCellHeight
 //        sectionHeaderHeight = kOutlineCellHeight
         tableFooterView = UIView()
-        separatorStyle = .None
+        separatorStyle = .none
         translatesAutoresizingMaskIntoConstraints = false
     }
     
