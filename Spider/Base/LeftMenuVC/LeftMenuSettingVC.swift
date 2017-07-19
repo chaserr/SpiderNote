@@ -117,7 +117,7 @@ extension LeftMenuSettingVC{
             break
         }
         
-        cell.setDefaultValue(indexPath, titleArray: self.cellTitle, cellDetailDic: self.cellDetailDict)
+        cell.setDefaultValue(indexPath, titleArray: self.cellTitle as Array<AnyObject>, cellDetailDic: self.cellDetailDict)
         
         return cell
         

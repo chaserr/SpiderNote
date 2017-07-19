@@ -259,7 +259,7 @@ class ArticleListViewController: UIViewController {
             
             SpiderConfig.ArticleList.reset()
             
-            println(" ArticleListViewController: release RealmToken, reset SpiderPlayer & ArticleList")
+            AODlog(" ArticleListViewController: release RealmToken, reset SpiderPlayer & ArticleList")
         }
     }
 

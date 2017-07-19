@@ -29,63 +29,63 @@ open class UploadProManager {
     func uploadProject(_ parameters:[String: AnyObject], success: () -> Void, failure: () -> Void) -> Void {
         
         AOHUDVIEW.showLoadingHUD("加载中...", parentView: APP_DELEGATE.window!)
-        AORequest(requestMethod: .POST, specialParameters: parameters, api: .uploadProjectsUrl).responseJSON { response in
-            if response.result.isSuccess{
-                AOHUDVIEW.hideHUD()
-                let jsonData = JSON(response.result.value!)
-                let dic = JsonStrToDic(jsonData.rawString()!)
-                AODlog((dic! as NSDictionary).description)
-                let code = dic!["code"] as! String
-                switch code {
-                case EAOUploadProject.UploadSuccess.rawValue:
-                    // 上传成功
-                    let noteArr: [Dictionary] = dic!["notes"] as! [Dictionary<String, AnyObject>]
-                    for noteItem in noteArr {
-                        
-                        switch (noteItem["code"] as! String) {
-                        case EAOUploadProjectState.Success.rawValue:
-                            // 上传成功
-                            
-                            success()
-                            
-                        case EAOUploadProjectState.SaveSectionException.rawValue:
-                            // 保存段落出现异常
-                            AOHUDVIEW.showTips(noteItem["message"] as! String)
-                            failure()
-
-                        case EAOUploadProjectState.SaveMindException.rawValue:
-                            // 保存节点出现异常
-                            AOHUDVIEW.showTips(noteItem["message"] as! String)
-                            failure()
-                        case EAOUploadProjectState.SaveProjectException.rawValue:
-                            // 保存项目本身出现异常
-                            AOHUDVIEW.showTips(noteItem["message"] as! String)
-                            failure()
-
-                        default: break
-                            
-                        }
-//                        AODlog((noteItem as NSDictionary).description)
-                        
-                    }
-                case EAOUploadProject.SaveSectionException.rawValue:
-                    AOHUDVIEW.showTips("数据库被锁定，请稍后再试")
-                    failure()
-                case EAOUploadProject.SaveProjectException.rawValue:
-                    AOHUDVIEW.showTips("服务端异常，请从新上传")
-                    failure()
-                default:break
-                }
-            }
-            
-            if response.result.isFailure{
-                AOHUDVIEW.hideHUD()
-                if let responseString = response.result.error?.debugDescription {
-                    failure()
-                    AODlog(responseString)
-                }
-            }
-        }
+//        AORequest(requestMethod: .POST, specialParameters: parameters, api: .uploadProjectsUrl).responseJSON { response in
+//            if response.result.isSuccess{
+//                AOHUDVIEW.hideHUD()
+//                let jsonData = JSON(response.result.value!)
+//                let dic = JsonStrToDic(jsonData.rawString()!)
+//                AODlog((dic! as NSDictionary).description)
+//                let code = dic!["code"] as! String
+//                switch code {
+//                case EAOUploadProject.UploadSuccess.rawValue:
+//                    // 上传成功
+//                    let noteArr: [Dictionary] = dic!["notes"] as! [Dictionary<String, AnyObject>]
+//                    for noteItem in noteArr {
+//                        
+//                        switch (noteItem["code"] as! String) {
+//                        case EAOUploadProjectState.Success.rawValue:
+//                            // 上传成功
+//                            
+//                            success()
+//                            
+//                        case EAOUploadProjectState.SaveSectionException.rawValue:
+//                            // 保存段落出现异常
+//                            AOHUDVIEW.showTips(noteItem["message"] as! String)
+//                            failure()
+//
+//                        case EAOUploadProjectState.SaveMindException.rawValue:
+//                            // 保存节点出现异常
+//                            AOHUDVIEW.showTips(noteItem["message"] as! String)
+//                            failure()
+//                        case EAOUploadProjectState.SaveProjectException.rawValue:
+//                            // 保存项目本身出现异常
+//                            AOHUDVIEW.showTips(noteItem["message"] as! String)
+//                            failure()
+//
+//                        default: break
+//                            
+//                        }
+////                        AODlog((noteItem as NSDictionary).description)
+//                        
+//                    }
+//                case EAOUploadProject.SaveSectionException.rawValue:
+//                    AOHUDVIEW.showTips("数据库被锁定，请稍后再试")
+//                    failure()
+//                case EAOUploadProject.SaveProjectException.rawValue:
+//                    AOHUDVIEW.showTips("服务端异常，请从新上传")
+//                    failure()
+//                default:break
+//                }
+//            }
+//            
+//            if response.result.isFailure{
+//                AOHUDVIEW.hideHUD()
+//                if let responseString = response.result.error?.debugDescription {
+//                    failure()
+//                    AODlog(responseString)
+//                }
+//            }
+//        }
     }
     
     
@@ -151,7 +151,7 @@ open class UploadProManager {
                             }
                         }
                     }
-                    mindDic["sectionIds"] = sectionIds as AnyObject ?? ""
+                    mindDic["sectionIds"] = sectionIds as AnyObject ?? "" as AnyObject
                     var childIds: String = ""
                     if mind.subMinds.count != 0 {
                         for (index,submind) in mind.subMinds.enumerated() {
@@ -164,11 +164,11 @@ open class UploadProManager {
                             }
                         }
                     }
-                    mindDic["childIds"] = childIds as AnyObject ?? ""
+                    mindDic["childIds"] = childIds as AnyObject ?? "" as AnyObject
                     mindsArr.append(mindDic as AnyObject)
                 }
             }
-            proDic["childIds"] = childIds as AnyObject ?? ""
+            proDic["childIds"] = childIds as AnyObject ?? "" as AnyObject
             proDic["minds"] = mindsArr as AnyObject
             notesArr.append(proDic as AnyObject)
         }
@@ -248,23 +248,23 @@ open class UploadProManager {
     }
     
     func downloadAudio(_ url: String, success: @escaping () -> Void, failure: @escaping () -> Void) -> Void {
-        AOHUDVIEW.showLoadingHUD("加载中...", parentView: APP_DELEGATE.window!)
-        AORequest.init(requestMethod: .GET, urlStr: url).responseJSON { (response) in
-            if response.result.isSuccess{
-                AOHUDVIEW.hideHUD()
-                
-                success()
-                
-            }
-            
-            if response.result.isFailure{
-                AOHUDVIEW.hideHUD()
-                if let responseString = response.result.error?.debugDescription {
-                    failure()
-                    AOHUDVIEW.showTips(responseString)
-                }
-            }
-        }
+//        AOHUDVIEW.showLoadingHUD("加载中...", parentView: APP_DELEGATE.window!)
+//        AORequest.init(requestMethod: .GET, urlStr: url).responseJSON { (response) in
+//            if response.result.isSuccess{
+//                AOHUDVIEW.hideHUD()
+//                
+//                success()
+//                
+//            }
+//            
+//            if response.result.isFailure{
+//                AOHUDVIEW.hideHUD()
+//                if let responseString = response.result.error?.debugDescription {
+//                    failure()
+//                    AOHUDVIEW.showTips(responseString)
+//                }
+//            }
+//        }
     }
 
 }
@@ -273,23 +273,23 @@ extension UploadProManager{
 
     // TODO: 测试
     func testNetWorking(_ success: @escaping () -> Void,  failure: @escaping () -> Void) -> Void {
-        AOHUDVIEW.showLoadingHUD("加载中...", parentView: APP_DELEGATE.window!)
-        AORequest(requestMethod: .GET, urlStr: "http://api2.pianke.me/read/columns").responseJSON { (response) in
-            if response.result.isSuccess{
-                AOHUDVIEW.hideHUD()
-                let jsonData = JSON(response.result.value!)
-                alert(jsonData.description, message: nil, parentVC: getCurrentRootViewController()!)
-                
-                success()
-            }
-            
-            if response.result.isFailure{
-                AOHUDVIEW.hideHUD()
-                if let responseString = response.result.error?.debugDescription {
-                    failure()
-                    AOHUDVIEW.showTips(responseString)
-                }
-            }
-        }
+//        AOHUDVIEW.showLoadingHUD("加载中...", parentView: APP_DELEGATE.window!)
+//        AORequest(requestMethod: .GET, urlStr: "http://api2.pianke.me/read/columns").responseJSON { (response) in
+//            if response.result.isSuccess{
+//                AOHUDVIEW.hideHUD()
+//                let jsonData = JSON(response.result.value!)
+//                alert(jsonData.description, message: nil, parentVC: getCurrentRootViewController()!)
+//                
+//                success()
+//            }
+//            
+//            if response.result.isFailure{
+//                AOHUDVIEW.hideHUD()
+//                if let responseString = response.result.error?.debugDescription {
+//                    failure()
+//                    AOHUDVIEW.showTips(responseString)
+//                }
+//            }
+//        }
     }
 }

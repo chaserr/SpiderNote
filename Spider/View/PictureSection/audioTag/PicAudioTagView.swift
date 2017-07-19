@@ -63,8 +63,8 @@ class PicAudioTagView: PicTagView, AVAudioPlayerDelegate {
             break
             
         case .left:
-            transform = CGAffineTransform(rotationAngle: CGFloat(M_PI))
-            contentView.transform = CGAffineTransform(rotationAngle: CGFloat(M_PI))
+            transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi))
+            contentView.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi))
             frame.origin = CGPoint(x: location.x - kPicAudioBGW - 15 + 5, y: location.y - kPicAudioBGH / 2)
         case .none:
             self.direction = .right
@@ -105,7 +105,7 @@ class PicAudioTagView: PicTagView, AVAudioPlayerDelegate {
                 icon.startAnimating()
                 
             } catch {
-                println("error: Pic Audio Tag can't play: \(error)")
+                AODlog("error: Pic Audio Tag can't play: \(error)")
             }
         }
     }

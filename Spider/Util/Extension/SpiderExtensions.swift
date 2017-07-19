@@ -101,20 +101,20 @@ extension String {
     
     func toYearMonth() -> String {
         let end = characters.index(endIndex, offsetBy: -1, limitedBy: startIndex)
-        let pos = characters.index(startIndex, offsetBy: 7, limitedBy: end)
-        return substring(to: pos)
+        let pos = characters.index(startIndex, offsetBy: 7, limitedBy: end!)
+        return substring(to: pos!)
     }
     
     func toYear() -> String {
         let end = characters.index(endIndex, offsetBy: -1, limitedBy: startIndex)
-        let pos = characters.index(startIndex, offsetBy: 4, limitedBy: end)
-        return substring(to: pos)
+        let pos = characters.index(startIndex, offsetBy: 4, limitedBy: end!)
+        return substring(to: pos!)
     }
     
     func toMonth() -> String {
         let ym = toYearMonth()
         let end = ym.characters.index(ym.endIndex, offsetBy: -2, limitedBy: ym.startIndex)
-        return ym.substring(from: end)
+        return ym.substring(from: end!)
     }
     
     func isThisYear() -> Bool {
@@ -151,7 +151,7 @@ extension String {
             if toMonth() == thisMonth {
                 return "本月"
             } else {
-                return "\(toMonth().toInt())月"
+                return "\(Int(toMonth()))月"
             }
         }
     }

@@ -126,7 +126,7 @@ extension SectionObject {
     }
 
     var indexOfOwner: Int? {
-        return owner.first?.sections.indexOf(self)
+        return owner.first?.sections.index(of: self)
     }
     
     func update(_ time: String = Date().toString()) {

@@ -104,7 +104,7 @@ open class AORequest: NSObject {
     init(specialParameters : [String:AnyObject],api : EAOServerRequestAPI,uploadPath:String, isImage:Bool){
         
         super.init()
-        addUploadRequestUrl(api, parameter: specialParameters)
+//        addUploadRequestUrl(api, parameter: specialParameters)
         self.filePath = uploadPath
         if isImage{
             self.mimType = "image/jpg"
@@ -383,7 +383,7 @@ open class AORequest: NSObject {
         
         let str = "\(adId)_\(nowTime)"
         
-        return str + "_" + str.AOMD5(str)
+        return str + "_" + str.md5()
     }
     
     /**

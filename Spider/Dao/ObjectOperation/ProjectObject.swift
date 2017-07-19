@@ -70,7 +70,7 @@ extension ProjectObject {
     }
     
     func removeMindWith(_ id: String) -> MindObject? {
-        guard let mind = REALM.realm.objectForPrimaryKey(MindObject.self, key: id as AnyObject) else { return nil}
+        guard let mind = REALM.realm.object(ofType: MindObject.self, forPrimaryKey: id as AnyObject) else { return nil}
         removeMind(mind)
         return mind
     }

@@ -80,7 +80,7 @@ class ProjectCollectionViewController: MainViewController, UICollectionViewDeleg
         collectionView.register(ProjectViewCell.self, forCellWithReuseIdentifier: cellID)
         
         view.addSubview(collectionView)
-        collectionView.snp_makeConstraints { (make) in
+        collectionView.snp.makeConstraints { (make) in
             make.top.bottom.right.left.equalTo(view)
         }
         

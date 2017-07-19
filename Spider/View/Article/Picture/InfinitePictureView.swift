@@ -76,11 +76,11 @@ class InfinitePictureView: UIView {
     func update(_ picInfo: [PicInfo]) {
         
         /** 预加载 */
-        var resources = [Resource]()
+        var resources = [ImageResource]()
         
         let _ = picInfo.map({ info in
             if let url = info.url {
-                resources.append(Resource(downloadURL: url, cacheKey: info.id))
+                resources.append(ImageResource (downloadURL: url, cacheKey: info.id))
             }
         })
         

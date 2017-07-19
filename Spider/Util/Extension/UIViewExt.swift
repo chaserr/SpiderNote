@@ -23,7 +23,7 @@ extension UIView {
         self.addGestureRecognizer(tapGesture)
     }
     
-    func whenTapped(_ action :(() -> Void)) {
+    func whenTapped(_ action :@escaping (() -> Void)) {
         // 手势-一次点击
         _addBlock(NewAction: action)
         whenTouch(NumberOfTouche: 1, NumberOfTaps: 1)
@@ -36,13 +36,13 @@ extension UIView {
     }
 
 
-    fileprivate func _addBlock(NewAction newAction:()->()) {
-        let key = String(NSValue(nonretainedObject: self))
+    fileprivate func _addBlock(NewAction newAction:@escaping ()->()) {
+        let key = String(describing: NSValue(nonretainedObject: self))
         blockActionDict[key] = newAction
     }
 
     fileprivate func _excuteCurrentBlock(){
-        let key = String(NSValue(nonretainedObject: self))
+        let key = String(describing: NSValue(nonretainedObject: self))
         let block = blockActionDict[key]
         block!()
     }
@@ -51,7 +51,7 @@ extension UIView {
 
 extension UIView{
 
-    func addSubLayerWithFrame(_ frame:CGRect, color:CGColorRef) -> CALayer {
+    func addSubLayerWithFrame(_ frame:CGRect, color:CGColor) -> CALayer {
         let layer:CALayer = CALayer()
         layer.frame = frame
         layer.backgroundColor = color
@@ -59,7 +59,7 @@ extension UIView{
         return layer
     }
     
-    func addBottomFillLineWithColor(_ color:CGColorRef) -> CALayer {
+    func addBottomFillLineWithColor(_ color:CGColor) -> CALayer {
         return addSubLayerWithFrame(CGRect(x: 0, y: self.h - 0.5, width: self.w, height: 0.5), color: color)
 
     

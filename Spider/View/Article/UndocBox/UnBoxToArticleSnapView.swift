@@ -17,7 +17,7 @@ class UnBoxToArticleSnapView: UIView {
         case .pic:
 
             guard let picInfo = info.picInfo else {
-                println(" UnBoxToArticleSnapView Init Failed: can't get pic info ")
+                AODlog(" UnBoxToArticleSnapView Init Failed: can't get pic info ")
                 return nil
             }
             
@@ -43,7 +43,7 @@ class UnBoxToArticleSnapView: UIView {
         case .text:
             
             guard let text = info.text else {
-                println(" UnBoxToArticleSnapView Init Failed: can't get text info ")
+                AODlog(" UnBoxToArticleSnapView Init Failed: can't get text info ")
                 return nil
             }
             
@@ -62,7 +62,7 @@ class UnBoxToArticleSnapView: UIView {
         case .audio:
             
             guard let duration = info.duration else {
-                println(" UnBoxToArticleSnapView Init Failed: can't get audio info ")
+                AODlog(" UnBoxToArticleSnapView Init Failed: can't get audio info ")
                 return nil
             }
             

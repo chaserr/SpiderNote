@@ -109,7 +109,7 @@ class UndocBoxViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        notificationToken = unDocResults.addNotificationBlock { [weak self] (changes: RealmCollectionChange) in
+        notificationToken = unDocResults?.addNotificationBlock { [weak self] (changes: RealmCollectionChange) in
             
             guard let collectionView = self?.collectionView, let sSelf = self else { return }
             
@@ -117,7 +117,7 @@ class UndocBoxViewController: UIViewController {
             case .initial:
                 break
                 
-            case .update(let _, let deletions, let insertions, let modifications):
+            case .update( _, let deletions, let insertions, let modifications):
                 
                 print(deletions, insertions, modifications)
                 
@@ -134,7 +134,7 @@ class UndocBoxViewController: UIViewController {
                 }
 
             case .error:
-                println("error")
+                AODlog("error")
                 break
             }
         }
@@ -156,7 +156,7 @@ class UndocBoxViewController: UIViewController {
         
         view.addSubview(collectionView)
         
-        collectionView.snp_makeConstraints { (make) in
+        collectionView.snp.makeConstraints { (make) in
             collectionView.bottomConstraint = make.bottom.equalTo(view).constraint
             make.left.right.top.equalTo(view)
         }
@@ -203,7 +203,7 @@ class UndocBoxViewController: UIViewController {
         
         if isMovingFromParentViewController {
             notificationToken?.stop()
-            println(" UndocBoxViewController: realse RealmToken ")
+            AODlog(" UndocBoxViewController: realse RealmToken ")
         }
     }
 
@@ -262,7 +262,7 @@ class UndocBoxViewController: UIViewController {
         layoutPool.chooseAllItem(hasChoosedAll)
         collectionView.reloadData()
         
-        choosedCount = hasChoosedAll ? unDocResults.count : 0
+        choosedCount = hasChoosedAll ? (unDocResults?.count)! : 0
     }
     
     func changeModel() {
@@ -373,7 +373,7 @@ extension UndocBoxViewController: UICollectionViewDelegate, UICollectionViewData
                 navigationController?.pushViewController(picVC, animated: true)
                 
             case .audio:
-                let audioVC = AudioSectionViewController(coder: undocItem)
+                let audioVC = AudioSectionViewController (section: undocItem)
                 navigationController?.pushViewController(audioVC, animated: true)
                 
             case .text:

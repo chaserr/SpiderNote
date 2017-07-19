@@ -42,14 +42,14 @@ class LeftMenuViewController: UIViewController, UITableViewDelegate, UITableView
         // 添加约束
         addViewConstranit()
         
-        addNotificationObserver(kNotificationLoginSuccessed, selector: #selector(updateInfo))
-        addNotificationObserver(kSyncSuccessNotification, selector: #selector(updateSyncTime))
+        addNotificationObserver(name: kNotificationLoginSuccessed, selector: #selector(updateInfo))
+        addNotificationObserver(name: kSyncSuccessNotification, selector: #selector(updateSyncTime))
 
     }
     
     deinit{
     
-        removeNotificationObserver(kNotificationLoginSuccessed)
+        removeNotificationObserver(name: kNotificationLoginSuccessed)
     }
     
 
@@ -148,7 +148,7 @@ class LeftMenuViewController: UIViewController, UITableViewDelegate, UITableView
                 self!.footerButton.isUserInteractionEnabled = false
                 var paraDic = [String: AnyObject]()
                 let dic: Dictionary = SYNCPROMANAGER.getFirstRequestParam()
-                paraDic["projectInfo"] = dic.dicToJSON(dic)
+                paraDic["projectInfo"] = dic.dicToJSON(dic) as AnyObject
                 SYNCPROMANAGER.syncProject(paraDic, success: { (uploadProObjID) in
                     // 执行上传操作
                     self!.uploadOperation(uploadProObjID)
@@ -181,7 +181,7 @@ class LeftMenuViewController: UIViewController, UITableViewDelegate, UITableView
     func uploadOperation(_ uploadProObjID: [String]) -> Void {
         var paraDic = [String: AnyObject]()
         let dic: Dictionary = UPLOADPROMANAGER.getSecondRequestParam(uploadProObjID)
-        paraDic["projectInfo"] = dic.dicToJSON(dic)
+        paraDic["projectInfo"] = dic.dicToJSON(dic) as AnyObject
 //        AODlog((paraDic as NSDictionary).description)
         UPLOADPROMANAGER.uploadProject(paraDic, success: { [weak self] in
             self!.endSync()
@@ -216,35 +216,35 @@ class LeftMenuViewController: UIViewController, UITableViewDelegate, UITableView
     
     func addViewConstranit() -> Void {
         
-        headImageView.snp_makeConstraints { (make) in
+        headImageView.snp.makeConstraints { (make) in
             make.width.height.equalTo(100)
             make.centerX.equalToSuperview()
             make.topMargin.equalTo(50)
         }
         
-        nicknameLable.snp_makeConstraints { (make) in
+        nicknameLable.snp.makeConstraints { (make) in
             make.width.equalToSuperview()
             make.height.equalTo(20)
-            make.topMargin.equalTo(headImageView.snp_bottom).offset(20)
+            make.topMargin.equalTo(headImageView.snp.bottom).offset(20)
             make.centerX.equalTo(headImageView)
         }
         
-        headerSeperatorLine.snp_makeConstraints { (make) in
+        headerSeperatorLine.snp.makeConstraints { (make) in
             make.leading.trailing.equalToSuperview()
-            make.topMargin.equalTo(nicknameLable.snp_bottom).offset(44)
+            make.topMargin.equalTo(nicknameLable.snp.bottom).offset(44)
             //            make.width.equalTo(100)
             make.height.equalTo(1)
             make.centerX.equalTo(nicknameLable)
             
         }
         
-        tableView.snp_makeConstraints { (make) in
+        tableView.snp.makeConstraints { (make) in
             make.left.right.equalToSuperview()
-            make.topMargin.equalTo(headerSeperatorLine.snp_bottom).offset(10)
-            make.bottom.equalTo(footerSeperatorLine.snp_top).offset(10)
+            make.topMargin.equalTo(headerSeperatorLine.snp.bottom).offset(10)
+            make.bottom.equalTo(footerSeperatorLine.snp.top).offset(10)
         }
         
-        footerSeperatorLine.snp_makeConstraints { (make) in
+        footerSeperatorLine.snp.makeConstraints { (make) in
             make.leading.trailing.equalToSuperview()
             make.bottomMargin.equalToSuperview().offset(-55)
             //            make.width.equalTo(100)
@@ -253,19 +253,19 @@ class LeftMenuViewController: UIViewController, UITableViewDelegate, UITableView
             
         }
         
-        footerView.snp_makeConstraints { (make) in
+        footerView.snp.makeConstraints { (make) in
             make.leading.trailing.bottom.equalToSuperview()
             make.height.equalTo(55)
 
         }
         
-        footerLabel.snp_makeConstraints { (make) in
+        footerLabel.snp.makeConstraints { (make) in
             make.leading.equalToSuperview().offset(10)
             make.top.bottom.equalToSuperview()
-            make.trailing.equalTo(footerButton.snp_leading).offset(-30)
+            make.trailing.equalTo(footerButton.snp.leading).offset(-30)
         }
         
-        footerButton.snp_makeConstraints { (make) in
+        footerButton.snp.makeConstraints { (make) in
             make.trailing.equalToSuperview().offset(-10)
             make.top.equalToSuperview()
             make.centerY.equalToSuperview()

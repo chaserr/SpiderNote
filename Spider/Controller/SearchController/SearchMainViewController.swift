@@ -65,8 +65,8 @@ class SearchMainViewController: UIViewController, UITextFieldDelegate, UISearchB
     lazy var segmentControl:LXDSegmentControl = {
     
         let config                           = LXDSegmentControlConfiguration.init(controlType: LXDSegmentControlTypeSlideBlock, items: segmentArrayTitle)
-        config.itemSelectedColor             = UIColor.clear
-        config.backgroundColor               = UIColor.white
+        config?.itemSelectedColor             = UIColor.clear
+        config?.backgroundColor               = UIColor.white
         let segmentControl:LXDSegmentControl = LXDSegmentControl.init(frame: CGRect(x: 0, y: 0, width: kScreenWidth, height: kSegmentHight), configuration: config, delegate: nil)
         segmentControl.addSubLayerWithFrame(CGRect(x: 0, y: segmentControl.frame.minY + 1, width: segmentControl.frame.width, height: 1), color: RGBCOLORV(0xdddddd).cgColor)
         segmentControl.addSubLayerWithFrame(CGRect(x: 0, y: segmentControl.frame.maxY - 1, width: segmentControl.frame.width, height: 1), color: RGBCOLORV(0xdddddd).cgColor)

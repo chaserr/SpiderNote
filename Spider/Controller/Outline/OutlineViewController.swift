@@ -93,7 +93,7 @@ class OutlineViewController: UIViewController {
     }
     
     deinit {
-        println("OutlineViewController deinit")
+        AODlog("OutlineViewController deinit")
     }
     
     required init?(coder aDecoder: NSCoder) {

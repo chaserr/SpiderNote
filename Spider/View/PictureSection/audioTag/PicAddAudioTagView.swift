@@ -181,7 +181,7 @@ class PicAddAudioTagView: UIView {
             try AVAudioSession.sharedInstance().setActive(true)
             recorder.record()
         } catch {
-            println(" Init Recorder error: \(error)")
+            AODlog(" Init Recorder error: \(error)")
         }
 
         duration = recordTimeLimit
@@ -205,7 +205,7 @@ class PicAddAudioTagView: UIView {
                 try player = AVAudioPlayer(contentsOf: audioURL, fileTypeHint: AVFileTypeAppleM4A)
                 player.delegate = self
             } catch {
-                println("play tag error: \(error)")
+                AODlog("play tag error: \(error)")
             }
             
             showDoneView()

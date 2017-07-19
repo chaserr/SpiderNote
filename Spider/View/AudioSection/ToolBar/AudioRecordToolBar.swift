@@ -306,7 +306,7 @@ class AudioRecordToolBar: UIView {
             displayLink?.isPaused = false
             
         } else {
-            println("audio record tool bar error")
+            AODlog("audio record tool bar error")
         }
     }
     
@@ -384,7 +384,7 @@ class AudioRecordToolBar: UIView {
                 displayLink?.isPaused = false
             }
         } catch {
-            println("Audio Section Recorder Init Failed......")
+            AODlog("Audio Section Recorder Init Failed......")
         }
     }
     
@@ -645,7 +645,7 @@ extension AudioRecordToolBar: AVAudioRecorderDelegate {
     }
     
     func audioRecorderBeginInterruption(_ recorder: AVAudioRecorder) {
-        println(" Recoder begin interruption")
+        AODlog(" Recoder begin interruption")
         
         beInterrupted = true
         recorder.stop()

@@ -149,7 +149,7 @@ public struct OutlineLayout {
             minds.insert(contentsOf: subminds, at: index + 1)
             return (index+1 ... index+subminds.count) 
         } else {
-            println("OutlineLayout openMind Failed: find \(subminds.count) subminds")
+            AODlog("OutlineLayout openMind Failed: find \(subminds.count) subminds")
             return nil
         }
     }
@@ -174,7 +174,7 @@ public struct OutlineLayout {
             
         } else {
             
-            println("OutlineLayout closeMind Failed: can't remove subminds")
+            AODlog("OutlineLayout closeMind Failed: can't remove subminds")
             return nil
         }
     }

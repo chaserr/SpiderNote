@@ -22,7 +22,7 @@ class OutlineTopBar: UIView {
         willSet {
             if projectName != newValue {
                                 
-                let rect = newValue.boundingRect(with: CGSize(width: CGFloat(FLT_MAX), height: 30), options: [.usesFontLeading, .usesLineFragmentOrigin], attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 16)], context: nil)
+                let rect = newValue.boundingRect(with: CGSize(width: CGFloat(Float.greatestFiniteMagnitude), height: 30), options: [.usesFontLeading, .usesLineFragmentOrigin], attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 16)], context: nil)
                 
                 if ceil(rect.width) > labelMaxWidth {
                     
@@ -40,7 +40,7 @@ class OutlineTopBar: UIView {
                 label.center = CGPoint(x: labelButtonW / 2 - openSize.width / 2, y: 22)
             }
             
-            iconOpen.transform = CGAffineTransform(rotationAngle: CGFloat(M_PI))
+            iconOpen.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi))
             changing = false
         }
     }
@@ -70,7 +70,7 @@ class OutlineTopBar: UIView {
     
     fileprivate var iconOpen: UIImageView = {
         let view = UIImageView(frame: CGRect(origin: CGPoint.zero, size: openSize))
-        view.transform = CGAffineTransform(rotationAngle: CGFloat(M_PI))
+        view.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi))
         view.image = UIImage(named: "outline_topbar_close")
         return view
     }()
@@ -89,13 +89,13 @@ class OutlineTopBar: UIView {
             
         } else {
             
-            if let project = REALM.realm.objectForPrimaryKey(ProjectObject.self, key: projectID) {
+            if let project = REALM.realm.object(ofType: ProjectObject.self, forPrimaryKey: projectID as AnyObject) {
                 projectName = project.name
             } else {
                 projectName = "未找到项目"
             }
             
-            let rect = projectName.boundingRect(with: CGSize(width: CGFloat(FLT_MAX), height: 30), options: [.usesFontLeading, .usesLineFragmentOrigin], attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 16)], context: nil)
+            let rect = projectName.boundingRect(with: CGSize(width: CGFloat(Float.greatestFiniteMagnitude), height: 30), options: [.usesFontLeading, .usesLineFragmentOrigin], attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 16)], context: nil)
             
             if ceil(rect.width) > labelMaxWidth {
                 label.text = projectName
@@ -124,7 +124,7 @@ class OutlineTopBar: UIView {
     }
     
     func changeProjectClicked() {
-        iconOpen.transform = changing ? CGAffineTransform(rotationAngle: CGFloat(M_PI)) : CGAffineTransform.identity
+        iconOpen.transform = changing ? CGAffineTransform(rotationAngle: CGFloat(Double.pi)) : CGAffineTransform.identity
         changing = !changing
         
         changeHandler?()

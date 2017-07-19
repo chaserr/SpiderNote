@@ -93,10 +93,12 @@ class SearchArticleCell: UITableViewCell {
                             // 1. 前10个字符串
                             let preTenString: String                   = (headString?.substring(to: headString!.characters.index(headString!.startIndex, offsetBy: 10)))!
                             // 2. 靠近搜索关键字的字符串
-                            let range                                  = ClosedRange(subSRange.startIndex.advancedBy(-10)...subSRange.startIndex.advancedBy(10))
-                            let searchNearByS: String                  = (headString!.substring(with: range))
+//                            let range                                  = ClosedRange(subSRange.startIndex.advancedBy(-10)...subSRange.startIndex.advancedBy(10))
+//                            let searchNearByS: String                  = (headString!.substring(with: range))
                             let lastStr: String                        = (headString?.substring(from: headString!.characters.index(headString!.endIndex, offsetBy: -5)))!
-                            let resultString                           = "\(preTenString)...\(searchNearByS)...\(lastStr)"
+//                            let resultString                           = "\(preTenString)...\(searchNearByS)...\(lastStr)"
+                            let resultString                           = "\(preTenString)...\(lastStr)"
+
                             textSectionView.contentText.attributedText = resultString.colorSubString(searchKey, color: UIColor.red)
                             continue
                         }
@@ -148,7 +150,7 @@ class SearchArticleCell: UITableViewCell {
                     let itemTag = item.audio!.tags.filter(NSPredicate(format: "type == 0 AND content CONTAINS[c] %@", searchKey)).toArray().first
                     let headString = itemTag?.content
                     vedioSectionView.tapVideoView({ (type) in
-                        self.tapAction(type: type, textSec: nil, picSec: nil, videoSec: item)
+                        self.tapAction(type, nil, nil,item)
                     })
                     
                     vedioSectionView.startTime.text = itemTag?.location
@@ -190,7 +192,7 @@ class SearchArticleCell: UITableViewCell {
         setupUI()
         addConstraints()
         titleView.addTapGesture { (tapgesture:UITapGestureRecognizer) in
-            self.tapAction(type: ClickViewType.title, textSec: nil, picSec: nil, videoSec: nil)
+            self.tapAction(ClickViewType.title, nil, nil, nil)
         }
         
     }
@@ -221,18 +223,18 @@ class SearchArticleCell: UITableViewCell {
 
         sectionHeader.frame = CGRect(x: 0, y: 0, width: kScreenWidth, height: 8)
         
-        articleTitleLabel.snp_makeConstraints { (make) in
+        articleTitleLabel.snp.makeConstraints { (make) in
             make.left.equalTo(15)
             make.top.equalTo(10)
             make.right.equalTo(rightArrow).offset(-10)
             make.height.lessThanOrEqualTo(20)
         }
-        updateTime.snp_makeConstraints { (make) in
+        updateTime.snp.makeConstraints { (make) in
             make.left.equalTo(15)
             make.top.equalTo(articleTitleLabel.snp_bottom).offset(8)
             make.width.height.greaterThanOrEqualTo(1)
         }
-        rightArrow.snp_makeConstraints { (make) in
+        rightArrow.snp.makeConstraints { (make) in
             make.right.equalToSuperview().offset(-15)
             make.height.equalTo(15)
             make.width.equalTo(8)

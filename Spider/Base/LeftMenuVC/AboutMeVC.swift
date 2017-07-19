@@ -91,10 +91,10 @@ extension AboutMeVC{
         return 55
     }
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = AboutMeCell.cellWithTableView(tableView, indexPath: indexPath) as! AboutMeCell
-        cell.setDefaultValue(indexPath, titleArray: cellTitle)
+        cell.setDefaultValue(indexPath, titleArray: cellTitle as Array<AnyObject>)
 
         return cell
     }
@@ -118,19 +118,19 @@ extension AboutMeVC{
 extension AboutMeVC{
     
     override func viewDidLayoutSubviews() {
-        if tableView.responds(to: Selector("setSeparatorInset:")) {
+        if tableView.responds(to: #selector(setter: UITableViewCell.separatorInset)) {
             tableView.separatorInset = UIEdgeInsets.zero
         }
-        if tableView.responds(to: Selector("setLayoutMargins:")) {
+        if tableView.responds(to: #selector(setter: UIView.layoutMargins)) {
             tableView.layoutMargins = UIEdgeInsets.zero
         }
     }
     
     func tableView(_ tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: IndexPath) {
-        if cell.responds(to: Selector("setSeparatorInset:")) {
+        if cell.responds(to: #selector(setter: UITableViewCell.separatorInset)) {
             cell.separatorInset = UIEdgeInsets.zero
         }
-        if cell.responds(to: Selector("setLayoutMargins:")) {
+        if cell.responds(to: #selector(setter: UIView.layoutMargins)) {
             cell.layoutMargins = UIEdgeInsets.zero
         }
     }

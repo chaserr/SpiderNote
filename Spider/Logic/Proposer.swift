@@ -76,7 +76,7 @@ public typealias Propose = () -> Void
 
 public typealias ProposerAction = () -> Void
 
-public func proposeToAccess(_ resource: PrivateResource, agreed successAction: ProposerAction, rejected failureAction: ProposerAction) {
+public func proposeToAccess(_ resource: PrivateResource, agreed successAction: @escaping ProposerAction, rejected failureAction: @escaping ProposerAction) {
 
     switch resource {
 
@@ -103,7 +103,7 @@ public func proposeToAccess(_ resource: PrivateResource, agreed successAction: P
     }
 }
 
-private func proposeToAccessPhotos(agreed successAction: ProposerAction, rejected failureAction: ProposerAction) {
+private func proposeToAccessPhotos(agreed successAction:@escaping ProposerAction, rejected failureAction:@escaping ProposerAction) {
     PHPhotoLibrary.requestAuthorization { status in
         DispatchQueue.main.async {
             switch status {
@@ -116,7 +116,7 @@ private func proposeToAccessPhotos(agreed successAction: ProposerAction, rejecte
     }
 }
 
-private func proposeToAccessCamera(agreed successAction: ProposerAction, rejected failureAction: ProposerAction) {
+private func proposeToAccessCamera(agreed successAction:@escaping ProposerAction, rejected failureAction:@escaping ProposerAction) {
     AVCaptureDevice.requestAccess(forMediaType: AVMediaTypeVideo) { granted in
         DispatchQueue.main.async {
             granted ? successAction() : failureAction()
@@ -124,7 +124,7 @@ private func proposeToAccessCamera(agreed successAction: ProposerAction, rejecte
     }
 }
 
-private func proposeToAccessMicrophone(agreed successAction: ProposerAction, rejected failureAction: ProposerAction) {
+private func proposeToAccessMicrophone(agreed successAction:@escaping ProposerAction, rejected failureAction:@escaping ProposerAction) {
     AVAudioSession.sharedInstance().requestRecordPermission { granted in
         DispatchQueue.main.async {
             granted ? successAction() : failureAction()
@@ -132,7 +132,7 @@ private func proposeToAccessMicrophone(agreed successAction: ProposerAction, rej
     }
 }
 
-private func proposeToAccessContacts(agreed successAction: ProposerAction, rejected failureAction: ProposerAction) {
+private func proposeToAccessContacts(agreed successAction: @escaping ProposerAction, rejected failureAction:@escaping ProposerAction) {
 
     if #available(iOS 9.0, *) {
         switch CNContactStore.authorizationStatus(for: .contacts) {
@@ -180,7 +180,7 @@ private func proposeToAccessContacts(agreed successAction: ProposerAction, rejec
     }
 }
 
-private func proposeToAccessEventForEntityType(_ entityYype: EKEntityType, agreed successAction: ProposerAction, rejected failureAction: ProposerAction) {
+private func proposeToAccessEventForEntityType(_ entityYype: EKEntityType, agreed successAction: @escaping ProposerAction, rejected failureAction: @escaping ProposerAction) {
 
     switch EKEventStore.authorizationStatus(for: entityYype) {
     case .authorized:
@@ -202,7 +202,7 @@ private func proposeToAccessEventForEntityType(_ entityYype: EKEntityType, agree
 
 private var _locationManager: CLLocationManager? // as strong ref
 
-private func proposeToAccessLocation(_ locationUsage: PrivateResource.LocationUsage, agreed successAction: ProposerAction, rejected failureAction: ProposerAction) {
+private func proposeToAccessLocation(_ locationUsage: PrivateResource.LocationUsage, agreed successAction: @escaping ProposerAction, rejected failureAction: @escaping ProposerAction) {
 
     switch CLLocationManager.authorizationStatus() {
 
@@ -257,7 +257,7 @@ class LocationDelegate: NSObject, CLLocationManagerDelegate {
     let successAction: ProposerAction
     let failureAction: ProposerAction
 
-    init(locationUsage: PrivateResource.LocationUsage, successAction: ProposerAction, failureAction: ProposerAction) {
+    init(locationUsage: PrivateResource.LocationUsage, successAction: @escaping ProposerAction, failureAction:@escaping ProposerAction) {
         self.locationUsage = locationUsage
         self.successAction = successAction
         self.failureAction = failureAction

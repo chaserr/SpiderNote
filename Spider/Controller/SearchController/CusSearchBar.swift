@@ -32,7 +32,7 @@ class CusSearchBar: UISearchBar {
         searchField.returnKeyType = UIReturnKeyType.search
         setBackgroundImage(UIImage.init(), for: UIBarPosition.any, barMetrics: UIBarMetrics.default)
         tintColor = RGBCOLORV(0x5fb85f)
-        UIBarButtonItem.appearanceWhenContained(within: UISearchBar).title = "取消"
+        UIBarButtonItem.appearanceWhenContained(within: UISearchBar.self).title = "取消"
 //        if #available(iOS 9.0, *) {
 //            UIBarButtonItem.appearanceWhenContainedInInstancesOfClasses([UISearchBar.self]).title = "取消"
 //        }

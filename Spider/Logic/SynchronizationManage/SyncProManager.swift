@@ -129,7 +129,7 @@ class SyncProManager: NSObject {
         for item in projectArr {
             var proDic = [String: AnyObject]()
             proDic["noteId"]        = item.id as AnyObject
-            proDic["syncTimestamp"] = item.syncTimesTamp == "" ? DateUtil.getCurrentDateString(withFormat: kDU_YYYYMMddhhmmss)! : item.syncTimesTamp as AnyObject
+            proDic["syncTimestamp"] = (item.syncTimesTamp == "" ? DateUtil.getCurrentDateString(withFormat: kDU_YYYYMMddhhmmss)! : item.syncTimesTamp) as AnyObject
             proDic["modifyFlag"]    = "item.modifyFlag" as AnyObject
             notesArr.append(proDic as AnyObject)
         }

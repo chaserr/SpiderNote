@@ -275,7 +275,7 @@ extension SearchMindResultVC{
         questionDataSource?.removeAll()
         //[c]不区分大小写 [d]无音调  [cd]两个都不要  (断言编程指南)
         let predicate = NSPredicate(format: "type == 0 AND deleteFlag == 0 AND name CONTAINS[c] %@", containsParameter)
-        let mindObjectArr = (REALM.realm?.objects(MindObject).sorted("updateAtTime", ascending: false).filter(predicate))!.toArray()
+        let mindObjectArr = (REALM.realm?.objects(MindObject.self).sorted("updateAtTime", ascending: false).filter(predicate))!.toArray()
 
         // 从当前结点搜
         if SPIDERSTRUCT.currentMindPath == nil {
@@ -300,19 +300,19 @@ extension SearchMindResultVC{
 extension SearchMindResultVC{
     
     override func viewDidLayoutSubviews() {
-        if tableView.responds(to: Selector("setSeparatorInset:")) {
+        if tableView.responds(to: #selector(setter: UITableViewCell.separatorInset)) {
             tableView.separatorInset = UIEdgeInsets.zero
         }
-        if tableView.responds(to: Selector("setLayoutMargins:")) {
+        if tableView.responds(to: #selector(setter: UIView.layoutMargins)) {
             tableView.layoutMargins = UIEdgeInsets.zero
         }
     }
     
     func tableView(_ tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: IndexPath) {
-        if cell.responds(to: Selector("setSeparatorInset:")) {
+        if cell.responds(to: #selector(setter: UITableViewCell.separatorInset)) {
             cell.separatorInset = UIEdgeInsets.zero
         }
-        if cell.responds(to: Selector("setLayoutMargins:")) {
+        if cell.responds(to: #selector(setter: UIView.layoutMargins)) {
             cell.layoutMargins = UIEdgeInsets.zero
         }
     }

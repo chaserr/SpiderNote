@@ -93,7 +93,7 @@ final class AddProjectAlertView: UIView {
     func keyboardWillShow(_ notification: Notification) {
         guard let info = notification.userInfo else { return }
         
-        let keyboardFrame = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue
+        let keyboardFrame = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
         
         alertContainter.frame.origin.y = (keyboardFrame.origin.y - 150) / 2
 
@@ -173,28 +173,28 @@ final class AddProjectAlertView: UIView {
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         doneButton.translatesAutoresizingMaskIntoConstraints = false
         
-        topContainter.snp_makeConstraints { (make) in
+        topContainter.snp.makeConstraints { (make) in
             make.size.equalTo(CGSize(width: 270, height: 106))
             make.top.centerX.equalTo(alertContainter)
         }
         
-        titleLabel.snp_makeConstraints { (make) in
+        titleLabel.snp.makeConstraints { (make) in
             make.height.equalTo(60)
             make.top.centerX.equalTo(topContainter)
         }
         
-        textField.snp_makeConstraints { (make) in
+        textField.snp.makeConstraints { (make) in
             make.size.equalTo(CGSize(width: 200, height: 30))
-            make.top.equalTo(titleLabel.snp_bottom)
+            make.top.equalTo(titleLabel.snp.bottom)
             make.centerX.equalTo(titleLabel)
         }
         
-        cancelButton.snp_makeConstraints { (make) in
+        cancelButton.snp.makeConstraints { (make) in
             make.size.equalTo(CGSize(width: 134.5, height: 43))
             make.bottom.left.equalTo(alertContainter)
         }
         
-        doneButton.snp_makeConstraints { (make) in
+        doneButton.snp.makeConstraints { (make) in
             make.size.equalTo(cancelButton)
             make.bottom.right.equalTo(alertContainter)
         }

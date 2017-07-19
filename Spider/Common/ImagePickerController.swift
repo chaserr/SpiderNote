@@ -10,7 +10,7 @@ import UIKit
 
 extension TZImagePickerController {
     
-    convenience init(maxCount: Int, animated: Bool = true, completion: ([UIImage]) -> Void) {
+    convenience init(maxCount: Int, animated: Bool = true, completion: @escaping ([UIImage]) -> Void) {
         
         self.init(maxImagesCount: maxCount, delegate: nil)
         
@@ -29,7 +29,7 @@ extension TZImagePickerController {
             
             self?.dismiss(animated: animated, completion: nil)
             
-            completion(photos)
+            completion(photos!)
         }
     }
 }

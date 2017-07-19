@@ -40,7 +40,7 @@ final class SpiderPlayer: NSObject, AVAudioPlayerDelegate {
             player?.delegate = self
             
         } catch {
-            println("SpiderPlayer init player failed: \n \(error)")
+            AODlog("SpiderPlayer init player failed: \n \(error)")
         }
     }
     
@@ -51,7 +51,7 @@ final class SpiderPlayer: NSObject, AVAudioPlayerDelegate {
             player = try AVAudioPlayer(contentsOf: url)
             player?.delegate = self
         } catch {
-            println("SpiderPlayer init player failed: \n \(error)")
+            AODlog("SpiderPlayer init player failed: \n \(error)")
         }
         
         return player
@@ -88,7 +88,7 @@ final class SpiderPlayer: NSObject, AVAudioPlayerDelegate {
     override init() {
         super.init()
         
-        println(" Init Spider Player ........ ")
+        AODlog(" Init Spider Player ........ ")
 
         NotificationCenter.default.addObserver(self, selector: #selector(handleRouteChange(_:)), name: NSNotification.Name.AVAudioSessionRouteChange, object: nil)
     }
@@ -103,18 +103,18 @@ final class SpiderPlayer: NSObject, AVAudioPlayerDelegate {
             else { return }
         
         if changeReason == .oldDeviceUnavailable && output.portType == AVAudioSessionPortHeadphones {
-            println(" Headphone has plugged out...........")
+            AODlog(" Headphone has plugged out...........")
             self.pause()
         }
     }
     
     func audioPlayerBeginInterruption(_ player: AVAudioPlayer) {
-        println(" Spider Player Begin Interruption ")
+        AODlog(" Spider Player Begin Interruption ")
         pause()
     }
     
     deinit {
-        println(" deinit Spider Player ........ ")
+        AODlog(" deinit Spider Player ........ ")
         NotificationCenter.default.removeObserver(self)
     }
 }

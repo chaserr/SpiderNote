@@ -83,7 +83,7 @@ class AppUtility: NSObject {
         if path != nil {
             let obj = NSKeyedUnarchiver.unarchiveObject(withFile: path!)
 
-            return obj
+            return obj as AnyObject
         }else{
         
             return nil
@@ -94,13 +94,13 @@ class AppUtility: NSObject {
     
     class func setObject(_ value:AnyObject, key:String) -> AnyObject? {
         let path: String = dataFilePathForKey(key)!
-        return NSKeyedArchiver.archiveRootObject(value, toFile: path)
+        return NSKeyedArchiver.archiveRootObject(value, toFile: path) as AnyObject
     }
     
     class func dataFilePathForKey(_ key:String) -> String? {
         let document = FileUtil.getFileUtil().getDocmentPath()
-        let dir = document.stringByAppendingPathComponent("user")
-        if !FileManager.default.fileExists(atPath: dir) {
+        let dir = document?.stringByAppendingPathComponent("user")
+        if !FileManager.default.fileExists(atPath: dir!) {
             do{
             
                 try FileManager.default.createDirectory(atPath: dir, withIntermediateDirectories: true, attributes: nil)
@@ -219,7 +219,7 @@ class AppUtility: NSObject {
     }
     
     func getAudioFilePath(_ id: String) -> URL? {
-        return URL(fileURLWithPath: voiceFilePath()).appendingPathComponent(id)?.appendingPathExtension(FileExtension.M4A.rawValue)
+        return URL(fileURLWithPath: voiceFilePath()).appendingPathComponent(id).appendingPathExtension(FileExtension.M4A.rawValue)
     }
     
     func removeAudioFile(_ id: String) {
@@ -229,7 +229,7 @@ class AppUtility: NSObject {
             do {
                 try filemgr.removeItem(atPath: path)
             } catch {
-                println("error: remove audio file: \(error)")
+                AODlog("error: remove audio file: \(error)")
             }
         }
     }

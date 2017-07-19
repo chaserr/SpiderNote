@@ -28,7 +28,7 @@ class MindObject: Object {
     dynamic var updateAtTime: String = ""
     
     // 子节点 (type == .Mind)
-    let subMinds = List<MindObject>()
+    var subMinds = List<MindObject>()
     
     // 子段落 (type == .Article)
     let sections = List<SectionObject>()
@@ -64,9 +64,9 @@ extension MindObject {
     // 在兄弟节点中的位置
     var index: Int {
         if let mind = ownerMind.first {     // 父节点为 Mind
-            return mind.subMinds.indexOf(self)!
+            return mind.subMinds.index(of: self)!
         } else {                            // 父节点为 Project
-            return ownerProject.first!.minds.indexOf(self)!
+            return ownerProject.first!.minds.index(of: self)!
         }
     }
     
@@ -83,10 +83,10 @@ extension MindObject {
     var isLast: Bool {
         if let mind = ownerMind.first {
             let subminds = mind.usefulMinds
-            return subminds.indexOf(self)! == subminds.count - 1 ? true : false
+            return subminds.index(of: self)! == subminds.count - 1 ? true : false
         } else {
             let subminds = ownerProject.first!.usefulMinds
-            return subminds.indexOf(self)! == subminds.count - 1 ? true : false
+            return subminds.index(of: self)! == subminds.count - 1 ? true : false
         }
     }
     
@@ -225,13 +225,13 @@ extension MindObject {
     }
     
     func removeSubmind(_ mind: MindObject) {
-        if let index = subMinds.indexOf(mind) {
-            subMinds.removeAtIndex(index)
+        if let index = subMinds.index(of: mind) {
+            subMinds.remove(at: index)
         }
     }
     
     func removeSubmindWith(_ id: String) -> MindObject? {
-        guard let submind = REALM.realm.objectForPrimaryKey(MindObject.self, key: id) else { return nil }
+        guard let submind = REALM.realm.object(ofType: MindObject.self, forPrimaryKey: id as AnyObject) else { return nil }
         removeSubmind(submind)
         return submind
     }
@@ -263,7 +263,7 @@ extension MindObject{
         
         var mindTypes:Results<MindObject>
 
-        mindTypes = (realm?.objects(MindObject).filter(predicate).sorted(sortDescriptors))!
+        mindTypes = (realm?.objects(MindObject.self).filter(predicate).sorted(by: sortDescriptors))!
         
         var mindTypeList:[MindObject] = []
         for mindType in mindTypes {

@@ -55,8 +55,8 @@ class LoginManager: NSObject {
         appState = AppState.willEnterForeground
         super.init()
         
-        NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground), name: KNotifcationApplicationWillEnterForeground, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(didEnterBackground), name: KNotifcationApplicationDidEnterBackground, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground), name: NSNotification.Name(rawValue: KNotifcationApplicationWillEnterForeground), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didEnterBackground), name: NSNotification.Name(rawValue: KNotifcationApplicationDidEnterBackground), object: nil)
     }
     
     deinit{
@@ -81,45 +81,45 @@ class LoginManager: NSObject {
     }
     
     /** 用户注册*/
-    func startRegister(_ account: String, password: String, success: () -> Void, failure: () -> Void) -> Void {
+    func startRegister(_ account: String, password: String, success: @escaping () -> Void,  failure:@escaping () -> Void) -> Void {
         
         var paramDic = [String : AnyObject]()
-        paramDic["userName"] = account
-        paramDic["password"] = password
-        AOHUDVIEW.showTips("发送中...")
-        AORequest.init(requestMethod: .POST, specialParameters: paramDic, api: .registerUrl).responseJSON { (response ) in
-            if response.result.isSuccess{
-                AOHUDVIEW.hideLoadingView()
-                let jsonData = JSON(response.result.value!)
-                let dic = JsonStrToDic(jsonData.rawString()!)
-                if (dic!["code"] as! String) == "1003" {
-                
-                    AOHUDVIEW.showTips(dic!["message"] as! String)
-                }else{
-                
-                    AODlog((dic! as NSDictionary).description)
-                    APP_USER.account = account
-                    APP_USER.password = password
-                    APP_USER.saveUserInfo()
-                    success()
-                }
-                
-            }
-            if response.result.isFailure{
-                AOHUDVIEW.hideHUD()
-                if let responseString = response.result.error?.debugDescription {
-                    failure()
-                    AODlog(responseString)
-                }
-            }
-        }
+        paramDic["userName"] = account as AnyObject
+        paramDic["password"] = password as AnyObject
+//        AOHUDVIEW.showTips("发送中...")
+//        AORequest.init(requestMethod: .POST, specialParameters: paramDic, api: .registerUrl).responseJSON { (response ) in
+//            if response.result.isSuccess{
+//                AOHUDVIEW.hideLoadingView()
+//                let jsonData = JSON(response.result.value!)
+//                let dic = JsonStrToDic(jsonData.rawString()!)
+//                if (dic!["code"] as! String) == "1003" {
+//                
+//                    AOHUDVIEW.showTips(dic!["message"] as! String)
+//                }else{
+//                
+//                    AODlog((dic! as NSDictionary).description)
+//                    APP_USER.account = account
+//                    APP_USER.password = password
+//                    APP_USER.saveUserInfo()
+//                    success()
+//                }
+//                
+//            }
+//            if response.result.isFailure{
+//                AOHUDVIEW.hideHUD()
+//                if let responseString = response.result.error?.debugDescription {
+//                    failure()
+//                    AODlog(responseString)
+//                }
+//            }
+//        }
 
     }
     
     func uploadOperation(_ uploadProObjID: [String]) -> Void {
         var paraDic = [String: AnyObject]()
         let dic: Dictionary = UPLOADPROMANAGER.getSecondRequestParam(uploadProObjID)
-        paraDic["projectInfo"] = dic.dicToJSON(dic)
+        paraDic["projectInfo"] = dic.dicToJSON(dic) as AnyObject
         //        AODlog((paraDic as NSDictionary).description)
         UPLOADPROMANAGER.uploadProject(paraDic, success: {
             alert("上传成功", message: nil, parentVC: getCurrentRootViewController()!)
@@ -134,76 +134,76 @@ class LoginManager: NSObject {
         
         AOHUDVIEW.showLoadingView("注册中...")
         var paramDic = [String : AnyObject]()
-        paramDic["userName"] = userName
-        paramDic["smsCode"] = smsCode
-        AORequest.init(requestMethod: .POST, specialParameters: paramDic, api: .sendEmailUrl).responseJSON { (response ) in
-            if response.result.isSuccess{
-                AOHUDVIEW.hideLoadingView()
-                AODlog("======注册成功======")
-                let jsonData = JSON(response.result.value!)
-                let dic = JsonStrToDic(jsonData.rawString()!)
-                AODlog((dic! as NSDictionary).description)
-                let code = dic!["code"] as! String
-                if code == "0000" { // 注册成功
-                
-                    AOHUDVIEW.showTips(dic!["message"] as! String)
-                    
-                    // 先把默认的用户的信息都清除， 切换到当前的用户
-                    self.logout(nil) // 相当于退出默认用户
-                    
-                    
-                    APP_UTILITY.currentUser?.token = dic!["token"] as? String
-                    APP_UTILITY.currentUser?.userID = dic!["userId"] as? String
-                    APP_UTILITY.currentUser?.account = APP_USER.account
-                    APP_UTILITY.currentUser?.password = APP_USER.password
-                    APP_UTILITY.saveCurrentUser()
-                    // 保存本次注册的账号
-                    Defaults[OldAccount] = userName
-                    //TODO: 注册成功后要合并本地数据库
-                    // 1. 切换数据库路径
-                    RealmDAO.instance()
-                    let oldSqlPath = FileUtil.getFileUtil().getDocmentPath().stringByAppendingPathComponent(defaultUserID).stringByAppendingPathComponent("sql").stringByAppendingPathComponent("spider.realm")
-                    REALM.copyObjectBetweenRealms(oldSqlPath, willCopyObject: ProjectObject.self)
-                    let userObj = UserObject()
-                    // 保存用户
-                    var nickName: String? = APP_UTILITY.currentUser?.account
-                    nickName = nickName?.substringToIndex((nickName?.startIndex.advancedBy((nickName?.getIndexOf("@"))!))!)
-                    userObj.email = userName
-                    userObj.userName = nickName!
-                    userObj.userId = dic!["userId"] as! String
-                    userObj.createAt = DateUtil.getCurrentDateStringWithFormat(kDUYYYYMMddhhmmss)
-                    userObj.saveUserObj()
-                    // 更新状态机
-                    self.setLoginState(LoginState.Logined)
-                    
-                    // 登录成功后默认同步
-                    var paraDic = [String: AnyObject]()
-                    let padic: Dictionary = SYNCPROMANAGER.getFirstRequestParam()
-                    paraDic["projectInfo"] = padic.dicToJSON(padic)
-                    SYNCPROMANAGER.syncProject(paraDic, success: { (uploadProObjID) in
-                        // 执行上传操作
-                        self.uploadOperation(uploadProObjID)
-                        }, failure: {
-                    })
-                    
-                    
-                    success()
-
-                }
-                else{
-                
-                    AOHUDVIEW.showTips(dic!["message"] as! String)
-                }
-                
-            }
-            if response.result.isFailure{
-                AOHUDVIEW.hideHUD()
-                if let responseString = response.result.error?.debugDescription {
-                    failure()
-                    AODlog(responseString)
-                }
-            }
-        }
+        paramDic["userName"] = userName as AnyObject
+        paramDic["smsCode"] = smsCode as AnyObject
+//        AORequest.init(requestMethod: .POST, specialParameters: paramDic, api: .sendEmailUrl).responseJSON { (response ) in
+//            if response.result.isSuccess{
+//                AOHUDVIEW.hideLoadingView()
+//                AODlog("======注册成功======")
+//                let jsonData = JSON(response.result.value!)
+//                let dic = JsonStrToDic(jsonData.rawString()!)
+//                AODlog((dic! as NSDictionary).description)
+//                let code = dic!["code"] as! String
+//                if code == "0000" { // 注册成功
+//                
+//                    AOHUDVIEW.showTips(dic!["message"] as! String)
+//                    
+//                    // 先把默认的用户的信息都清除， 切换到当前的用户
+//                    self.logout(nil) // 相当于退出默认用户
+//                    
+//                    
+//                    APP_UTILITY.currentUser?.token = dic!["token"] as? String
+//                    APP_UTILITY.currentUser?.userID = dic!["userId"] as? String
+//                    APP_UTILITY.currentUser?.account = APP_USER.account
+//                    APP_UTILITY.currentUser?.password = APP_USER.password
+//                    APP_UTILITY.saveCurrentUser()
+//                    // 保存本次注册的账号
+//                    Defaults[OldAccount] = userName
+//                    //TODO: 注册成功后要合并本地数据库
+//                    // 1. 切换数据库路径
+//                    RealmDAO.instance()
+//                    let oldSqlPath = FileUtil.getFileUtil().getDocmentPath().stringByAppendingPathComponent(defaultUserID).stringByAppendingPathComponent("sql").stringByAppendingPathComponent("spider.realm")
+//                    REALM.copyObjectBetweenRealms(oldSqlPath, willCopyObject: ProjectObject.self)
+//                    let userObj = UserObject()
+//                    // 保存用户
+//                    var nickName: String? = APP_UTILITY.currentUser?.account
+//                    nickName = nickName?.substringToIndex((nickName?.startIndex.advancedBy((nickName?.getIndexOf("@"))!))!)
+//                    userObj.email = userName
+//                    userObj.userName = nickName!
+//                    userObj.userId = dic!["userId"] as! String
+//                    userObj.createAt = DateUtil.getCurrentDateStringWithFormat(kDUYYYYMMddhhmmss)
+//                    userObj.saveUserObj()
+//                    // 更新状态机
+//                    self.setLoginState(LoginState.Logined)
+//                    
+//                    // 登录成功后默认同步
+//                    var paraDic = [String: AnyObject]()
+//                    let padic: Dictionary = SYNCPROMANAGER.getFirstRequestParam()
+//                    paraDic["projectInfo"] = padic.dicToJSON(padic)
+//                    SYNCPROMANAGER.syncProject(paraDic, success: { (uploadProObjID) in
+//                        // 执行上传操作
+//                        self.uploadOperation(uploadProObjID)
+//                        }, failure: {
+//                    })
+//                    
+//                    
+//                    success()
+//
+//                }
+//                else{
+//                
+//                    AOHUDVIEW.showTips(dic!["message"] as! String)
+//                }
+//                
+//            }
+//            if response.result.isFailure{
+//                AOHUDVIEW.hideHUD()
+//                if let responseString = response.result.error?.debugDescription {
+//                    failure()
+//                    AODlog(responseString)
+//                }
+//            }
+//        }
     }
     
     /**
@@ -226,72 +226,72 @@ class LoginManager: NSObject {
         }
         
         var bodyDic = [String : AnyObject]()
-        bodyDic["password"] = password
-        bodyDic["userName"] = account
+        bodyDic["password"] = password as AnyObject
+        bodyDic["userName"] = account as AnyObject
         
-        AORequest.init(requestMethod: .POST, specialParameters: bodyDic, api: .loginUrl).responseJSON { (response ) in
-            
-            if response.result.isSuccess {
-                AODlog("======登录成功======")
-                let jsonData = JSON(response.result.value!)
-                let dic = JsonStrToDic(jsonData.rawString()!)
-                AODlog((dic! as NSDictionary).description)
-                self.logout(nil) // 相当于退出默认用户
-                
-                APP_UTILITY.currentUser?.account = account
-                APP_UTILITY.currentUser?.password = password
-                APP_UTILITY.currentUser?.userID = dic!["userId"] as? String
-                APP_UTILITY.currentUser?.token = dic!["token"] as? String
-                APP_UTILITY.saveCurrentUser()
-                APP_USER.account = account
-                APP_USER.password = password
-                APP_USER.saveUserInfo()
-                
-                // 保存本次登录的账号
-                Defaults[OldAccount] = account
-                //TODO: 登录成功后只需要切换数据库
-                RealmDAO.instance()
-                
-                // 保存用户
-                
-                let userObj = UserObject()
-                var userName: String? = APP_UTILITY.currentUser?.account
-                userName = userName?.substringToIndex((userName?.startIndex.advancedBy((userName?.getIndexOf("@"))!))!)
-                userObj.userName = userName!
-                userObj.userId = dic!["userId"] as! String
-                userObj.email = account
-                userObj.password = password
-                userObj.updateAccoundPrimaryKey()
-                
-                
-                // 更新状态机
-                self.setLoginState(LoginState.Logined)
-                
-                // 登录成功后默认同步
-                var paraDic = [String: AnyObject]()
-                let padic: Dictionary = SYNCPROMANAGER.getFirstRequestParam()
-                paraDic["projectInfo"] = padic.dicToJSON(padic)
-                SYNCPROMANAGER.syncProject(paraDic, success: { (uploadProObjID) in
-                    // 执行上传操作
-                    self.uploadOperation(uploadProObjID)
-                    }, failure: {
-                })
-                
-                self.transToController(manualLogin)
-
-            }
-            
-            if response.result.isFailure{
-                AODlog("======登录失败======")
-                self.setLoginState(LoginState.Not)
-                AOHUDVIEW.showTips("登录失败"/*response.result.description*/)
-                if !manualLogin {
-                    
-                    
-                }
-                
-            }
-        }
+//        AORequest.init(requestMethod: .POST, specialParameters: bodyDic, api: .loginUrl).responseJSON { (response ) in
+//            
+//            if response.result.isSuccess {
+//                AODlog("======登录成功======")
+//                let jsonData = JSON(response.result.value!)
+//                let dic = JsonStrToDic(jsonData.rawString()!)
+//                AODlog((dic! as NSDictionary).description)
+//                self.logout(nil) // 相当于退出默认用户
+//                
+//                APP_UTILITY.currentUser?.account = account
+//                APP_UTILITY.currentUser?.password = password
+//                APP_UTILITY.currentUser?.userID = dic!["userId"] as? String
+//                APP_UTILITY.currentUser?.token = dic!["token"] as? String
+//                APP_UTILITY.saveCurrentUser()
+//                APP_USER.account = account
+//                APP_USER.password = password
+//                APP_USER.saveUserInfo()
+//                
+//                // 保存本次登录的账号
+//                Defaults[OldAccount] = account
+//                //TODO: 登录成功后只需要切换数据库
+//                RealmDAO.instance()
+//                
+//                // 保存用户
+//                
+//                let userObj = UserObject()
+//                var userName: String? = APP_UTILITY.currentUser?.account
+//                userName = userName?.substringToIndex((userName?.startIndex.advancedBy((userName?.getIndexOf("@"))!))!)
+//                userObj.userName = userName!
+//                userObj.userId = dic!["userId"] as! String
+//                userObj.email = account
+//                userObj.password = password
+//                userObj.updateAccoundPrimaryKey()
+//                
+//                
+//                // 更新状态机
+//                self.setLoginState(LoginState.Logined)
+//                
+//                // 登录成功后默认同步
+//                var paraDic = [String: AnyObject]()
+//                let padic: Dictionary = SYNCPROMANAGER.getFirstRequestParam()
+//                paraDic["projectInfo"] = padic.dicToJSON(padic)
+//                SYNCPROMANAGER.syncProject(paraDic, success: { (uploadProObjID) in
+//                    // 执行上传操作
+//                    self.uploadOperation(uploadProObjID)
+//                    }, failure: {
+//                })
+//                
+//                self.transToController(manualLogin)
+//
+//            }
+//            
+//            if response.result.isFailure{
+//                AODlog("======登录失败======")
+//                self.setLoginState(LoginState.Not)
+//                AOHUDVIEW.showTips("登录失败"/*response.result.description*/)
+//                if !manualLogin {
+//                    
+//                    
+//                }
+//                
+//            }
+//        }
         
     }
     

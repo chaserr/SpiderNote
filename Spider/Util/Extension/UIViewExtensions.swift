@@ -394,12 +394,12 @@ private let UIViewAnimationSpringVelocity: CGFloat = 0.5
 // MARK: Animation Extensions
 extension UIView {
     /// EZSwiftExtensions
-    public func spring(animations: (() -> Void), completion: ((Bool) -> Void)? = nil) {
+    public func spring(animations: @escaping (() -> Void), completion: ((Bool) -> Void)? = nil) {
         spring(duration: UIViewAnimationDuration, animations: animations, completion: completion)
     }
 
     /// EZSwiftExtensions
-    public func spring(duration: TimeInterval, animations: (() -> Void), completion: ((Bool) -> Void)? = nil) {
+    public func spring(duration: TimeInterval, animations: @escaping (() -> Void), completion: ((Bool) -> Void)? = nil) {
         UIView.animate(
             withDuration: UIViewAnimationDuration,
             delay: 0,
@@ -412,12 +412,12 @@ extension UIView {
     }
 
     /// EZSwiftExtensions
-    public func animate(duration: TimeInterval, animations: (() -> Void), completion: ((Bool) -> Void)? = nil) {
+    public func animate(duration: TimeInterval, animations: @escaping (() -> Void), completion: ((Bool) -> Void)? = nil) {
         UIView.animate(withDuration: duration, animations: animations, completion: completion)
     }
 
     /// EZSwiftExtensions
-    public func animate(animations: (() -> Void), completion: ((Bool) -> Void)? = nil) {
+    public func animate(animations: @escaping (() -> Void), completion: ((Bool) -> Void)? = nil) {
         animate(duration: UIViewAnimationDuration, animations: animations, completion: completion)
     }
 

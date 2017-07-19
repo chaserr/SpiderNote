@@ -93,9 +93,16 @@ class AOHudView: NSObject {
      - parameter autoHideTime: auto dismiss after autoHideTime
      */
     func showHudOnView(_ view:UIView!, caption:String?, image:UIImage?, bActive:Bool, autoHideTime:TimeInterval) -> Void {
-        let array:[MBProgressHUD] = MBProgressHUD.allHUDs(for: view) as! [MBProgressHUD]
+        let view:UIView = (UIApplication.shared.delegate!.window!)!
+        var array:[MBProgressHUD] = []
+        let subviews = view.subviews
+        for aView in subviews {
+            if aView is MBProgressHUD {
+                array.append(aView as! MBProgressHUD)
+            }
+        }
         for obj:MBProgressHUD in array {
-            obj.hide(false)
+            obj.hide(animated: false)
         }
         
         let hud:MBProgressHUD = MBProgressHUD.showAdded(to: view, animated: true)
@@ -125,7 +132,7 @@ extension AOHudView{
 
     func rotate360DegreeWithImageView(_ imageView:UIImageView) -> UIImageView {
         let animation:CABasicAnimation = CABasicAnimation(keyPath: "transform.rotation")
-        animation.byValue = (M_PI*2)
+        animation.byValue = (Double.pi*2)
         animation.duration = 1.0
         animation.repeatCount = Float.infinity
         animation.isCumulative = true
