@@ -30,7 +30,7 @@ class SpiderRealm {
     // MARK: - Undoc Box
     class func groupUndocItems(_ items: Results<SectionObject>? = nil) -> [[SectionObject]] {
         let undocItems = items ?? getUndocItems()
-        let results = undocItems!.sorted("updateAt", ascending: false)
+        let results = undocItems!.sorted(byKeyPath: "updateAt", ascending: false)
         var timeSortor = "...", index = 0, isOld = false
         var sortedResults = [[SectionObject]]()
         
@@ -111,7 +111,7 @@ extension SpiderRealm {
         guard let audio = audioSection.audio else { return }
         
         try! REALM.realm.write({ 
-            audio.tags.removeAtIndex(index)
+            audio.tags.remove(at: index)
             audioSection.update()
         })
     }
@@ -150,25 +150,25 @@ extension SpiderRealm {
         
         if let ownerMind = owner as? MindObject {
             
-            guard let aIndex = ownerMind.subMinds.indexOf(aMind),
-                let bIndex = ownerMind.subMinds.indexOf(bMind) else { return }
+            guard let aIndex = ownerMind.subMinds.index(of: aMind),
+                let bIndex = ownerMind.subMinds.index(of: bMind) else { return }
             
             let time = Date().toString()
             
             try! REALM.realm.write {
                 project.update(time)
-                ownerMind.subMinds.swap(aIndex, bIndex)
+                ownerMind.subMinds.swap(index1: aIndex, bIndex)
                 ownerMind.update(time)
             }
             
         } else {
             
             guard let project = owner as? ProjectObject,
-                let aIndex = project.minds.indexOf(aMind),
-                let bIndex = project.minds.indexOf(bMind) else { return }
+                let aIndex = project.minds.index(of: aMind),
+                let bIndex = project.minds.index(of: bMind) else { return }
             
             try! REALM.realm.write {
-                project.minds.swap(aIndex, bIndex)
+                project.minds.swap(index1: aIndex, bIndex)
                 project.update()
             }
         }
@@ -224,7 +224,7 @@ extension SpiderRealm {
     }
     
     class func addMind(_ mind: MindObject, to noteID: String) {
-        guard let note = REALM.realm.objectForPrimaryKey(ProjectObject.self, key: noteID) else { return }
+        guard let note = REALM.realm.objectForPrimaryKey(ProjectObject.self, key: noteID as AnyObject) else { return }
         
         try! REALM.realm.write({ 
             REALM.realm.add(mind, update: true)
@@ -257,7 +257,7 @@ extension SpiderRealm {
     class func moveMinds(_ mindIDs: [String], to toMind: MindObject) {
         //TODO:- Move Between Different Project
         guard let exID = mindIDs.first,
-            let exMind = REALM.realm.objectForPrimaryKey(MindObject.self, key: exID) else { return }
+            let exMind = REALM.realm.object(ofType: MindObject.self, forPrimaryKey: exID as AnyObject) else { return }
         
         let time = Date().toString()
         
@@ -294,8 +294,8 @@ extension SpiderRealm {
     class func moveMinds(_ mindIDs: [String], to projectID: String) {
         //TODO:- Move Between Different Project
         guard let exID = mindIDs.first,
-            let exMind = REALM.realm.objectForPrimaryKey(MindObject.self, key: exID),
-            let project = REALM.realm.objectForPrimaryKey(ProjectObject.self, key: projectID)
+            let exMind = REALM.realm.object(ofType: MindObject.self, forPrimaryKey: exID as AnyObject),
+            let project = REALM.realm.object(ofType: ProjectObject.self, forPrimaryKey: projectID as AnyObject)
         else { return }
         
         let time = Date().toString()
@@ -369,7 +369,7 @@ extension SpiderRealm {
     class func removeSections(with ids: [String]) {
         try! REALM.realm.write({
             for id in ids {
-                if let section = REALM.realm.objectForPrimaryKey(SectionObject.self, key: id) {
+                if let section = REALM.realm.object(ofType: SectionObject.self, forPrimaryKey: id as AnyObject) {
                     section.modifiyFlag = 1
                     section.deleteFlag = 1
                     section.updateAt = Date().toString()
@@ -381,19 +381,19 @@ extension SpiderRealm {
     // MARK: - Article List
     class func swap(_ aSection: SectionObject, _ bSection: SectionObject) {
         guard let article = SpiderConfig.ArticleList.article,
-                  let aIndex  = article.sections.indexOf(aSection),
-                  let bIndex  = article.sections.indexOf(bSection) else { return }
+                  let aIndex  = article.sections.index(of: aSection),
+                  let bIndex  = article.sections.index(of: bSection) else { return }
         
         try! REALM.realm.write({
-            article.sections.swap(aIndex, bIndex)
+            article.sections.swap(index1: aIndex, bIndex)
             article.update()
         })
     }
     
     class func move(_ aSection: SectionObject, to bSection: SectionObject) {
         guard let article = SpiderConfig.ArticleList.article,
-            let aIndex  = article.sections.indexOf(aSection),
-            let bIndex  = article.sections.indexOf(bSection) else { return }
+            let aIndex  = article.sections.index(of: aSection),
+            let bIndex  = article.sections.index(of: bSection) else { return }
         
         try! REALM.realm.write({
             article.sections.move(from: aIndex, to: bIndex)
@@ -430,7 +430,7 @@ extension SpiderRealm {
         aSection.undocFlag = 0
         aSection.update()
         
-        if let bSection = bSection, let index = article.sections.indexOf(bSection) {
+        if let bSection = bSection, let index = article.sections.index(of: bSection) {
             article.sections.insert(aSection, at: index)
         } else {
             article.sections.append(aSection)
@@ -461,10 +461,10 @@ extension SpiderRealm {
         REALM.realm.beginWrite()
 
         for id in ids {
-            if let section = REALM.realm.objectForPrimaryKey(SectionObject.self, key: id) {
+            if let section = REALM.realm.object(ofType: SectionObject.self, forPrimaryKey: id as AnyObject) {
                 
-                if let index = fromArticle?.sections.indexOf(section) {
-                    fromArticle!.sections.removeAtIndex(index)
+                if let index = fromArticle?.sections.index(of: section) {
+                    fromArticle!.sections.remove(at: index)
                 } else {
                     section.undocFlag = 0
                 }

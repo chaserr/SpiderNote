@@ -492,30 +492,30 @@ class AudioRecordToolBar: UIView {
             quitButton.translatesAutoresizingMaskIntoConstraints = false
             timeLabel.translatesAutoresizingMaskIntoConstraints = false
             
-            recordButton.snp_makeConstraints { (make) in
+            recordButton.snp.makeConstraints { (make) in
                 make.width.height.equalTo(40)
                 make.top.equalTo(20)
                 make.centerX.equalTo(self)
             }
             
-            quitButton.snp_makeConstraints { (make) in
+            quitButton.snp.makeConstraints { (make) in
                 make.width.height.equalTo(12)
                 make.left.equalTo(15)
                 make.bottom.equalTo(-18)
             }
             
-            markButton.snp_makeConstraints { (make) in
+            markButton.snp.makeConstraints { (make) in
                 make.width.height.equalTo(40)
                 make.left.equalTo(86)
                 make.centerY.equalTo(quitButton)
             }
             
-            timeLabel.snp_makeConstraints { (make) in
+            timeLabel.snp.makeConstraints { (make) in
                 make.centerX.equalTo(self)
                 make.centerY.equalTo(quitButton)
             }
             
-            doneButton.snp_makeConstraints { (make) in
+            doneButton.snp.makeConstraints { (make) in
                 make.size.equalTo(markButton)
                 make.right.equalTo(-86)
                 make.centerY.equalTo(quitButton)
@@ -533,48 +533,48 @@ class AudioRecordToolBar: UIView {
             totalTimeLabel.translatesAutoresizingMaskIntoConstraints = false
             playButton.translatesAutoresizingMaskIntoConstraints = false
             
-            currentTimeLabel.snp_makeConstraints({ (make) in
+            currentTimeLabel.snp.makeConstraints({ (make) in
                 make.left.equalTo(15)
                 make.centerY.equalTo(playSlider)
             })
             
-            totalTimeLabel.snp_makeConstraints({ (make) in
+            totalTimeLabel.snp.makeConstraints({ (make) in
                 make.right.equalTo(-15)
                 make.centerY.equalTo(playSlider)
             })
             
-            playButton.snp_makeConstraints({ (make) in
+            playButton.snp.makeConstraints({ (make) in
                 make.width.height.equalTo(40)
-                make.top.equalTo(playSlider.snp_bottom).offset(14)
+                make.top.equalTo(playSlider.snp.bottom).offset(14)
                 make.centerX.equalTo(self)
             })
             
-            markButton.snp_makeConstraints({ (make) in
+            markButton.snp.makeConstraints({ (make) in
                 make.width.height.equalTo(40)
                 make.left.equalTo(86)
                 make.centerY.equalTo(playButton)
             })
             
-            doneButton.snp_makeConstraints({ (make) in
+            doneButton.snp.makeConstraints({ (make) in
                 make.width.height.equalTo(40)
                 make.right.equalTo(-86)
                 make.centerY.equalTo(playButton)
             })
         }
         
-        markContainter.snp_makeConstraints { (make) in
+        markContainter.snp.makeConstraints { (make) in
             make.size.equalTo(CGSize(width: 80, height: 34))
             make.centerX.equalTo(markButton)
-            make.bottom.equalTo(markButton.snp_top).offset(8)
+            make.bottom.equalTo(markButton.snp.top).offset(8)
         }
         
-        markTextButton.snp_makeConstraints { (make) in
+        markTextButton.snp.makeConstraints { (make) in
             make.size.equalTo(CGSize(width: 38, height: 27))
             make.left.equalTo(1)
             make.top.equalTo(0)
         }
         
-        markPicButton.snp_makeConstraints { (make) in
+        markPicButton.snp.makeConstraints { (make) in
             make.size.equalTo(markTextButton)
             make.top.equalTo(0)
             make.right.equalTo(1)
@@ -598,29 +598,29 @@ class AudioRecordToolBar: UIView {
         
         doneButton.setTitle("返回", for: UIControlState())
         
-        currentTimeLabel.snp_makeConstraints { (make) in
+        currentTimeLabel.snp.makeConstraints { (make) in
             make.left.equalTo(15)
             make.centerY.equalTo(playSlider)
         }
         
-        totalTimeLabel.snp_makeConstraints { (make) in
+        totalTimeLabel.snp.makeConstraints { (make) in
             make.right.equalTo(-15)
             make.centerY.equalTo(playSlider)
         }
         
-        playButton.snp_makeConstraints { (make) in
+        playButton.snp.makeConstraints { (make) in
             make.width.height.equalTo(40)
-            make.top.equalTo(playSlider.snp_bottom).offset(14)
+            make.top.equalTo(playSlider.snp.bottom).offset(14)
             make.centerX.equalTo(self)
         }
         
-        markButton.snp_remakeConstraints { (make) in
+        markButton.snp.remakeConstraints { (make) in
             make.width.height.equalTo(40)
             make.left.equalTo(86)
             make.centerY.equalTo(playButton)
         }
         
-        doneButton.snp_remakeConstraints { (make) in
+        doneButton.snp.remakeConstraints { (make) in
             make.width.height.equalTo(40)
             make.right.equalTo(-86)
             make.centerY.equalTo(playButton)

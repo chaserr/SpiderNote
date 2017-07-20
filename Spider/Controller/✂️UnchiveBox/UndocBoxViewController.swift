@@ -261,7 +261,6 @@ class UndocBoxViewController: UIViewController {
         
         layoutPool.chooseAllItem(hasChoosedAll)
         collectionView.reloadData()
-        
         choosedCount = hasChoosedAll ? (unDocResults?.count)! : 0
     }
     

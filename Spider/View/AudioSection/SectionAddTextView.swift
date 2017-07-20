@@ -91,30 +91,30 @@ class SectionAddTextView: UIView {
         charactersRemainingLabel.translatesAutoresizingMaskIntoConstraints = false
         textView.translatesAutoresizingMaskIntoConstraints = false
         
-        contaniner.snp_makeConstraints { (make) in
+        contaniner.snp.makeConstraints { (make) in
             make.size.equalTo(CGSize(width: kScreenWidth, height: 120))
             make.bottom.left.equalTo(self)
         }
         
-        textView.snp_makeConstraints { (make) in
+        textView.snp.makeConstraints { (make) in
             make.size.equalTo(CGSize(width: kScreenWidth - 20, height: 70))
             make.top.left.equalTo(10)
         }
         
-        cancelButton.snp_makeConstraints { (make) in
+        cancelButton.snp.makeConstraints { (make) in
             make.size.equalTo(CGSize(width: 40, height: 20))
             make.left.equalTo(10)
             make.bottom.equalTo(-10)
         }
         
-        doneButton.snp_makeConstraints { (make) in
+        doneButton.snp.makeConstraints { (make) in
             make.size.centerY.equalTo(cancelButton)
             make.right.equalTo(-10)
         }
         
-        charactersRemainingLabel.snp_makeConstraints { (make) in
+        charactersRemainingLabel.snp.makeConstraints { (make) in
             make.size.centerY.equalTo(cancelButton)
-            make.right.equalTo(doneButton.snp_left)
+            make.right.equalTo(doneButton.snp.left)
         }
     }
     
@@ -149,7 +149,7 @@ class SectionAddTextView: UIView {
     
     func keyboardWillShow(_ notification: Notification) {
         let info = notification.userInfo!
-        let kbFrame = info[UIKeyboardFrameEndUserInfoKey]!.CGRectValue
+        let kbFrame = (info[UIKeyboardFrameEndUserInfoKey]! as AnyObject).CGRectValue
         
         UIView.animate(withDuration: 1.3, animations: {
             self.contaniner.transform = CGAffineTransform(translationX: 0, y: -kbFrame.height)

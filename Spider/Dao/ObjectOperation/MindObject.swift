@@ -31,7 +31,7 @@ class MindObject: Object {
     var subMinds = List<MindObject>()
     
     // 子段落 (type == .Article)
-    let sections = List<SectionObject>()
+    var sections = List<SectionObject>()
     
     // 父节点为 Mind
     let ownerMind = LinkingObjects(fromType: MindObject.self, property: "subMinds")

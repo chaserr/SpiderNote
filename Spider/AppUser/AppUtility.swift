@@ -100,10 +100,11 @@ class AppUtility: NSObject {
     class func dataFilePathForKey(_ key:String) -> String? {
         let document = FileUtil.getFileUtil().getDocmentPath()
         let dir = document?.stringByAppendingPathComponent("user")
+        
         if !FileManager.default.fileExists(atPath: dir!) {
             do{
             
-                try FileManager.default.createDirectory(atPath: dir, withIntermediateDirectories: true, attributes: nil)
+                try FileManager.default.createDirectory(atPath: dir!, withIntermediateDirectories: true, attributes: nil)
                 
                 
             }catch let error as NSError{

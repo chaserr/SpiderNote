@@ -210,7 +210,7 @@ extension ShareVC{
         
         let activityVC = UIActivityViewController.init(activityItems: arr, applicationActivities: nil)
         // 屏蔽那些模块
-        let cludeActivitys: [String] = [
+        let cludeActivitys: [UIActivityType] = [
             
             // 保存到本地相册
             //UIActivityTypeSaveToCameraRoll,

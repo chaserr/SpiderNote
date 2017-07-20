@@ -63,7 +63,7 @@ extension FileManager {
         
         let audioURL = url.appendingPathComponent("\(id).\(FileExtension.M4A.rawValue)")
         
-        if `default`.fileExists(atPath: audioURL!.path!) {
+        if `default`.fileExists(atPath: audioURL.path!) {
             return audioURL
         } else {
             return nil
@@ -83,8 +83,7 @@ extension UIImage {
     
     public func saveToDisk(withid id: String) {
         if let imageData = UIImageJPEGRepresentation(self, 1.0) {
-            Kingfisher.ImageCache.defaultCache.storeImage(self, originalData: imageData, forKey: id, toDisk: true, completionHandler: { 
-                
+            ImageCache.default.store(self, original: imageData, forKey: id, processorIdentifier: "ImageCache", cacheSerializer: CacheSerializer, toDisk: true, completionHandler: {
             })
         }
     }

@@ -109,7 +109,7 @@ class AddUndocTextView: UIView, UITextViewDelegate {
     func keyboardWillShow(_ notification: Notification) {
         guard let info = notification.userInfo else { return }
         
-        let keyboardFrame = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue
+        let keyboardFrame = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
         let duration: TimeInterval = (info[UIKeyboardAnimationDurationUserInfoKey] as! NSNumber).doubleValue
         
         UIView.animate(withDuration: duration, animations: {

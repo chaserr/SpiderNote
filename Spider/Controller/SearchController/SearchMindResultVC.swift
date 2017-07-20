@@ -275,7 +275,7 @@ extension SearchMindResultVC{
         questionDataSource?.removeAll()
         //[c]不区分大小写 [d]无音调  [cd]两个都不要  (断言编程指南)
         let predicate = NSPredicate(format: "type == 0 AND deleteFlag == 0 AND name CONTAINS[c] %@", containsParameter)
-        let mindObjectArr = (REALM.realm?.objects(MindObject.self).sorted("updateAtTime", ascending: false).filter(predicate))!.toArray()
+        let mindObjectArr = (REALM.realm?.objects(MindObject.self).sorted(byKeyPath: "updateAtTime", ascending: false).filter(predicate))!.toArray()
 
         // 从当前结点搜
         if SPIDERSTRUCT.currentMindPath == nil {

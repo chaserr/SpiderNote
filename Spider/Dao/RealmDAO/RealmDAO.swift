@@ -41,18 +41,13 @@ class RealmDAO: NSObject {
      */
      func createDatabase() -> Void {
         
-        let config = Realm.Configuration (
-
-            fileURL: URL(fileURLWithPath: APP_UTILITY.databasePath()),
-            schemaVersion: RealmDBSchema,
-            deleteRealmIfMigrationNeeded: false,
-            // 设置闭包，这个闭包将会在打开低于上面所设置版本号的 Realm 数据库的时候被自动调用
-            migrationBlock: { migration, oldSchemaVersion in
-                if (oldSchemaVersion < RealmDBSchema) {
-                    // 什么都不要做！Realm 会自行检测新增和需要移除的属性，然后自动更新硬盘上的数据库架构
-                }
-                
-        })
+        let fileUrl = URL (fileURLWithPath: APP_UTILITY.databasePath())
+        
+        let config = Realm.Configuration (fileURL: fileUrl, inMemoryIdentifier: nil, syncConfiguration: nil, encryptionKey: nil, readOnly: false, schemaVersion: RealmDBSchema, migrationBlock: { (migration, oldSchemaVersion) in
+            if (oldSchemaVersion < RealmDBSchema) {
+                // 什么都不要做！Realm 会自行检测新增和需要移除的属性，然后自动更新硬盘上的数据库架构
+            }
+        }, deleteRealmIfMigrationNeeded: false, shouldCompactOnLaunch: nil, objectTypes: nil)
 
     //        if !filemgr.fileExistsAtPath(databasePath) {
             do {

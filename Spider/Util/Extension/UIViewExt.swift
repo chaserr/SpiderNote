@@ -50,7 +50,7 @@ extension UIView {
 }
 
 extension UIView{
-
+    @discardableResult
     func addSubLayerWithFrame(_ frame:CGRect, color:CGColor) -> CALayer {
         let layer:CALayer = CALayer()
         layer.frame = frame

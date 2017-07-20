@@ -39,6 +39,8 @@ extension AboutMeVC{
         return sectionNum
     }
     
+    
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let cellArr = self.cellTitle[section]
         return cellArr.count
@@ -91,7 +93,7 @@ extension AboutMeVC{
         return 55
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = AboutMeCell.cellWithTableView(tableView, indexPath: indexPath) as! AboutMeCell
         cell.setDefaultValue(indexPath, titleArray: cellTitle as Array<AnyObject>)
