@@ -10,7 +10,7 @@ import UIKit
 
 private let themeColor = UIColor.color(withHex: 0xaaaaaa)
 private let tag_unfold_width = kScreenWidth - 15 * 4 - 30 - 1
-private let textTagSize = CGSize(width: tag_unfold_width, height: CGFloat(FLT_MAX))
+private let textTagSize = CGSize(width: tag_unfold_width, height: CGFloat(Float.greatestFiniteMagnitude))
 
 class AudioTagCellContentView: UIView {
     
@@ -74,7 +74,7 @@ class AudioTagCellContentView: UIView {
     func foldTag() {
         switch info.type {
         case .pic:
-            picTag.snp_updateConstraints(closure: { (make) in
+            picTag.snp.updateConstraints({ (make) in
                 make.width.height.equalTo(30)
             })
         case .text:
@@ -93,7 +93,7 @@ class AudioTagCellContentView: UIView {
             
             let picTagH = tag_unfold_width / image.size.width * image.size.height
             
-            picTag.snp_updateConstraints(closure: { (make) in
+            picTag.snp.updateConstraints({ (make) in
                 make.size.equalTo(CGSize(width: tag_unfold_width, height: picTagH))
             })
             
@@ -119,19 +119,19 @@ class AudioTagCellContentView: UIView {
         dotView.translatesAutoresizingMaskIntoConstraints = false
         timeLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        timeLabel.snp_makeConstraints { (make) in
+        timeLabel.snp.makeConstraints { (make) in
             make.size.equalTo(CGSize(width: 30, height: kAudioTagCellHeight))
             make.left.equalTo(15)
             make.top.equalTo(0)
         }
         
-        lineView.snp_makeConstraints { (make) in
+        lineView.snp.makeConstraints { (make) in
             make.width.equalTo(1)
             make.top.bottom.equalTo(self)
-            make.left.equalTo(timeLabel.snp_right).offset(14)
+            make.left.equalTo(timeLabel.snp.right).offset(14)
         }
         
-        dotView.snp_makeConstraints { (make) in
+        dotView.snp.makeConstraints { (make) in
             make.width.height.equalTo(6)
             make.centerX.equalTo(lineView)
             make.top.equalTo((kAudioTagCellHeight - 6)*0.5)
@@ -152,9 +152,9 @@ class AudioTagCellContentView: UIView {
             addSubview(picTag)
             picTag.translatesAutoresizingMaskIntoConstraints = false
             
-            picTag.snp_makeConstraints(closure: { (make) in
+            picTag.snp.makeConstraints({ (make) in
                 make.width.height.equalTo(30)
-                make.left.equalTo(lineView.snp_right).offset(15)
+                make.left.equalTo(lineView.snp.right).offset(15)
                 make.top.equalTo((kAudioTagCellHeight - 30)*0.5)
             })
             
@@ -165,8 +165,8 @@ class AudioTagCellContentView: UIView {
             
             textTag.translatesAutoresizingMaskIntoConstraints = false
             
-            textTag.snp_makeConstraints(closure: { (make) in
-                make.left.equalTo(lineView.snp_right).offset(15)
+            textTag.snp.makeConstraints({ (make) in
+                make.left.equalTo(lineView.snp.right).offset(15)
                 make.right.equalTo(-15)
                 make.top.equalTo(8.5)
             })

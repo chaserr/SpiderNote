@@ -95,7 +95,7 @@ class BaseWebView: MainViewController, WKNavigationDelegate, WKUIDelegate {
         
         
         let urlRequest:NSMutableURLRequest = NSMutableURLRequest.init(url: URL(string: currentUrl)!)
-        webView.load(urlRequest)
+        webView.load(urlRequest as URLRequest)
         
     }
     

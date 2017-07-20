@@ -39,9 +39,9 @@ extension FileManager {
     
     class func savePic(_ imageData: Data) -> String? {
         let id = UUID().uuidString
-        if let imageURL = spiderImageURLWithID(id),
-           let imagePath = imageURL.path {
-            if `default`.createFile(atPath: imagePath, contents: imageData, attributes: nil) {
+        if let imageURL = spiderImageURLWithID(id){
+           let imagePath = imageURL.path
+           if `default`.createFile(atPath: imagePath, contents: imageData, attributes: nil) {
                 return id
             }
         }
@@ -50,8 +50,8 @@ extension FileManager {
     }
     
     public class func getPic(withID id: String) -> UIImage? {
-        if let imageURL = spiderImageURLWithID(id),
-            let imagePath = imageURL.path {
+        if let imageURL = spiderImageURLWithID(id){
+            let imagePath = imageURL.path
             return UIImage(contentsOfFile: imagePath)
         }
         
@@ -63,7 +63,7 @@ extension FileManager {
         
         let audioURL = url.appendingPathComponent("\(id).\(FileExtension.M4A.rawValue)")
         
-        if `default`.fileExists(atPath: audioURL.path!) {
+        if `default`.fileExists(atPath: audioURL.path) {
             return audioURL
         } else {
             return nil
@@ -83,7 +83,7 @@ extension UIImage {
     
     public func saveToDisk(withid id: String) {
         if let imageData = UIImageJPEGRepresentation(self, 1.0) {
-            ImageCache.default.store(self, original: imageData, forKey: id, processorIdentifier: "ImageCache", cacheSerializer: CacheSerializer, toDisk: true, completionHandler: {
+            ImageCache.default.store(self, original: imageData, forKey: id, processorIdentifier: "", cacheSerializer: DefaultCacheSerializer.default, toDisk: true, completionHandler: {
             })
         }
     }

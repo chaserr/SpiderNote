@@ -38,7 +38,7 @@ class ArticleTextCell: ArticleBaseCell {
         let tap = UITapGestureRecognizer(target: self, action: #selector(didTap))
         contentLabel.addGestureRecognizer(tap)
         
-        contentLabel.snp_makeConstraints { (make) in
+        contentLabel.snp.makeConstraints { (make) in
             contentLabelEdge = make.edges.equalTo(contentView).inset(commonEdge).constraint
         }
     }
@@ -53,7 +53,7 @@ class ArticleTextCell: ArticleBaseCell {
         
         if beEditing != editing {
             beEditing = editing
-            contentLabelEdge?.updateInsets(editing ? editEdge : commonEdge)
+            contentLabelEdge?.updateInsets(amount: editing ? editEdge : commonEdge)
         }
     }
     

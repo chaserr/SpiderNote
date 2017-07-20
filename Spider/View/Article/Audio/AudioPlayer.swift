@@ -36,7 +36,7 @@ class AudioPlayer: NSObject {
             var centerInfo = [
                 MPMediaItemPropertyTitle: aInfo["title"] as! String,
                 MPMediaItemPropertyPlaybackDuration: NSNumber(value: self.player.duration as Double)
-            ]
+            ] as [String : Any]
             
             if let imageName = aInfo["artwork"] as? String {
                 let artwork = MPMediaItemArtwork(image: UIImage(named: imageName)!)

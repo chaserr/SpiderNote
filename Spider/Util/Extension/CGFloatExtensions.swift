@@ -14,7 +14,7 @@ extension CGFloat {
 
     /// EZSwiftExtensions
     public func toRadians() -> CGFloat {
-        return (CGFloat (M_PI) * self) / 180.0
+        return (CGFloat (Double.pi) * self) / 180.0
     }
 
     /// EZSwiftExtensions
@@ -24,11 +24,11 @@ extension CGFloat {
 
     /// EZSwiftExtensions
     public mutating func toRadiansInPlace() {
-        self = (CGFloat (M_PI) * self) / 180.0
+        self = (CGFloat (Double.pi) * self) / 180.0
     }
 
     /// EZSE: Converts angle degrees to radians.
     public func degreesToRadians (_ angle: CGFloat) -> CGFloat {
-        return (CGFloat (M_PI) * angle) / 180.0
+        return (CGFloat (Double.pi) * angle) / 180.0
     }
 }

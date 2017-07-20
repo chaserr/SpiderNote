@@ -12,7 +12,7 @@ extension UIImage {
     func getHalfSize() -> CGSize {
         return CGSize(width: size.width / 2, height: size.height / 2)
     }
-    
+    @discardableResult
     func resize(_ width: CGFloat) -> UIImage {
         return UIImage(cgImage: self.cgImage!, scale: size.height / width, orientation: .up)
     }

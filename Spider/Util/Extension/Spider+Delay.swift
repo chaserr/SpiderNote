@@ -27,7 +27,7 @@ public typealias CancelableTask = (_ cancel: Bool) -> Void
     
     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(time * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)) {
         if let task = finalTask {
-            task(cancel: false)
+            task(false)
         }
     }
     
@@ -35,5 +35,5 @@ public typealias CancelableTask = (_ cancel: Bool) -> Void
 }
 
 public func cancel(_ cancelableTask: CancelableTask?) {
-    cancelableTask?(cancel: true)
+    cancelableTask?(true)
 }

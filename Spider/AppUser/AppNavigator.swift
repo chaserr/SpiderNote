@@ -20,6 +20,7 @@ class AppNavigator: NSObject, CAAnimationDelegate {
     }
 
     static var instance:AppNavigator?
+    @discardableResult
     class func getInstance() ->AppNavigator {
         if (instance == nil) {
             instance = AppNavigator()

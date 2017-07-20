@@ -54,12 +54,12 @@ class UserSpaceViewController: BaseTableViewController, IBActionSheetDelegate, T
     
     func addViewConstranit() -> Void {
         
-        tableView.snp_makeConstraints { (make) in
+        tableView.snp.makeConstraints { (make) in
             make.top.left.right.equalToSuperview()
             make.bottom.equalTo(footerBtn.top).offset(5)
         }
         
-        footerBtn.snp_makeConstraints { (make) in
+        footerBtn.snp.makeConstraints { (make) in
             make.left.right.bottom.equalToSuperview()
             make.height.equalTo(50)
             
@@ -149,12 +149,12 @@ extension UserSpaceViewController{
         switch (indexPath.section, indexPath.row) {
         case (0, _), (1,_):
            let cell = LeftMenuUserSpaceCell.cellWithTableView(tableView) as! LeftMenuUserSpaceCell
-            cell.setDefaultValue(indexPath, titleArray: cellTitle)
+            cell.setDefaultValue(indexPath, titleArray: cellTitle as Array<AnyObject>)
            return cell
 
         case (2, _):
             let cell = LeftMenuUserSpaceCell.flowCellWithTableView(tableView) as! LeftMenuUserSpaceCell
-            cell.setDefaultValue(indexPath, titleArray: cellTitle)
+            cell.setDefaultValue(indexPath, titleArray: cellTitle as Array<AnyObject>)
 
             let progressWidth = cell.cellStoreProgress.w
             // 最大200M , 已经用了20M
@@ -217,10 +217,10 @@ extension UserSpaceViewController{
     func selectPhoto(_ cell: LeftMenuUserSpaceCell) -> Void {
         let imagePickerController:TZImagePickerController = TZImagePickerController.init(maxImagesCount: 1, delegate:nil)
         imagePickerController.pickerDelegate = self
-        imagePickerController.didFinishPickingPhotosHandle = { [weak self] (photos, assets, isOriginal) in
+        imagePickerController.didFinishPickingPhotosHandle = { (photos, assets, isOriginal) in
             
-            let image = photos[0]
-            image.resize(cell.cellDetail.size.width)
+            let image = photos?[0]
+            image?.resize(cell.cellDetail.size.width)
             
             cell.cellDetail.setImage(image, for: UIControlState())
             let currentUsr = UserObject.fetchUserObj((APP_UTILITY.currentUser?.userID)!)
@@ -238,19 +238,19 @@ extension UserSpaceViewController{
 extension UserSpaceViewController{
 
     override func viewDidLayoutSubviews() {
-        if tableView.responds(to: Selector("setSeparatorInset:")) {
+        if tableView.responds(to: #selector(setter: UITableViewCell.separatorInset)) {
             tableView.separatorInset = UIEdgeInsets.zero
         }
-        if tableView.responds(to: Selector("setLayoutMargins:")) {
+        if tableView.responds(to: #selector(setter: UIView.layoutMargins)) {
             tableView.layoutMargins = UIEdgeInsets.zero
         }
     }
     
      func tableView(_ tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: IndexPath) {
-        if cell.responds(to: Selector("setSeparatorInset:")) {
+        if cell.responds(to: #selector(setter: UITableViewCell.separatorInset)) {
             cell.separatorInset = UIEdgeInsets.zero
         }
-        if cell.responds(to: Selector("setLayoutMargins:")) {
+        if cell.responds(to: #selector(setter: UIView.layoutMargins)) {
             cell.layoutMargins = UIEdgeInsets.zero
         }
     }

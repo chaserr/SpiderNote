@@ -26,7 +26,7 @@ class VersionManage: NSObject {
     
     /**获取本地版本号*/
     func appLocalVersion() -> String {
-        let info:[String:AnyObject] = Bundle.main.infoDictionary!
+        let info:[String:AnyObject] = Bundle.main.infoDictionary! as [String : AnyObject]
         let version:String = info["CFBundleVersion"] as! String
         return version.trimmingCharacters(in: CharacterSet.letters)
         

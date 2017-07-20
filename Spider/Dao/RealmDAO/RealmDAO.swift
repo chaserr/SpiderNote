@@ -21,6 +21,7 @@ class RealmDAO: NSObject {
     
     static var realmManage: RealmDAO?
 
+    @discardableResult
     class func instance() -> RealmDAO {
         if (realmManage == nil) {
             realmManage = RealmDAO()

@@ -27,11 +27,10 @@ class AddMediaButton: UIButton {
         mediaView.removeHandler = { [unowned self] in
             self.removeAction()
         }
-        
-        self.addTarget(self, action: #selector(action), for: .touchUpInside)
+        self.addTarget(self, action: #selector(addMediaaction), for: .touchUpInside)
     }
     
-    func action() {
+    func addMediaaction() {
         
         if hasShowed {
             
@@ -46,7 +45,7 @@ class AddMediaButton: UIButton {
             superview!.bringSubview(toFront: self)
             
             buttonAnimation({
-                self.transform = CGAffineTransform(rotationAngle: CGFloat(M_PI_4))
+                self.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi/4))
             }, completion: { done in
                 self.hasShowed = true
             })
@@ -66,7 +65,7 @@ class AddMediaButton: UIButton {
         })
     }
     
-    fileprivate func buttonAnimation(_ animation: () -> Void, completion: (Bool) -> Void) {
+    fileprivate func buttonAnimation(_ animation: @escaping () -> Void, completion: @escaping (Bool) -> Void) {
         UIView.animate(withDuration: 0.3,
                                    delay: 0,
                                    usingSpringWithDamping: 0.5,

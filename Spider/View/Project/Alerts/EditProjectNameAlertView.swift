@@ -101,22 +101,22 @@ final class EditProjectNameAlertView: UIView {
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         doneButton.translatesAutoresizingMaskIntoConstraints = false
         
-        topContainter.snp_makeConstraints { (make) in
+        topContainter.snp.makeConstraints { (make) in
             make.size.equalTo(CGSize(width: 270, height: 62))
             make.top.centerX.equalTo(self)
         }
         
-        textField.snp_makeConstraints { (make) in
+        textField.snp.makeConstraints { (make) in
             make.size.equalTo(CGSize(width: 240, height: 30))
             make.center.equalTo(topContainter)
         }
         
-        cancelButton.snp_makeConstraints { (make) in
+        cancelButton.snp.makeConstraints { (make) in
             make.size.equalTo(CGSize(width: 134.5, height: 43))
             make.bottom.left.equalTo(self)
         }
         
-        doneButton.snp_makeConstraints { (make) in
+        doneButton.snp.makeConstraints { (make) in
             make.size.equalTo(cancelButton)
             make.bottom.right.equalTo(self)
         }

@@ -32,24 +32,28 @@ class TopHitView: UIView {
     var dismissTimer: Timer!
     
     override init(frame: CGRect) {
-        super.init(frame: frame)
-        
-        autoresizingMask = UIViewAutoresizing.flexibleWidth
-        backgroundColor = RGBACOLOR(0.64, g: 0.65, b: 0.66, a: 0.96)
         label = UILabel(frame: CGRect(x: 0, y: 0, width: 50, height: kTopBarHeight))
         label.backgroundColor = UIColor.clear
         label.autoresizingMask = UIViewAutoresizing.flexibleWidth
         label.font = SYSTEMFONT(13)
         label.isUserInteractionEnabled = true
+        iconIgv = UIImageView()
+        iconIgv.contentMode = UIViewContentMode.center
+        tapHandler = {() -> () in }
+        dismissHandler = {()->() in}
+        super.init(frame: frame)
+        autoresizingMask = UIViewAutoresizing.flexibleWidth
+        backgroundColor = RGBACOLOR(0.64, g: 0.65, b: 0.66, a: 0.96)
+        
+        
         
         addSubview(label)
-        iconIgv = UIImageView()
         addSubview(iconIgv)
-        iconIgv.contentMode = UIViewContentMode.center
-        addTapGesture(target: self, action: #selector(tapNow))
         iconIgv.addTapGesture { (UITapGestureRecognizer) in
             self.dismiss()
         }
+        addTapGesture(target: self, action: #selector(tapNow))
+        
         
     }
     
@@ -57,7 +61,7 @@ class TopHitView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func showTopMessage(_ message: String, config: NSDictionary?, delay: Float, tapHandler: ()->()?) -> Void {
+    func showTopMessage(_ message: String, config: NSDictionary?, delay: Float, tapHandler: @escaping ()->()?) -> Void {
         
         warningText = message;
         self.tapHandler = tapHandler;

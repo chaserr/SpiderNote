@@ -101,7 +101,7 @@ class AppUser: NSObject {
         if path != nil {
             let obj = NSKeyedUnarchiver.unarchiveObject(withFile: path!)
             
-            return obj
+            return obj as AnyObject
         }else{
             
             return nil
@@ -110,10 +110,11 @@ class AppUser: NSObject {
         
     }
     
+    @discardableResult
     class func setObject(_ value:AnyObject, key:String) -> AnyObject? {
         let path:String = dataFilePathForKey(key)!
         
-        return NSKeyedArchiver.archiveRootObject(value, toFile: path)
+        return NSKeyedArchiver.archiveRootObject(value, toFile: path) as AnyObject
     }
     
     class func dataFilePathForKey(_ key:String) -> String? {
@@ -156,7 +157,7 @@ class AppUser: NSObject {
             }
         }
         
-        return ((try? UIImageJPEGRepresentation(image, 0.6)?.write(to: URL(fileURLWithPath: imageCacheMgrDir.stringByAppendingPathComponent(path.md5())), options: [.atomic])) != nil)!
+        return ((try? UIImageJPEGRepresentation(image, 0.6)?.write(to: URL(fileURLWithPath: imageCacheMgrDir.stringByAppendingPathComponent(path.md5())), options: [.atomic])) != nil)
     }
     
     /** 读取数据 */

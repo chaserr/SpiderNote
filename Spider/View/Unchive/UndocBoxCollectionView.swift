@@ -17,8 +17,7 @@ class UndocBoxCollectionView: UICollectionView {
         didSet {
             
             if beEditing {
-                
-                bottomConstraint?.updateOffset(-60)
+                bottomConstraint?.update(offset: -60)
                 backgroundColor = UIColor.color(withHex: 0xc1c1c1)
                 
                 let layout = collectionViewLayout as! UICollectionViewFlowLayout
@@ -28,8 +27,7 @@ class UndocBoxCollectionView: UICollectionView {
                 layout.itemSize = CGSize(width: kScreenWidth / 2 - 6, height: kScreenWidth / 2 - 6)
                 
             } else {
-                
-                bottomConstraint?.updateOffset(0)
+                bottomConstraint?.update(offset: 0)
                 backgroundColor = UIColor.white
                 
                 let layout = collectionViewLayout as! UICollectionViewFlowLayout

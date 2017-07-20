@@ -346,12 +346,12 @@ extension SearchArticleResultVC{
             let articleModel:ArticleModel = ArticleModel()
             // 查询未归档
             let unarchivePredicate = NSPredicate(format: "type == 1 AND undocFlag == 1 AND deleteFlag == 0")
-            let sectionArr = REALM.realm.objects(SectionObject).sorted("updateAt", ascending: false).filter(unarchivePredicate)
+            let sectionArr = REALM.realm.objects(SectionObject.self).sorted(byKeyPath: "updateAt", ascending: false).filter(unarchivePredicate)
             // 查询文字段落
-            let sectionTextArr = sectionArr.filter(NSPredicate(format: "type == 0 AND deleteFlag == 0 AND text CONTAINS[c] %@", containsParameter)).sorted("updateAt", ascending: false).toArray()
+            let sectionTextArr = sectionArr.filter(NSPredicate(format: "type == 0 AND deleteFlag == 0 AND text CONTAINS[c] %@", containsParameter)).sorted(byKeyPath: "updateAt", ascending: false).toArray()
             
             // 查询图片段落
-            let sectionPicArr = sectionArr.filter(NSPredicate(format: "type == 1 AND deleteFlag == 0")).sorted("updateAt", ascending: false).toArray()
+            let sectionPicArr = sectionArr.filter(NSPredicate(format: "type == 1 AND deleteFlag == 0")).sorted(byKeyPath: "updateAt", ascending: false).toArray()
             var picSecObjArr = [PicSectionObject]() // 存放符合条件的图片
             for picSection in sectionPicArr {
                 // 每一个图片段落的每张图片包含的标签
@@ -366,7 +366,7 @@ extension SearchArticleResultVC{
             }
             
             // 查询音频段落
-            let vedioSecArr = sectionArr.filter(NSPredicate(format: "type == 2 AND deleteFlag == 0")).sorted("updateAt", ascending: false).toArray()
+            let vedioSecArr = sectionArr.filter(NSPredicate(format: "type == 2 AND deleteFlag == 0")).sorted(byKeyPath: "updateAt", ascending: false).toArray()
             var vedioSecObjArr = [SectionObject]() // 存放符合条件的音频
             for vedioSection in vedioSecArr {
                 // 每一个音频段落的每个文字标签
@@ -391,14 +391,14 @@ extension SearchArticleResultVC{
         
         // 1. 查询出所有文章
         let articlePredicate = NSPredicate(format: "type == 1 AND deleteFlag == 0")
-        let allArticleArr = REALM.realm.objects(MindObject).sorted("updateAtTime", ascending: false).filter(articlePredicate)
+        let allArticleArr = REALM.realm.objects(MindObject.self).sorted(byKeyPath: "updateAtTime", ascending: false).filter(articlePredicate)
         for articleObj in allArticleArr.toArray() {
             let articleModel:ArticleModel = ArticleModel()
             // 查询文字段落
-            let sectionArr = articleObj.sections.filter(NSPredicate(format: "type == 0 AND deleteFlag == 0 AND text CONTAINS[c] %@", containsParameter)).sorted("updateAt", ascending: false).toArray()
+            let sectionArr = articleObj.sections.filter(NSPredicate(format: "type == 0 AND deleteFlag == 0 AND text CONTAINS[c] %@", containsParameter)).sorted(byKeyPath: "updateAt", ascending: false).toArray()
             
             // 查询图片段落
-            let sectionPicArr = articleObj.sections.filter(NSPredicate(format: "type == 1 AND deleteFlag == 0")).sorted("updateAt", ascending: false).toArray()
+            let sectionPicArr = articleObj.sections.filter(NSPredicate(format: "type == 1 AND deleteFlag == 0")).sorted(byKeyPath: "updateAt", ascending: false).toArray()
             var picSecObjArr = [PicSectionObject]() // 存放符合条件的图片
             for picSection in sectionPicArr {
                 // 每一个图片段落的每张图片包含的标签
@@ -413,7 +413,7 @@ extension SearchArticleResultVC{
             }
             
             // 查询音频段落
-            let vedioSecArr = articleObj.sections.filter(NSPredicate(format: "type == 2 AND deleteFlag == 0")).sorted("updateAt", ascending: false).toArray()
+            let vedioSecArr = articleObj.sections.filter(NSPredicate(format: "type == 2 AND deleteFlag == 0")).sorted(byKeyPath: "updateAt", ascending: false).toArray()
             var vedioSecObjArr = [SectionObject]() // 存放符合条件的音频
             for vedioSection in vedioSecArr {
                 // 每一个音频段落的每个文字标签

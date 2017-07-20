@@ -25,16 +25,14 @@ class AlertView: NSObject, UIAlertViewDelegate {
     
     
     
-    init(title: String?, message: String?, cancleBtnTitle: String?, otherButtonTitle: String?, theCancleBtnBlock: AlertViewBlock, theOtherBtnBlock: AlertViewBlock) {
+    init(title: String?, message: String?, cancleBtnTitle: String?, otherButtonTitle: String?, theCancleBtnBlock: @escaping AlertViewBlock, theOtherBtnBlock:@escaping AlertViewBlock) {
         super.init()
         cancleBtnBlock = theCancleBtnBlock
         otherBtnBlock = theOtherBtnBlock
         alertView = UIAlertView.init(title: title!, message: message!, delegate: self, cancelButtonTitle: cancleBtnTitle, otherButtonTitles: otherButtonTitle!)
         alertView!.show()
     }
-    
-
-    class func alert(_ title: String?, message: String?, cancleBtnTitle: String?, otherButtonTitle: String?, theCancleBtnBlock: AlertViewBlock, theOtherBtnBlock: AlertViewBlock) -> AlertView {
+    class func alert(_ title: String?, message: String?, cancleBtnTitle: String?, otherButtonTitle: String?, theCancleBtnBlock: @escaping AlertViewBlock, theOtherBtnBlock:@escaping AlertViewBlock) -> AlertView {
         let alert = AlertView.init(title: title!, message: message!, cancleBtnTitle: cancleBtnTitle!, otherButtonTitle: otherButtonTitle!, theCancleBtnBlock: theCancleBtnBlock, theOtherBtnBlock: theOtherBtnBlock)
         
         return alert

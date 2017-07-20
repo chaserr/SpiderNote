@@ -33,7 +33,7 @@ class MainViewController: UIViewController {
     }
     
     @objc fileprivate func contentSizeDidChangeNotification(_ notification: Notification) {
-        if let userInfo: NSDictionary = notification.userInfo {
+        if let userInfo: NSDictionary = notification.userInfo as! NSDictionary {
             self.contentSizeDidChange(userInfo[UIContentSizeCategoryNewValueKey] as! String)
         }
     }

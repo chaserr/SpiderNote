@@ -36,7 +36,7 @@ class PicSectionObject: Object {
     /** ignored properties */
     
     var index: Int? {
-        return owner.first?.pics.indexOf(self)
+        return owner.first?.pics.index(of: self)
     }
 }
 

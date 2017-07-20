@@ -37,11 +37,11 @@ class ArticlePicsCell: ArticleBaseCell {
         tagCountView.translatesAutoresizingMaskIntoConstraints = false
         picsView.translatesAutoresizingMaskIntoConstraints = false
         
-        picsView.snp_makeConstraints { (make) in
+        picsView.snp.makeConstraints { (make) in
             picEdge = make.edges.equalTo(contentView).inset(commonEdge).constraint
         }
         
-        tagCountView.snp_makeConstraints { (make) in
+        tagCountView.snp.makeConstraints { (make) in
             make.size.equalTo(CGSize(width: 20, height: 23))
             make.top.equalTo(9)
             make.right.equalTo(picsView).offset(-8)
@@ -68,7 +68,7 @@ class ArticlePicsCell: ArticleBaseCell {
         if beEditing != editing {
             beEditing = editing
 
-            picEdge?.updateInsets(editing ? editEdge : commonEdge)
+            picEdge?.updateInsets(amount: editing ? editEdge : commonEdge)
             tagCountView.isHidden = editing
         }
     }

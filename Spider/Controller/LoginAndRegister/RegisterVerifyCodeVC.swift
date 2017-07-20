@@ -66,7 +66,7 @@ class RegisterVerifyCodeVC: UIViewController {
         dismissKeyboard()
     }
     
-    func getUserInfo(_ nameBlock:UserNameBlock){
+    func getUserInfo(_ nameBlock:@escaping UserNameBlock){
         userNameBlock = nameBlock
     }
     

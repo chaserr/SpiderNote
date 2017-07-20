@@ -32,14 +32,14 @@ class BaseNavViewController: UINavigationController, UINavigationControllerDeleg
         super.pushViewController(viewController, animated: animated)
 
     }
-    
+    @discardableResult
     override func popViewController(animated: Bool) -> UIViewController? {
         
         if ((navigationController?.topViewController?.isKind(of: MindViewController.self)) != nil) {
             SPIDERSTRUCT.currentLevel -= 1
         }else if ((navigationController?.topViewController?.isKind(of: ProjectCollectionViewController.self)) != nil) {
         
-            SPIDERSTRUCT.currentLevel == 0
+            SPIDERSTRUCT.currentLevel = 0
             
         }
         

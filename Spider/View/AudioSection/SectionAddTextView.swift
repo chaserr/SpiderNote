@@ -149,10 +149,10 @@ class SectionAddTextView: UIView {
     
     func keyboardWillShow(_ notification: Notification) {
         let info = notification.userInfo!
-        let kbFrame = (info[UIKeyboardFrameEndUserInfoKey]! as AnyObject).CGRectValue
+        let kbFrame = (info[UIKeyboardFrameEndUserInfoKey]! as AnyObject).cgRectValue
         
         UIView.animate(withDuration: 1.3, animations: {
-            self.contaniner.transform = CGAffineTransform(translationX: 0, y: -kbFrame.height)
+            self.contaniner.transform = CGAffineTransform(translationX: 0, y: -(kbFrame?.height)!)
         })
     }
     

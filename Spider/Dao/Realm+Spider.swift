@@ -224,7 +224,7 @@ extension SpiderRealm {
     }
     
     class func addMind(_ mind: MindObject, to noteID: String) {
-        guard let note = REALM.realm.objectForPrimaryKey(ProjectObject.self, key: noteID as AnyObject) else { return }
+        guard let note = REALM.realm.object(ofType: ProjectObject.self, forPrimaryKey: noteID as AnyObject) else { return }
         
         try! REALM.realm.write({ 
             REALM.realm.add(mind, update: true)
