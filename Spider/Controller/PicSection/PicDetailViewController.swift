@@ -2,7 +2,7 @@
 //  PicDetailViewController.swift
 //  Spider
 //
-//  Created by Atuooo on 5/30/16.
+//  Created by 童星 on 5/30/16.
 //  Copyright © 2016 oOatuo. All rights reserved.
 //
 

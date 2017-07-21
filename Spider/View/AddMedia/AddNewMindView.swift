@@ -2,7 +2,7 @@
 //  AddNewMindView.swift
 //  Spider
 //
-//  Created by Atuooo on 07/09/2016.
+//  Created by 童星 on 07/09/2016.
 //  Copyright © 2016 auais. All rights reserved.
 //
 

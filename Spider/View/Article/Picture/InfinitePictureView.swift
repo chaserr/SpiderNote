@@ -2,7 +2,7 @@
 //  InfinitePictureView.swift
 //  GuttlerPageControl
 //
-//  Created by Atuooo on 4/27/16.
+//  Created by 童星 on 4/27/16.
 //  Copyright © 2016 oOatuo. All rights reserved.
 //
 

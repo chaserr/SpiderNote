@@ -2,7 +2,7 @@
 //  AddMediaButton.swift
 //  Spider
 //
-//  Created by Atuooo on 5/9/16.
+//  Created by 童星 on 5/9/16.
 //  Copyright © 2016 oOatuo. All rights reserved.
 //
 
