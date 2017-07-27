@@ -69,6 +69,14 @@ extension FileManager {
             return nil
         }
     }
+    
+    
+    /// 获取文件夹路径
+    ///
+    /// - Parameter folderName: folderName description
+    /// - Returns: return 文件夹路径名
+
+    
 }
 
 extension UIImage {

@@ -20,7 +20,8 @@ class SpiderRealm {
     }
     
     class func getUndocItems() -> Results<SectionObject>! {
-        return REALM.realm.objects(SectionObject.self).filter("undocFlag == 1 AND deleteFlag == 0")
+        let result: Results<SectionObject> = REALM.realm.objects(SectionObject.self).filter("undocFlag == 1 AND deleteFlag == 0")
+        return result
     }
     
     class func getUndocItemCount() -> Int {
@@ -34,8 +35,7 @@ class SpiderRealm {
         var timeSortor = "...", index = 0, isOld = false
         var sortedResults = [[SectionObject]]()
         
-        let _ = results.map { result in
-            
+        for result in results {
             if result.updateAt.isThisYear() {
                 
                 if result.updateAt.toYearMonth() != timeSortor {
@@ -49,8 +49,8 @@ class SpiderRealm {
                     
                     sortedResults[index].append(result)
                 }
-                
-            } else {
+            }
+            else{
                 
                 if !isOld {
                     isOld = true
@@ -60,8 +60,36 @@ class SpiderRealm {
                 
                 sortedResults[index].append(result)
             }
-            
         }
+        
+//        let _ = results.map { result in
+//            
+//            if result.updateAt.isThisYear() {
+//                
+//                if result.updateAt.toYearMonth() != timeSortor {
+//                    
+//                    index = sortedResults.count
+//                    timeSortor = result.updateAt.toYearMonth()
+//                    sortedResults.append([SectionObject]())
+//                    sortedResults[index].append(result)
+//                    
+//                } else {
+//                    
+//                    sortedResults[index].append(result)
+//                }
+//                
+//            } else {
+//                
+//                if !isOld {
+//                    isOld = true
+//                    index = sortedResults.count
+//                    sortedResults.append([SectionObject]())
+//                }
+//                
+//                sortedResults[index].append(result)
+//            }
+//            
+//        }
         
         return sortedResults
     }

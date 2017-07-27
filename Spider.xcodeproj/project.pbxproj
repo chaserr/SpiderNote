@@ -218,6 +218,8 @@
 		F72F39E71D3F51930094E805 /* UIDevice+Ext.m in Sources */ = {isa = PBXBuildFile; fileRef = F72F39DD1D3F51930094E805 /* UIDevice+Ext.m */; };
 		F72F39EE1D3F51E80094E805 /* LXDSegmentControl.m in Sources */ = {isa = PBXBuildFile; fileRef = F72F39EA1D3F51E80094E805 /* LXDSegmentControl.m */; };
 		F72F39EF1D3F51E80094E805 /* LXDSegmentControlConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = F72F39EC1D3F51E80094E805 /* LXDSegmentControlConfiguration.m */; };
+		F7344D941F282521001E5B40 /* Operators.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7344D921F282521001E5B40 /* Operators.swift */; };
+		F7344D951F282521001E5B40 /* String+Attributed.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7344D931F282521001E5B40 /* String+Attributed.swift */; };
 		F734CD331D41C7EB008F7481 /* SearchMindResultVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F734CD321D41C7EB008F7481 /* SearchMindResultVC.swift */; };
 		F734CD351D41C878008F7481 /* SearchArticleResultVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F734CD341D41C878008F7481 /* SearchArticleResultVC.swift */; };
 		F739050D1D37243F005E62CA /* AboutMeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F739050B1D37243F005E62CA /* AboutMeCell.swift */; };
@@ -535,6 +537,8 @@
 		F72F39EB1D3F51E80094E805 /* LXDSegmentControlConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LXDSegmentControlConfiguration.h; sourceTree = "<group>"; };
 		F72F39EC1D3F51E80094E805 /* LXDSegmentControlConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LXDSegmentControlConfiguration.m; sourceTree = "<group>"; };
 		F72F39ED1D3F51E80094E805 /* LXDSegmentControlDefine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LXDSegmentControlDefine.h; sourceTree = "<group>"; };
+		F7344D921F282521001E5B40 /* Operators.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Operators.swift; sourceTree = "<group>"; };
+		F7344D931F282521001E5B40 /* String+Attributed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Attributed.swift"; sourceTree = "<group>"; };
 		F734CD321D41C7EB008F7481 /* SearchMindResultVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchMindResultVC.swift; sourceTree = "<group>"; };
 		F734CD341D41C878008F7481 /* SearchArticleResultVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchArticleResultVC.swift; sourceTree = "<group>"; };
 		F739050B1D37243F005E62CA /* AboutMeCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutMeCell.swift; sourceTree = "<group>"; };
@@ -1268,6 +1272,8 @@
 				F71C62AC1F13854E00D48275 /* Timer+Addition.swift */,
 				F71C62AD1F13854E00D48275 /* Timer+Block.swift */,
 				F71C62B01F13855600D48275 /* URL+Man.swift */,
+				F7344D921F282521001E5B40 /* Operators.swift */,
+				F7344D931F282521001E5B40 /* String+Attributed.swift */,
 			);
 			path = Foundation;
 			sourceTree = "<group>";
@@ -2316,6 +2322,7 @@
 				C951205C1CE182C30080543D /* NavigationItemTitleView.swift in Sources */,
 				F7F3FAEF1D38E5FB00E844D1 /* AppDefine.swift in Sources */,
 				F71C627C1F1383E700D48275 /* NSTimerExtensions.swift in Sources */,
+				F7344D951F282521001E5B40 /* String+Attributed.swift in Sources */,
 				F7FC411C1D33378A00E033CE /* MainViewController.swift in Sources */,
 				F71C62EE1F13856C00D48275 /* UIButton+Man.swift in Sources */,
 				F71C626E1F1383E700D48275 /* AVPlayer+Man.swift in Sources */,
@@ -2345,6 +2352,7 @@
 				4525CC011D6822CF00A2488B /* UndocBoxLayout.swift in Sources */,
 				F710EB641D76ACBB00DEA611 /* AlertView.swift in Sources */,
 				F71C62F91F13856C00D48275 /* UIScrollView+Man.swift in Sources */,
+				F7344D941F282521001E5B40 /* Operators.swift in Sources */,
 				F71C63031F13856C00D48275 /* UIView+Find.swift in Sources */,
 				F78CAE1B1D66F06C001E0707 /* QNUploadHelper.swift in Sources */,
 				4523EB011D4AF9D000CF3330 /* PicSectionObject.swift in Sources */,
@@ -2505,6 +2513,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 1;
+				VALID_ARCHS = "arm64 armv7 armv7s x86_64";
 			};
 			name = Debug;
 		};
@@ -2549,6 +2558,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 1;
+				VALID_ARCHS = "arm64 armv7 armv7s x86_64";
 			};
 			name = Release;
 		};
@@ -2640,6 +2650,7 @@
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = YES;
+				VALID_ARCHS = "arm64 armv7 armv7s x86_64";
 			};
 			name = Adhoc;
 		};

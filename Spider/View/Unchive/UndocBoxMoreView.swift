@@ -53,7 +53,7 @@ class UndocBoxMoreView: UIImageView, UITableViewDataSource, UITableViewDelegate 
         
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
-        tableView.snp_makeConstraints { (make) in
+        tableView.snp.makeConstraints { (make) in
             make.right.left.bottom.equalTo(self)
             make.top.equalTo(7)
         }
